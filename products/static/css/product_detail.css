@@ -1,0 +1,28 @@
+.product-detail-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: sans-serif;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 16px;
+  text-decoration: none;
+  color: #333;
+}
+
+.product-image {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.product-name {
+  margin-top: 16px;
+}
+
+.product-description {
+  color: #555;
+}
