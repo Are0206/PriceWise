@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>{{ shopping_list.name }} - PriceWise</title>
+</head>
+
+<body>
+  <h1>{{ shopping_list.name }}</h1>
+  <p>Created: {{ shopping_list.created_at }}</p>
+  <p>Last modified: {{ shopping_list.updated_at }}</p>
+
+  <ul>
+    {% for item in shopping_list.items.all %}
+      <li>
+        {{ item.quantity }} x
+        <a href="{% url 'products:detail' item.product.pk %}">{{ item.product.name }}</a>
+      </li>
+    {% empty %}
+      <li>This list is empty.</li>
+    {% endfor %}
+  </ul>
+
+  <a href="{% url 'shopping_lists:index' %}">Back</a>
+</body>
+
+</html>

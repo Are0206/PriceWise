@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Shopping lists - PriceWise</title>
+</head>
+
+<body>
+  <h1>Shopping lists</h1>
+
+  <a href="{% url 'shopping_lists:create' %}">+ Create list</a>
+
+  <ul>
+    {% for shopping_list in shopping_lists %}
+      <li>
+        <a href="{% url 'shopping_lists:detail' shopping_list.pk %}">{{ shopping_list.name }}</a>
+        ({{ shopping_list.items.count }} products)
+      </li>
+    {% empty %}
+      <li>No lists yet.</li>
+    {% endfor %}
+  </ul>
+
+  <a href="{% url 'home' %}">Home</a>
+</body>
+
+</html>

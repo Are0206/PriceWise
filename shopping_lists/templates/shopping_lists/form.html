@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>{{ title }} - PriceWise</title>
+</head>
+
+<body>
+  <h1>{{ title }}</h1>
+
+  <form method="post">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <h3>Products</h3>
+
+    {{ formset.management_form }}
+
+    <div id="items-container">
+      {% for item_form in formset %}
+        <div class="item-form">
+          {{ item_form.id }}
+          {{ item_form.product }}
+          {{ item_form.quantity }}
+          {{ item_form.DELETE }} <label>Remove</label>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div id="empty-form-template" style="display: none;">
+      <div class="item-form">
+        {{ formset.empty_form.id }}
+        {{ formset.empty_form.product }}
+        {{ formset.empty_form.quantity }}
+        {{ formset.empty_form.DELETE }} <label>Remove</label>
+      </div>
+    </div>
+
+    <button type="button" id="add-item">+ Add product</button>
+
+    <button type="submit">Save list</button>
+  </form>
+
+  <a href="{% url 'shopping_lists:index' %}">Back</a>
+
+  <script>
+    (function () {
+      const container = document.getElementById('items-container');
+      const template = document.getElementById('empty-form-template');
+      const addButton = document.getElementById('add-item');
+      const totalForms = document.getElementById('id_{{ formset.prefix }}-TOTAL_FORMS');
+
+      addButton.addEventListener('click', function () {
+        const index = parseInt(totalForms.value, 10);
+        const newRow = template.innerHTML.replace(/__prefix__/g, index);
+        container.insertAdjacentHTML('beforeend', newRow);
+        totalForms.value = index + 1;
+      });
+    })();
+  </script>
+</body>
+
+</html>
