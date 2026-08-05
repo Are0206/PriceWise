@@ -20,6 +20,8 @@
     {% if product.description %}
       <p class="product-description">{{ product.description }}</p>
     {% endif %}
+
+    <a href="{% url 'products:compare' product.pk %}" class="compare-link">Compare prices across supermarkets</a>
   </div>
 </body>
 
