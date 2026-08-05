@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>{{ product.name }} - PriceWise</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/product_detail.css' %}">
+</head>
+
+<body>
+  <div class="product-detail-container">
+    <a href="{% url 'home' %}" class="back-link">&larr; Back</a>
+
+    {% if product.image_url %}
+      <img class="product-image" src="{{ product.image_url }}" alt="{{ product.name }}">
+    {% endif %}
+
+    <h1 class="product-name">{{ product.name }}</h1>
+
+    {% if product.description %}
+      <p class="product-description">{{ product.description }}</p>
+    {% endif %}
+
+    <a href="{% url 'products:compare' product.pk %}" class="compare-link">Compare prices across supermarkets</a>
+  </div>
+</body>
+
+</html>

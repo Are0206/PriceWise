@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Compare prices - {{ product.name }} - PriceWise</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/compare_prices.css' %}">
+</head>
+
+<body>
+  <div class="compare-prices-container">
+    <a href="{% url 'products:detail' product.pk %}" class="back-link">&larr; Back to {{ product.name }}</a>
+
+    <h1 class="product-name">{{ product.name }}</h1>
+    <p class="compare-subtitle">Price by supermarket</p>
+
+    <table class="compare-prices-table">
+      <thead>
+        <tr>
+          <th>Supermarket</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for price in prices %}
+          <tr {% if forloop.first %}class="cheapest"{% endif %}>
+            <td>{{ price.supermarket.name }}</td>
+            <td>${{ price.amount }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="2">No prices available yet for this product.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</body>
+
+</html>

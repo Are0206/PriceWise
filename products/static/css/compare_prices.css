@@ -1,0 +1,35 @@
+.compare-prices-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: sans-serif;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 16px;
+  text-decoration: none;
+  color: #333;
+}
+
+.compare-subtitle {
+  color: #555;
+  margin-top: 0;
+}
+
+.compare-prices-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.compare-prices-table th,
+.compare-prices-table td {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.compare-prices-table tr.cheapest {
+  font-weight: bold;
+  color: #1a7f37;
+}
