@@ -1,0 +1,190 @@
+* {
+  font-family: Cabin, Helvetica, sans-serif;
+  font-weight: bold;
+  font-size: 13px;
+  color: white;
+}
+
+.main-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.page-body {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+}
+
+.filter-section {
+  flex: 1;
+  border-width: 10px;
+  border-style: solid;
+}
+
+.product-section {
+  flex: 5;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-icon {
+  font-family: "Bebas Neue", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 50px;
+  margin: 0px;
+  cursor: pointer;
+  transition: all, 10ms;
+}
+
+.app-icon:hover {
+  font-size: 45px;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #011A1C;
+  height: 120px;
+  margin: 0;
+  box-shadow: 0px 0.6px 10px 2px rgba(0, 0, 0, 0.2);
+}
+
+.left-header,
+.right-header {
+  flex: 1;
+  text-align: center;
+}
+
+.middle-header {
+  flex: 2;
+  max-width: 1000px;
+}
+
+.search-container {
+  display: flex;
+  flex-direction: row;
+  width: auto;
+  height: 40px;
+  box-shadow: 0px 6px 15px 0.1px rgba(0, 0, 0, 0.6);
+  transition: padding, 100ms;
+}
+
+.search-container:hover {
+  padding: 2px;
+}
+
+.search-bar {
+  padding-left: 15px;
+  flex: 1;
+  border: none;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  margin: 0px;
+  color: rgb(110, 108, 110);
+}
+
+
+.search-button {
+  width: 60px;
+  background-color: rgb(234, 229, 237);
+  height: 100%;
+  margin: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  cursor: pointer;
+}
+
+.search-icon {
+  width: 30px;
+  height: auto;
+}
+
+.shopping-list-anchor {
+  display: inline-block;
+  text-decoration: none;
+}
+
+.shopping-list-container {
+  display: flex;
+  flex-direction: column;
+  width: auto;
+  margin: 0;
+  padding: 0px;
+  align-items: center;
+  justify-content: center;
+}
+
+.shopping-list-icon:hover {
+  width: 47px;
+}
+
+.shopping-list-icon {
+  height: auto;
+  width: 50px;
+  margin: 0px;
+}
+
+.shopping-list-text {
+  margin: 0px;
+}
+
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  row-gap: 20px;
+  padding: 20px;
+  place-items: center;
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 350px;
+  width: 250px;
+  background-color: white;
+  padding: 2px;
+  border-radius: 10px;
+  box-shadow: 5px 0px 10px 1px rgba(0, 0, 0, 0.2);
+}
+
+.product-image {
+  height: 70%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.product-name{
+  font-size: 20px;
+  color:black;
+  margin: 10px ;
+}
+
+.product-details{
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+button{
+  background-color: #1C0C01;
+  border: none;
+  cursor: pointer;
+  padding: 10px 50px;
+  border-radius: 5px;
+}
+
+body {
+  background-color: rgb(251, 247, 243);
+  margin: 0px;
+}
