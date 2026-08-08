@@ -3,46 +3,89 @@
 
 <head>
   <title>PriceWise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lobster+Two:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+    rel="stylesheet">
   {% load static %}
 
-  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+  <link rel="stylesheet" href="{% static 'css/header.css' %}">
 </head>
 
 <body>
-  <div class="main-container">
 
-    <div class="shopping-list-grid">
-
-      <div class="shopping-list-title">
-        <h2>Shopping List</h2>
+  <div class="main-page">
+    <div class="header">
+      <div class="left-header">
+        <p class="app-icon">PriceWise</p>
       </div>
 
-      <div class="shopping-list-content">
-        <div class="create-shopping-list-div">
-          <button class="create-shopping-list-button">+</button>
-          <p class="create-shopping-list-text">Create Shopping List</p>
+      <div class="middle-header">
+        <div class="search-container">
+          <input class="search-bar" placeholder="Search product">
+          <a class="search-button-achor">
+
+            <div class="search-button">
+              <img class="search-icon" src="{% static 'img/icons/search.png'%}">
+            </div>
+
+          </a>
+        </div>
+      </div>
+
+      <div class="right-header">
+        <a class="shopping-list-anchor" href="{% url 'shopping_lists:index'  %}">
+          <div class="shopping-list-container">
+            <img class="shopping-list-icon" src="{% static 'img/icons/lists.png'%}">
+            <p class="shopping-list-text">Shopping Lists</p>
+
+          </div>
+        </a>
+      </div>
+
+
+    </div>
+
+    <div class="page-body">
+
+      <div class="filter-section">
+        sadsadasd
+      </div>
+
+      <div class="product-section">
+        <div class="products-grid">
+
+          {% for product in products %}
+
+          <div class="product-card">
+
+            <img class="product-image" src="{{ product.image.url }}" alt="{{ product.name }}">
+
+            <div class="product-details">
+              <p class="product-name">{{ product.name }}</p>
+
+              <a href="{% url 'products:detail' product.pk %}">
+                <button>View Details</button>
+              </a>
+            </div>
+          </div>
+
+          {% empty %}
+
+          <p>No products available.</p>
+
+          {% endfor %}
+
         </div>
       </div>
 
     </div>
-    <div class="main-page-grid">
-
-      <div class="page-title">
-        <h1>PriceWise</h1>
-      </div>
-
-      <div class="search-bar-div">
-        <input class="search-bar" type="text" placeholder="Search product">
-        <button class="search-button">Search</button>
-      </div>
-
-
-      <div class="main-content">
-
-      </div>
-    </div>
   </div>
+
 </body>
 
 </html>

@@ -1,5 +1,3 @@
-
-
 from decimal import Decimal
 
 from .models import ShoppingList
