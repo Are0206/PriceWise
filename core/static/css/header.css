@@ -188,3 +188,9 @@ body {
   background-color: rgb(251, 247, 243);
   margin: 0px;
 }
+.search-button-achor{
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}

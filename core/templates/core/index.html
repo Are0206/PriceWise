@@ -25,16 +25,19 @@
       </div>
 
       <div class="middle-header">
-        <div class="search-container">
-          <input class="search-bar" placeholder="Search product">
-          <a class="search-button-achor">
+        <form action="" method="get">
+          <div class="search-container">
+          <input type="text" name="q" class="search-bar" placeholder="Search product" value="{{ request.GET.q }}">
 
+          <button type="submit" class="search-button-achor">
             <div class="search-button">
               <img class="search-icon" src="{% static 'img/icons/search.png'%}">
             </div>
-
-          </a>
-        </div>
+          </button>
+          
+          </div>
+        </form>
+        
       </div>
 
       <div class="right-header">
