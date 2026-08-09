@@ -5,6 +5,10 @@
   color: white;
 }
 
+a {
+  text-decoration: none;
+}
+
 .main-page {
   display: flex;
   flex-direction: column;
@@ -13,33 +17,36 @@
 .page-body {
   display: flex;
   flex-direction: row;
-  height: 100vh;
+  align-items: stretch;
 }
 
 .filter-section {
   flex: 1;
-  border-width: 10px;
-  border-style: solid;
+  background-color: white;
+  position: sticky;
+  height: 100vh;
+  top:0;
 }
 
 .product-section {
-  flex: 5;
+  flex: 4;
   align-items: center;
   justify-content: center;
+  padding: 10px 40px;
 }
 
 .app-icon {
   font-family: "Bebas Neue", sans-serif;
   font-weight: 400;
   font-style: normal;
-  font-size: 50px;
+  font-size: 45px;
   margin: 0px;
   cursor: pointer;
-  transition: all, 10ms;
+  transition: all, 1s;
 }
 
 .app-icon:hover {
-  font-size: 45px;
+  letter-spacing: 1px
 }
 
 .header {
@@ -70,11 +77,11 @@
   width: auto;
   height: 40px;
   box-shadow: 0px 6px 15px 0.1px rgba(0, 0, 0, 0.6);
-  transition: padding, 100ms;
+  transition: transform, 1s;
 }
 
 .search-container:hover {
-  padding: 2px;
+  transform: translateX(-5px);
 }
 
 .search-bar {
@@ -108,7 +115,6 @@
 
 .shopping-list-anchor {
   display: inline-block;
-  text-decoration: none;
 }
 
 .shopping-list-container {
@@ -119,10 +125,11 @@
   padding: 0px;
   align-items: center;
   justify-content: center;
+  transition: all, 1s;
 }
 
-.shopping-list-icon:hover {
-  width: 47px;
+.shopping-list-container:hover {
+  transform: translateX(5px);
 }
 
 .shopping-list-icon {
@@ -139,8 +146,8 @@
 .products-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  row-gap: 20px;
-  padding: 20px;
+  row-gap: 25px;
+  padding: 20px 70px;
   place-items: center;
 }
 
@@ -154,37 +161,60 @@
   background-color: white;
   padding: 2px;
   border-radius: 10px;
-  box-shadow: 5px 0px 10px 1px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 1s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 13px rgba(0, 0, 0, 0.15);
 }
 
 .product-image {
   height: 70%;
   width: 100%;
   object-fit: cover;
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: rgba(0, 0, 0, 0.05);
 }
 
-.product-name{
+.product-name {
   font-size: 20px;
-  color:black;
-  margin: 10px ;
+  color: black;
+  margin: 10px;
+  margin-top: 12px;
 }
 
-.product-details{
-  display:flex;
+.product-details {
+  height: 30%;
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-button{
-  background-color: #1C0C01;
+button {
+  background-color: #011A1C;
   border: none;
   cursor: pointer;
   padding: 10px 50px;
   border-radius: 5px;
+  transition: padding, 1s;
+}
+button:hover{
+  padding: 10px 54px;
+  background-color: #1a2a2c;
 }
 
 body {
-  background-color: rgb(251, 247, 243);
+  background: #f5f6f4;
   margin: 0px;
+}
+.search-button-achor{
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }

@@ -14,6 +14,14 @@
   {% load static %}
 
   <link rel="stylesheet" href="{% static 'css/header.css' %}">
+  <link rel="stylesheet" href="{% static 'css/list_panel.css' %}">
+
+  <script>
+    const shoppingListsUrl = "{% url 'shopping_lists:index' %}";
+  </script>
+
+  <script src="{% static 'js/shopping-list-panel.js' %}" defer>
+  </script>
 </head>
 
 <body>
@@ -21,30 +29,35 @@
   <div class="main-page">
     <div class="header">
       <div class="left-header">
-        <p class="app-icon">PriceWise</p>
+        <a href="{% url 'home' %}">
+          <p class="app-icon">PriceWise</p>
+        </a>
       </div>
 
       <div class="middle-header">
-        <div class="search-container">
-          <input class="search-bar" placeholder="Search product">
-          <a class="search-button-achor">
+        <form action="" method="get">
+          <div class="search-container">
+          <input type="text" name="q" class="search-bar" placeholder="Search product" value="{{ request.GET.q }}">
 
+          <button type="submit" class="search-button-achor">
             <div class="search-button">
               <img class="search-icon" src="{% static 'img/icons/search.png'%}">
             </div>
-
-          </a>
-        </div>
+          </button>
+          
+          </div>
+        </form>
+        
       </div>
 
       <div class="right-header">
-        <a class="shopping-list-anchor" href="{% url 'shopping_lists:index'  %}">
+        <button class="shopping-list-anchor" id="shoppingListButton" type="button">
           <div class="shopping-list-container">
             <img class="shopping-list-icon" src="{% static 'img/icons/lists.png'%}">
             <p class="shopping-list-text">Shopping Lists</p>
 
           </div>
-        </a>
+        </button>
       </div>
 
 
@@ -53,7 +66,8 @@
     <div class="page-body">
 
       <div class="filter-section">
-        sadsadasd
+        <h1 style="color: black; font-size:20px; text-align: center;">Filter</h1>
+        <!-- solo para indicar, luego se quita -->
       </div>
 
       <div class="product-section">
@@ -85,6 +99,21 @@
 
     </div>
   </div>
+
+
+  <div id="shoppingListPanel" class="shopping-list-panel">
+
+    <button
+        id="closeShoppingList"
+        class="close-panel"
+        type="button"
+    >
+        ×
+    </button>
+
+    <div id="shoppingListContent"></div>
+
+</div>
 
 </body>
 
