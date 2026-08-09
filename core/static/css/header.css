@@ -196,7 +196,7 @@ a {
 }
 
 button {
-  background-color: #1C0C01;
+  background-color: #011A1C;
   border: none;
   cursor: pointer;
   padding: 10px 50px;
@@ -205,7 +205,7 @@ button {
 }
 button:hover{
   padding: 10px 54px;
-  background-color: #472c23;
+  background-color: #1a2a2c;
 }
 
 body {
