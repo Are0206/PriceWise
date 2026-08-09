@@ -1,27 +1,42 @@
-<!DOCTYPE html>
-<html>
+<div class="shopping-list-panel-content">
 
-<head>
-  <title>Shopping lists - PriceWise</title>
-</head>
+  <div class="shopping-list-header">
 
-<body>
-  <h1>Shopping lists</h1>
+    <h1>Shopping Lists</h1>
 
-  <a href="{% url 'shopping_lists:create' %}">+ Create list</a>
+    <a href="{% url 'shopping_lists:create' %}">
+      + Create list
+    </a>
 
-  <ul>
+  </div>
+
+
+  <ul class="shopping-list-items">
+
     {% for shopping_list in shopping_lists %}
-      <li>
-        <a href="{% url 'shopping_lists:detail' shopping_list.pk %}">{{ shopping_list.name }}</a>
-        ({{ shopping_list.items.count }} products)
+
+    <a href="{% url 'shopping_lists:detail' shopping_list.pk %}">
+      <li class="shopping-list-item">
+
+
+        {{ shopping_list.name }}
+
+
+        <span>
+          ({{ shopping_list.items.count }} products)
+        </span>
+
       </li>
+    </a>
+
     {% empty %}
-      <li>No lists yet.</li>
+
+    <li>
+      No lists yet.
+    </li>
+
     {% endfor %}
+
   </ul>
 
-  <a href="{% url 'home' %}">Home</a>
-</body>
-
-</html>
+</div>
