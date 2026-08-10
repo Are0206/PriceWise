@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from .forms import ShoppingListForm, ShoppingListItemFormSet
 from .models import ShoppingList
-from .services import calculate_estimated_savings
+from .services import calculate_estimated_savings, recommend_cheapest_supermarket
 # Create your views here.
 
 def shopping_list_create(request):
@@ -33,9 +33,11 @@ def shopping_list_detail(request, pk):
     
     shopping_list = get_object_or_404(ShoppingList, pk=pk)
     savings = calculate_estimated_savings(shopping_list)
+    cheapest_supermarket = recommend_cheapest_supermarket(shopping_list)
     return render(request, 'shopping_lists/detail.html', {
         'shopping_list': shopping_list,
         "savings": savings,
+        "cheapest_supermarket": cheapest_supermarket,
     })
 
 

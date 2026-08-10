@@ -47,3 +47,12 @@ def calculate_estimated_savings(shopping_list: ShoppingList):
     most_expensive = max(totals.values())
 
     return most_expensive - cheapest
+
+def recommend_cheapest_supermarket(shopping_list: ShoppingList):
+
+    totals = calculate_supermarket_totals(shopping_list)
+
+    if not totals:
+        return None
+
+    return min(totals, key=totals.get)
