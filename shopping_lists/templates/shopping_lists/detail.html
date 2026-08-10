@@ -3,6 +3,11 @@
 
 <head>
   <title>{{ shopping_list.name }} - PriceWise</title>
+
+  {%load static%}
+
+  <link rel="stylesheet" href="{% static 'css/detail.css' %}">
+
 </head>
 
 <body>
@@ -23,7 +28,7 @@
 
   <p>Estimated savings: ${{ savings }}</p>
 
-  <a href="{% url 'shopping_lists:index' %}">Back</a>
+  <a href="{% url 'home' %}?open_lists=true">Back</a>
 </body>
 
 </html>
