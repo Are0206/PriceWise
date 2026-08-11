@@ -23,7 +23,9 @@
 
   <p>If you buy them in {{ cheapest_supermarket.name }}, you get an estimated saving of {{ savings }}</p>
 
+  <a href="{% url 'shopping_lists:edit' shopping_list.pk %}">Edit list</a>
   <a href="{% url 'shopping_lists:index' %}">Back</a>
+
 </body>
 
 </html>
