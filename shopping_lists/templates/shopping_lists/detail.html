@@ -26,7 +26,19 @@
     {% endfor %}
   </ul>
 
-  <p>If you buy them in {{ cheapest_supermarket.name }}, you get an estimated saving of {{ savings }}</p>
+  {% if best %}
+    <p>
+      Cheapest option: buy everything in <strong>{{ best.supermarket.name }}</strong> for ${{ best.total }}
+      {% if not best.complete %}
+        (missing: {% for product in best.missing %}{{ product.name }}{% if not forloop.last %}, {% endif %}{% endfor %} — buy those elsewhere)
+      {% endif %}
+    </p>
+    {% if savings %}
+      <p>Estimated saving vs. the most expensive supermarket with everything on the list: ${{ savings }}</p>
+    {% endif %}
+  {% else %}
+    <p>No supermarket carries any of the products in this list yet.</p>
+  {% endif %}
 
   <a href="{% url 'home' %}?open_lists=true">Back</a>
 </body>

@@ -39,6 +39,12 @@
       <div class="middle-header">
         <form action="" method="get">
           <div class="search-container">
+          
+          <select name="search_by">
+            <option value="product" {% if search_by == 'product' %}selected{% endif %}>Producto</option>
+            <option value="supermarket" {% if search_by == 'supermarket' %}selected{% endif %}>Supermercado</option>
+          </select>
+
           <input type="text" name="q" class="search-bar" placeholder="Search product" value="{{ request.GET.q }}">
 
           <button type="submit" class="search-button">
@@ -79,7 +85,9 @@
 
           <div class="product-card">
 
-            <img class="product-image" src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% if product.image %}
+              <img class="product-image" src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% endif %}
 
             <div class="product-details">
               <p class="product-name">{{ product.name }}</p>
