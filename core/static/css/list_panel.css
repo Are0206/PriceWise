@@ -135,12 +135,13 @@
     text-decoration: none;
     color:black;
     font-size: 16px;
+    transition: background-color, 0.7s;
+    transition: transform, 0.7s;
 }
 
 .shopping-list-item span {
     font-size: 14px;
     color: #777;
-
 }
 
 
@@ -150,6 +151,7 @@
 
 .shopping-list-item:hover {
     background-color: #f7f7f7;
+    transform: translateY(-1px);
 }
 
 

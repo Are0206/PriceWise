@@ -3,6 +3,11 @@
 
 <head>
   <title>{{ shopping_list.name }} - PriceWise</title>
+
+  {%load static%}
+
+  <link rel="stylesheet" href="{% static 'css/detail.css' %}">
+
 </head>
 
 <body>
@@ -35,9 +40,13 @@
     <p>No supermarket carries any of the products in this list yet.</p>
   {% endif %}
 
+<<<<<<< HEAD
   <a href="{% url 'shopping_lists:edit' shopping_list.pk %}">Edit list</a>
   <a href="{% url 'shopping_lists:index' %}">Back</a>
 
+=======
+  <a href="{% url 'home' %}?open_lists=true">Back</a>
+>>>>>>> 9faac717081c5aa97a9c5666bac7a9f40db0a003
 </body>
 
 </html>

@@ -14,6 +14,8 @@
   {% load static %}
 
   <link rel="stylesheet" href="{% static 'css/header.css' %}">
+  <link rel="stylesheet" href="{% static 'css/body.css' %}">
+  <link rel="stylesheet" href="{% static 'css/general.css' %}">
   <link rel="stylesheet" href="{% static 'css/list_panel.css' %}">
 
   <script>
@@ -45,8 +47,8 @@
 
           <input type="text" name="q" class="search-bar" placeholder="Search product" value="{{ request.GET.q }}">
 
-          <button type="submit" class="search-button-achor">
-            <div class="search-button">
+          <button type="submit" class="search-button">
+            <div class="search-button-div">
               <img class="search-icon" src="{% static 'img/icons/search.png'%}">
             </div>
           </button>
