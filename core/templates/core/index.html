@@ -83,7 +83,9 @@
 
           <div class="product-card">
 
-            <img class="product-image" src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% if product.image %}
+              <img class="product-image" src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% endif %}
 
             <div class="product-details">
               <p class="product-name">{{ product.name }}</p>
