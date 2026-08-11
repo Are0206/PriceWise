@@ -3,8 +3,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from .forms import ShoppingListForm, ShoppingListItemFormSet
 from .models import ShoppingList
-from .services import calculate_estimated_savings
-# Create your views here.
+from .services import calculate_supermarket_breakdown
+
 
 def shopping_list_create(request):
     
@@ -29,13 +29,44 @@ def shopping_list_create(request):
     })
 
 
+def shopping_list_edit(request, pk):
+    
+    shopping_list = get_object_or_404(ShoppingList, pk=pk)
+
+    if request.method == 'POST':
+        form = ShoppingListForm(request.POST, instance=shopping_list)
+        formset = ShoppingListItemFormSet(request.POST, instance=shopping_list)
+
+        if form.is_valid() and formset.is_valid():
+            with transaction.atomic():
+                form.save()
+                formset.save()
+            return redirect('shopping_lists:detail', pk=shopping_list.pk)
+    else:
+        form = ShoppingListForm(instance=shopping_list)
+        formset = ShoppingListItemFormSet(instance=shopping_list)
+
+    return render(request, 'shopping_lists/form.html', {
+        'form': form,
+        'formset': formset,
+        'title': 'Edit shopping list',
+    })
+
+
 def shopping_list_detail(request, pk):
     
     shopping_list = get_object_or_404(ShoppingList, pk=pk)
-    savings = calculate_estimated_savings(shopping_list)
+    breakdown = calculate_supermarket_breakdown(shopping_list)
+    best = breakdown[0] if breakdown else None
+    complete_entries = [entry for entry in breakdown if entry['complete']]
+    savings = None
+    if len(complete_entries) >= 2:
+        savings = complete_entries[-1]['total'] - complete_entries[0]['total']
     return render(request, 'shopping_lists/detail.html', {
         'shopping_list': shopping_list,
-        "savings": savings,
+        'breakdown': breakdown,
+        'best': best,
+        'savings': savings,
     })
 
 

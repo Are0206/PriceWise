@@ -1,0 +1,23 @@
+* {
+  font-family: Cabin, Helvetica, sans-serif;
+  font-weight: bold;
+  font-size: 13px;
+  color: white;
+}
+
+a {
+  text-decoration: none;
+}
+
+button {
+  background-color: #011A1C;
+  border: none;
+  cursor: pointer;
+  padding: 10px 50px;
+  border-radius: 5px;
+  transition: padding, 1s;
+}
+button:hover{
+  padding: 10px 54px;
+  background-color: #1a2a2c;
+}

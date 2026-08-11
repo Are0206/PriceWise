@@ -11,7 +11,19 @@ const shoppingListContent =
     document.getElementById("shoppingListContent");
 
 
+const params = new URLSearchParams(window.location.search);
+
+if (params.get("open_lists") === "true") {
+    openShoppingListPanel();
+}
+
+
 shoppingListButton.addEventListener("click", async () => {
+
+    openShoppingListPanel();
+});
+
+async function openShoppingListPanel() {
 
     shoppingListPanel.classList.add("open");
 
@@ -34,7 +46,7 @@ shoppingListButton.addEventListener("click", async () => {
         shoppingListContent.innerHTML =
             "<p>Error loading shopping lists.</p>";
     }
-});
+}
 
 
 closeShoppingList.addEventListener("click", () => {
