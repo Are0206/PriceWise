@@ -40,9 +40,9 @@
         <form action="" method="get">
           <div class="search-container">
           
-          <select name="search_by">
-            <option value="product" {% if search_by == 'product' %}selected{% endif %}>Producto</option>
-            <option value="supermarket" {% if search_by == 'supermarket' %}selected{% endif %}>Supermercado</option>
+          <select class="search-by-selector" name="search_by">
+            <option class="search-by-selector" value="product" {% if search_by == 'product' %}selected{% endif %}>Producto</option>
+            <option class="search-by-selector" value="supermarket" {% if search_by == 'supermarket' %}selected{% endif %}>Supermercado</option>
           </select>
 
           <input type="text" name="q" class="search-bar" placeholder="Search product" value="{{ request.GET.q }}">
