@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from .forms import ShoppingListForm, ShoppingListItemFormSet
 from .models import ShoppingList
-from .services import calculate_estimated_savings, recommend_cheapest_supermarket
+from .services import calculate_supermarket_breakdown
 
 
 def shopping_list_create(request):
@@ -56,12 +56,17 @@ def shopping_list_edit(request, pk):
 def shopping_list_detail(request, pk):
     
     shopping_list = get_object_or_404(ShoppingList, pk=pk)
-    savings = calculate_estimated_savings(shopping_list)
-    cheapest_supermarket = recommend_cheapest_supermarket(shopping_list)
+    breakdown = calculate_supermarket_breakdown(shopping_list)
+    best = breakdown[0] if breakdown else None
+    complete_entries = [entry for entry in breakdown if entry['complete']]
+    savings = None
+    if len(complete_entries) >= 2:
+        savings = complete_entries[-1]['total'] - complete_entries[0]['total']
     return render(request, 'shopping_lists/detail.html', {
         'shopping_list': shopping_list,
+        'breakdown': breakdown,
+        'best': best,
         'savings': savings,
-        'cheapest_supermarket': cheapest_supermarket,
     })
 
 
