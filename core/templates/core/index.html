@@ -39,23 +39,27 @@
       <div class="middle-header">
         <form action="" method="get">
           <div class="search-container">
-          
-          <select class="search-by-selector" name="search_by">
-            <option class="search-by-selector" value="product" {% if search_by == 'product' %}selected{% endif %}>Producto</option>
-            <option class="search-by-selector" value="supermarket" {% if search_by == 'supermarket' %}selected{% endif %}>Supermercado</option>
-          </select>
 
-          <input type="text" name="q" class="search-bar" placeholder="Search product" value="{{ request.GET.q }}">
+            <select class="search-by-selector" name="search_by">
+              <option class="search-by-selector" value="product" {% if search_by == 'product' %}selected{% endif %}>
+                Producto
+              </option>
+              <option class="search-by-selector" value="supermarket" {% if search_by == 'supermarket' %}selected{% endif %}>
+                Supermercado
+              </option>
+            </select>
 
-          <button type="submit" class="search-button">
-            <div class="search-button-div">
-              <img class="search-icon" src="{% static 'img/icons/search.png'%}">
-            </div>
-          </button>
-          
+            <input type="text" name="q" class="search-bar" placeholder="Search product" value="{{ request.GET.q }}">
+
+            <button type="submit" class="search-button">
+              <div class="search-button-div">
+                <img class="search-icon" src="{% static 'img/icons/search.png'%}">
+              </div>
+            </button>
+
           </div>
         </form>
-        
+
       </div>
 
       <div class="right-header">
@@ -75,7 +79,14 @@
 
       <div class="filter-section">
         <h1 style="color: black; font-size:20px; text-align: center;">Filter</h1>
-        <!-- solo para indicar, luego se quita -->
+        <form action="{% url 'home' %}" method="get" id="categoryFilterForm">
+          <select class="search-by-selector" name="category" onchange="document.getElementById('categoryFilterForm').submit();">
+            <option value="">-- Category --</option>
+            {% for category in categories %}
+            <option value="{{ category.slug }}" {% if category_filter == category.slug %}selected{% endif %}>{{ category.name }}</option>
+            {% endfor %}
+          </select>
+        </form>
       </div>
 
       <div class="product-section">
@@ -86,7 +97,7 @@
           <div class="product-card">
 
             {% if product.image %}
-              <img class="product-image" src="{{ product.image.url }}" alt="{{ product.name }}">
+            <img class="product-image" src="{{ product.image.url }}" alt="{{ product.name }}">
             {% endif %}
 
             <div class="product-details">
@@ -113,17 +124,13 @@
 
   <div id="shoppingListPanel" class="shopping-list-panel">
 
-    <button
-        id="closeShoppingList"
-        class="close-panel"
-        type="button"
-    >
-        ×
+    <button id="closeShoppingList" class="close-panel" type="button">
+      ×
     </button>
 
     <div id="shoppingListContent"></div>
 
-</div>
+  </div>
 
 </body>
 
