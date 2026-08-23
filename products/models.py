@@ -7,9 +7,23 @@ class Supermarket(models.Model):
     def __str__(self):
         return self.name
 
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=110, unique=True)
+    description = models.TextField(blank=True, null=True)
+    icon = models.ImageField(upload_to='products/category_icons/', blank=True, null=True)
+
+    class Meta:
+        verbose_name_plural = 'Categories'
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
 
 class Product(models.Model):
     name = models.CharField(max_length=200)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
     description = models.TextField(blank=True)
     image = models.ImageField(
         upload_to="products/",
