@@ -1,14 +1,16 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from .models import Price, Product, Supermarket
+from .models import Category, Price, Product, Supermarket
 
 
 class ProductDetailViewTests(TestCase):
     def setUp(self):
+        category = Category.objects.create(name='Granos', slug='granos')
         self.product = Product.objects.create(
             name='Arroz Diana 500g',
             description='Arroz blanco, paquete de 500 gramos.',
+            category=category,
         )
 
     def test_returns_200_for_existing_product(self):
@@ -24,7 +26,8 @@ class ProductDetailViewTests(TestCase):
 
 class ComparePricesViewTests(TestCase):
     def setUp(self):
-        self.product = Product.objects.create(name='Arroz Diana 500g')
+        category = Category.objects.create(name='Granos', slug='granos')
+        self.product = Product.objects.create(name='Arroz Diana 500g', category=category)
         exito = Supermarket.objects.create(name='Exito')
         carulla = Supermarket.objects.create(name='Carulla')
         jumbo = Supermarket.objects.create(name='Jumbo')
@@ -51,7 +54,8 @@ class ComparePricesViewTests(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_product_with_no_prices_shows_empty_state(self):
-        lonely_product = Product.objects.create(name='Producto sin precios')
+        category = Category.objects.get(slug='granos')
+        lonely_product = Product.objects.create(name='Producto sin precios', category=category)
         response = self.client.get(reverse('products:compare', args=[lonely_product.pk]))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'No prices available yet')
