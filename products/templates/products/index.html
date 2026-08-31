@@ -13,10 +13,10 @@
     rel="stylesheet">
   {% load static %}
 
-  <link rel="stylesheet" href="{% static 'css/header.css' %}">
-  <link rel="stylesheet" href="{% static 'css/body.css' %}">
-  <link rel="stylesheet" href="{% static 'css/general.css' %}">
-  <link rel="stylesheet" href="{% static 'css/list_panel.css' %}">
+  <link rel="stylesheet" href="{% static 'css/index/header.css' %}">
+  <link rel="stylesheet" href="{% static 'css/index/body.css' %}">
+  <link rel="stylesheet" href="{% static 'css/index/general.css' %}">
+  <link rel="stylesheet" href="{% static 'css/index/list_panel.css' %}">
 
   <style>
     .filter-form {
@@ -100,13 +100,13 @@
   <div class="main-page">
     <div class="header">
       <div class="left-header">
-        <a href="{% url 'home' %}">
+        <a href="{% url 'index' %}">
           <p class="app-icon">PriceWise</p>
         </a>
       </div>
 
       <div class="middle-header">
-        <form action="{% url 'home' %}" method="get">
+        <form action="{% url 'index' %}" method="get">
 
           <!-- Carry the active filters so searching does not clear them -->
           <input type="hidden" name="category" value="{{ category_filter }}">
@@ -164,7 +164,7 @@
       <div class="filter-section">
         <h1 style="color: black; font-size:20px; text-align: center;">Filter</h1>
 
-        <form action="{% url 'home' %}" method="get" id="filterForm" class="filter-form">
+        <form action="{% url 'index' %}" method="get" id="filterForm" class="filter-form">
 
           <!-- Carry the active search so filtering does not clear it -->
           <input type="hidden" name="q" value="{{ query }}">
@@ -202,7 +202,7 @@
           </div>
 
           <button type="submit" class="filter-apply">Apply</button>
-          <a href="{% url 'home' %}" class="filter-clear">Clear filters</a>
+          <a href="{% url 'index' %}" class="filter-clear">Clear filters</a>
 
         </form>
       </div>

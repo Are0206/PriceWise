@@ -3,8 +3,8 @@ from django.shortcuts import redirect, render
 
 from .forms import RegisterForm
 
-
-def register(request):
+#RF-24: Register Account
+def register_account(request):
     
     if request.method == 'POST':
         form = RegisterForm(request.POST)
