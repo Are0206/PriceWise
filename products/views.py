@@ -4,12 +4,13 @@ from django.shortcuts import get_object_or_404, render
 from .models import Category, Product
 from .services import *
 
-def product_detail(request, pk):
+#RF-9: View product details
+def view_product_details(request, pk):
     product = get_object_or_404(Product, pk=pk)
     return render(request, 'products/product_detail.html', {'product': product})
 
-
-def compare_prices(request, pk):
+#RF-8: Compare product prices
+def compare_product_prices(request, pk):
     product = get_object_or_404(Product, pk=pk)
     prices = product.prices.select_related('supermarket').order_by('amount')
     return render(request, 'products/compare_prices.html', {'product': product, 'prices': prices})
@@ -33,7 +34,6 @@ def index(request):
     products = filter_products_by_price_range(products, min_price, max_price) # RF-14
     products = sort_products_by_price(products, sort)                        # RF-13
 
-    # 4. Renderizado
     return render(
         request,
         "products/index.html",
