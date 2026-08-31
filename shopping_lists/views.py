@@ -53,6 +53,19 @@ def shopping_list_edit(request, pk):
     })
 
 
+def shopping_list_delete(request, pk):
+
+    shopping_list = get_object_or_404(ShoppingList, pk=pk)
+
+    if request.method == 'POST':
+        shopping_list.delete()
+        return redirect('shopping_lists:index')
+
+    return render(request, 'shopping_lists/confirm_delete.html', {
+        'shopping_list': shopping_list,
+    })
+
+
 def shopping_list_detail(request, pk):
     
     shopping_list = get_object_or_404(ShoppingList, pk=pk)

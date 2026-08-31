@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Delete {{ shopping_list.name }} - PriceWise</title>
+</head>
+
+<body>
+  <h1>Delete "{{ shopping_list.name }}"?</h1>
+  <p>This list and its {{ shopping_list.items.count }} product{{ shopping_list.items.count|pluralize }} will be deleted permanently. This can't be undone.</p>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Delete</button>
+  </form>
+
+  <a href="{% url 'shopping_lists:detail' shopping_list.pk %}">Cancel</a>
+</body>
+
+</html>
