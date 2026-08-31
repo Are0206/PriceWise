@@ -181,6 +181,15 @@
           </div>
 
           <div class="filter-field">
+            <label for="sort">Sort by price</label>
+            <select id="sort" name="sort">
+              <option value="">-- Sort --</option>
+              <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Price: low to high</option>
+              <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: high to low</option>
+            </select>
+          </div>
+
+          <div class="filter-field">
             <label for="min_price">Min price</label>
             <input type="number" id="min_price" name="min_price" min="0" step="any"
               placeholder="0" value="{{ min_price }}">
