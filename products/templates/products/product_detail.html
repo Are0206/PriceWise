@@ -9,7 +9,7 @@
 
 <body>
   <div class="product-detail-container">
-    <a href="{% url 'home' %}" class="back-link">&larr; Back</a>
+    <a href="{% url 'index' %}" class="back-link">&larr; Back</a>
 
     {% if product.image_url %}
       <img class="product-image" src="{{ product.image_url }}" alt="{{ product.name }}">
