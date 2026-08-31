@@ -18,6 +18,61 @@
   <link rel="stylesheet" href="{% static 'css/general.css' %}">
   <link rel="stylesheet" href="{% static 'css/list_panel.css' %}">
 
+    <style>
+    .filter-form {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 14px;
+      padding: 0 16px;
+      align-items: stretch;
+    }
+
+    .filter-field {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 4px;
+      width: 100%;
+    }
+
+    .filter-field label {
+      display: block !important;
+      font-size: 13px;
+      font-weight: bold;
+      color: #000;
+      visibility: visible !important;
+      height: auto !important;
+    }
+
+    .filter-field select,
+    .filter-field input {
+      width: 100% !important;
+      padding: 6px 8px;
+      box-sizing: border-box;
+      font-size: 14px !important;
+      color: #000 !important;
+      background-color: #fff !important;
+      text-indent: 0 !important;
+      opacity: 1 !important;
+      -webkit-text-fill-color: #000 !important;
+      line-height: normal !important;
+      height: auto !important;
+      text-transform: none !important;
+    }
+    
+
+    .filter-apply {
+      width: 100%;
+      padding: 8px;
+      cursor: pointer;
+    }
+
+    .filter-clear {
+      display: block;
+      font-size: 13px;
+      text-align: center;
+    }
+  </style>
+
   <script>
     const shoppingListsUrl = "{% url 'shopping_lists:index' %}";
   </script>
@@ -37,7 +92,13 @@
       </div>
 
       <div class="middle-header">
-        <form action="" method="get">
+        <form action="{% url 'home' %}" method="get">
+
+          <!-- Carry the active filters so searching does not clear them -->
+          <input type="hidden" name="category" value="{{ category_filter }}">
+          <input type="hidden" name="min_price" value="{{ min_price }}">
+          <input type="hidden" name="max_price" value="{{ max_price }}">
+
           <div class="search-container">
 
             <select class="search-by-selector" name="search_by">
@@ -49,7 +110,7 @@
               </option>
             </select>
 
-            <input type="text" name="q" class="search-bar" placeholder="Search product" value="{{ request.GET.q }}">
+            <input type="text" name="q" class="search-bar" placeholder="Search product" value="{{ query }}">
 
             <button type="submit" class="search-button">
               <div class="search-button-div">
@@ -79,13 +140,39 @@
 
       <div class="filter-section">
         <h1 style="color: black; font-size:20px; text-align: center;">Filter</h1>
-        <form action="{% url 'home' %}" method="get" id="categoryFilterForm">
-          <select class="search-by-selector" name="category" onchange="document.getElementById('categoryFilterForm').submit();">
-            <option value="">-- Category --</option>
-            {% for category in categories %}
-            <option value="{{ category.slug }}" {% if category_filter == category.slug %}selected{% endif %}>{{ category.name }}</option>
-            {% endfor %}
-          </select>
+        
+
+        <form action="{% url 'home' %}" method="get" id="filterForm" class="filter-form">
+
+          <!-- Carry the active search so filtering does not clear it -->
+          <input type="hidden" name="q" value="{{ query }}">
+          <input type="hidden" name="search_by" value="{{ search_by }}">
+
+          <div class="filter-field">
+            <label for="category">Category</label>
+            <select id="category" name="category">
+              <option value="">-- Category --</option>
+              {% for category in categories %}
+              <option value="{{ category.slug }}" {% if category_filter == category.slug %}selected{% endif %}>{{ category.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="filter-field">
+            <label for="min_price">Min price</label>
+            <input type="number" id="min_price" name="min_price" min="0" step="any"
+              placeholder="0" value="{{ min_price }}">
+          </div>
+
+          <div class="filter-field">
+            <label for="max_price">Max price</label>
+            <input type="number" id="max_price" name="max_price" min="0" step="any"
+              placeholder="Any" value="{{ max_price }}">
+          </div>
+
+          <button type="submit" class="filter-apply">Apply</button>
+          <a href="{% url 'home' %}" class="filter-clear">Clear filters</a>
+
         </form>
       </div>
 
