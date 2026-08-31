@@ -1,5 +1,6 @@
 from decimal import Decimal, InvalidOperation
 
+from django.db.models import Min
 from django.shortcuts import render
 
 from products.models import Product, Category
@@ -22,10 +23,12 @@ def home(request):
     min_price_raw = request.GET.get('min_price', '')
     max_price_raw = request.GET.get('max_price', '')
 
+    sort = request.GET.get('sort', '')
+
     min_price = _parse_price(min_price_raw)
     max_price = _parse_price(max_price_raw)
 
-    products = Product.objects.all()
+    products = Product.objects.annotate(cheapest_price=Min('prices__amount'))
     categories = Category.objects.all()
 
     if category_filter:
@@ -49,6 +52,12 @@ def home(request):
     elif max_price is not None:
         products = products.filter(prices__amount__lte=max_price).distinct()
 
+    match sort:
+        case 'price_asc':
+            products = products.order_by('cheapest_price')
+        case 'price_desc':
+            products = products.order_by('-cheapest_price')
+
     return render(
         request,
         "core/index.html",
@@ -60,5 +69,6 @@ def home(request):
             "category_filter": category_filter,
             "min_price": min_price_raw,
             "max_price": max_price_raw,
+            "sort": sort,
         }
     )
