@@ -3,10 +3,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from .forms import ShoppingListForm, ShoppingListItemFormSet
 from .models import ShoppingList
-from .services import calculate_supermarket_breakdown
+from .services import *
 
-
-def shopping_list_create(request):
+#RF-1: Create shopping lists
+def create_shopping_lists(request):
     
     if request.method == 'POST':
         form = ShoppingListForm(request.POST)
@@ -52,8 +52,8 @@ def shopping_list_edit(request, pk):
         'title': 'Edit shopping list',
     })
 
-
-def shopping_list_delete(request, pk):
+#RF-5: Delete shopping lists
+def delete_shopping_lists(request, pk):
 
     shopping_list = get_object_or_404(ShoppingList, pk=pk)
 
@@ -66,15 +66,14 @@ def shopping_list_delete(request, pk):
     })
 
 
-def shopping_list_detail(request, pk):
+def shopping_list_details(request, pk):
     
     shopping_list = get_object_or_404(ShoppingList, pk=pk)
-    breakdown = calculate_supermarket_breakdown(shopping_list)
-    best = breakdown[0] if breakdown else None
-    complete_entries = [entry for entry in breakdown if entry['complete']]
-    savings = None
-    if len(complete_entries) >= 2:
-        savings = complete_entries[-1]['total'] - complete_entries[0]['total']
+    
+    raw_breakdown = calculate_supermarket_breakdown(shopping_list)
+    breakdown, best = get_cheapest_supermarket_recommendation(raw_breakdown) #RF-2
+    savings = calculate_estimated_savings(breakdown) #RF-3
+
     return render(request, 'shopping_lists/detail.html', {
         'shopping_list': shopping_list,
         'breakdown': breakdown,
@@ -82,8 +81,7 @@ def shopping_list_detail(request, pk):
         'savings': savings,
     })
 
-
-def shopping_list_index(request):
+def index(request):
     
     shopping_lists = ShoppingList.objects.prefetch_related('items')
     return render(request, 'shopping_lists/index.html', {

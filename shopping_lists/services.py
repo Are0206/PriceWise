@@ -31,8 +31,8 @@ def calculate_supermarket_breakdown(shopping_list: ShoppingList):
             else:
                 total += price * item.quantity
 
-        if len(missing) == len(items):
-            continue  # doesn't carry any of the items, not worth listing
+        if len(missing) == len(items) and len(items) > 0:
+            continue
 
         breakdown.append({
             'supermarket': supermarket,
@@ -41,5 +41,19 @@ def calculate_supermarket_breakdown(shopping_list: ShoppingList):
             'complete': not missing,
         })
 
-    breakdown.sort(key=lambda entry: (not entry['complete'], entry['total']))
     return breakdown
+
+#RF-2: Recommend cheapest supermarket
+def get_cheapest_supermarket_recommendation(breakdown):
+    sorted_breakdown = sorted(breakdown, key=lambda entry: (not entry['complete'], entry['total']))
+    best_supermarket = sorted_breakdown[0] if sorted_breakdown else None
+    
+    return sorted_breakdown, best_supermarket
+
+#RF-3: Calculate estimated savings
+def calculate_estimated_savings(sorted_breakdown):
+    complete_entries = [entry for entry in sorted_breakdown if entry['complete']]
+    
+    if len(complete_entries) >= 2:
+        return complete_entries[-1]['total'] - complete_entries[0]['total']
+    return None

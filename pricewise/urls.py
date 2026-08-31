@@ -18,11 +18,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
-from products.views import home
+from products.views import index
 
 urlpatterns = [
+    path('', index, name='index'),
     path('admin/', admin.site.urls),
-    path('', home, name='home'),
     path('products/', include('products.urls')),
     path('lists/', include('shopping_lists.urls')),
     path('accounts/', include('accounts.urls')),
