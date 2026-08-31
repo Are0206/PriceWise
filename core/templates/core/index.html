@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="{% static 'css/general.css' %}">
   <link rel="stylesheet" href="{% static 'css/list_panel.css' %}">
 
-    <style>
+  <style>
     .filter-form {
       display: flex !important;
       flex-direction: column !important;
@@ -58,7 +58,6 @@
       height: auto !important;
       text-transform: none !important;
     }
-    
 
     .filter-apply {
       width: 100%;
@@ -70,6 +69,21 @@
       display: block;
       font-size: 13px;
       text-align: center;
+    }
+
+    .user-area {
+      color: #fff;
+      margin-right: 12px;
+      font-size: 14px;
+    }
+
+    .user-area a {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .user-area a:hover {
+      text-decoration: underline;
     }
   </style>
 
@@ -124,6 +138,15 @@
       </div>
 
       <div class="right-header">
+
+        <span class="user-area">
+          {% if user.is_authenticated %}
+            {{ user.username }}
+          {% else %}
+            <a href="{% url 'accounts:register' %}">Sign up</a>
+          {% endif %}
+        </span>
+
         <button class="shopping-list-anchor" id="shoppingListButton" type="button">
           <div class="shopping-list-container">
             <img class="shopping-list-icon" src="{% static 'img/icons/lists.png'%}">
@@ -140,7 +163,6 @@
 
       <div class="filter-section">
         <h1 style="color: black; font-size:20px; text-align: center;">Filter</h1>
-        
 
         <form action="{% url 'home' %}" method="get" id="filterForm" class="filter-form">
 
