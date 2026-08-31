@@ -92,3 +92,37 @@ body {
 /* =========================================
    FILTER SECTION
    ========================================= */
+.filter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 0 16px;
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filter-field label {
+  font-size: 13px;
+  color: #333;
+}
+
+.filter-field select,
+.filter-field input {
+  width: 100%;
+  padding: 6px 8px;
+  box-sizing: border-box;
+}
+
+.filter-apply {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.filter-clear {
+  font-size: 13px;
+  text-align: center;
+}
