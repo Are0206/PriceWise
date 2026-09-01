@@ -43,6 +43,7 @@
   <a href="{% url 'shopping_lists:edit' shopping_list.pk %}">Edit list</a>
   <a href="{% url 'shopping_lists:delete' shopping_list.pk %}">Delete list</a>
   <a href="{% url 'index' %}?open_lists=true">Back</a>
+  <a href="{% url 'shopping_lists:share' shopping_list.pk %}">share</a>
 </body>
 
 </html>

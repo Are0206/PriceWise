@@ -5,6 +5,13 @@ from .forms import ShoppingListForm, ShoppingListItemFormSet
 from .models import ShoppingList
 from .services import *
 
+def index(request):
+    
+    shopping_lists = ShoppingList.objects.prefetch_related('items')
+    return render(request, 'shopping_lists/index.html', {
+        'shopping_lists': shopping_lists,
+    })
+
 #RF-1: Create shopping lists
 def create_shopping_lists(request):
     
@@ -28,8 +35,8 @@ def create_shopping_lists(request):
         'title': 'Create shopping list',
     })
 
-
-def shopping_list_edit(request, pk):
+#RF-4: Edit shopping lists
+def edit_shopping_lists(request, pk):
     
     shopping_list = get_object_or_404(ShoppingList, pk=pk)
 
@@ -65,6 +72,15 @@ def delete_shopping_lists(request, pk):
         'shopping_list': shopping_list,
     })
 
+#RF-15: Share shopping lists 
+def share_shopping_lists(request, pk):
+    shopping_list = get_object_or_404(ShoppingList, pk=pk) 
+    share_permission = request.GET.get('permission', 'read')
+    
+    return render(request, 'shopping_lists/share.html', {
+        'share_permission':share_permission,
+        'shopping_list': shopping_list,
+    })
 
 def shopping_list_details(request, pk):
     
@@ -79,11 +95,4 @@ def shopping_list_details(request, pk):
         'breakdown': breakdown,
         'best': best,
         'savings': savings,
-    })
-
-def index(request):
-    
-    shopping_lists = ShoppingList.objects.prefetch_related('items')
-    return render(request, 'shopping_lists/index.html', {
-        'shopping_lists': shopping_lists,
     })
