@@ -1,5 +1,6 @@
 from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 
 from .forms import ShoppingListForm, ShoppingListItemFormSet
 from .models import ShoppingList
@@ -77,9 +78,19 @@ def share_shopping_lists(request, pk):
     shopping_list = get_object_or_404(ShoppingList, pk=pk) 
     share_permission = request.GET.get('permission', 'read')
     
+    if share_permission == 'edit':
+        share_link = 'shopping_lists:edit'
+    else:
+        share_link = 'shopping_lists:detail'
+    
+    relative_url = reverse(share_link, kwargs={'pk': shopping_list.pk})
+    base_url = request.build_absolute_uri(relative_url)
+    share_url = f"{base_url}?permission={share_permission}"
+    
     return render(request, 'shopping_lists/share.html', {
-        'share_permission':share_permission,
+        'share_permission': share_permission,
         'shopping_list': shopping_list,
+        'share_url': share_url,
     })
 
 def shopping_list_details(request, pk):

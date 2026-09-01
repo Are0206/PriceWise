@@ -17,76 +17,7 @@
   <link rel="stylesheet" href="{% static 'css/index/body.css' %}">
   <link rel="stylesheet" href="{% static 'css/index/general.css' %}">
   <link rel="stylesheet" href="{% static 'css/index/list_panel.css' %}">
-
-  <style>
-    .filter-form {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 14px;
-      padding: 0 16px;
-      align-items: stretch;
-    }
-
-    .filter-field {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 4px;
-      width: 100%;
-    }
-
-    .filter-field label {
-      display: block !important;
-      font-size: 13px;
-      font-weight: bold;
-      color: #000;
-      visibility: visible !important;
-      height: auto !important;
-    }
-
-    .filter-field select,
-    .filter-field input {
-      width: 100% !important;
-      padding: 6px 8px;
-      box-sizing: border-box;
-      font-size: 14px !important;
-      color: #000 !important;
-      background-color: #fff !important;
-      text-indent: 0 !important;
-      opacity: 1 !important;
-      -webkit-text-fill-color: #000 !important;
-      line-height: normal !important;
-      height: auto !important;
-      text-transform: none !important;
-    }
-
-    .filter-apply {
-      width: 100%;
-      padding: 8px;
-      cursor: pointer;
-    }
-
-    .filter-clear {
-      display: block;
-      font-size: 13px;
-      text-align: center;
-    }
-
-    .user-area {
-      color: #fff;
-      margin-right: 12px;
-      font-size: 14px;
-    }
-
-    .user-area a {
-      color: #fff;
-      text-decoration: none;
-    }
-
-    .user-area a:hover {
-      text-decoration: underline;
-    }
-  </style>
-
+  
   <script>
     const shoppingListsUrl = "{% url 'shopping_lists:index' %}";
   </script>

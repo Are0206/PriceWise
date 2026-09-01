@@ -15,15 +15,13 @@
 <div class="share-link-generator-div">
   <p>link to {{ share_permission }} shopping list</p>
   <div class="share-label-columns">
-    <input id="share-link-input" type="text" value="{{ request.scheme }}://{{ request.get_host }}{% if share_permission == 'edit' %}{% url 'shopping_lists:edit' shopping_list.pk %}{% else %}{% url 'shopping_lists:detail' shopping_list.pk %}{% endif %}" readonly>
-    <button>Copy</button>
+    <input type="text" id="share-link-input" value="{{ share_url  }}" readonly>
+    <button id="copy-btn">Copy</button>
   </div>
 </div>
 
 <div class="share-permissions-div">
   <p>Link permissions</p>
-  <a href="?permission=read" class="btn {% if share_permission == 'read' %}active{% endif %}">Read Only</a>
-  <a href="?permission=edit" class="btn {% if share_permission == 'edit' %}active{% endif %}">Edit</a>
+  <a href="{% url 'shopping_lists:share' shopping_list.pk %}?permission=read">Read Only</a>
+  <a href="{% url 'shopping_lists:share' shopping_list.pk %}?permission=edit">Edit</a>
 </div>
-
-<script src="{% static 'js/share.js' %}" defer></script>
