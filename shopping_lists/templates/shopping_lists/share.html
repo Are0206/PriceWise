@@ -1,0 +1,27 @@
+{% load static %}
+
+<div class="share-title-div">
+  <p>Share Shopping List</p>
+  <p>{{ shopping_list.name }}</p>
+</div>
+
+<div class="share-type-div">
+  <div class="share-type-columns">
+    <button>Link</button>
+    <button>User</button>
+  </div>
+</div>
+
+<div class="share-link-generator-div">
+  <p>link to {{ share_permission }} shopping list</p>
+  <div class="share-label-columns">
+    <input type="text" id="share-link-input" value="{{ share_url  }}" readonly>
+    <button id="copy-btn">Copy</button>
+  </div>
+</div>
+
+<div class="share-permissions-div">
+  <p>Link permissions</p>
+  <a href="{% url 'shopping_lists:share' shopping_list.pk %}?permission=read">Read Only</a>
+  <a href="{% url 'shopping_lists:share' shopping_list.pk %}?permission=edit">Edit</a>
+</div>

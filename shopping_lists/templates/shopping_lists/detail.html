@@ -7,7 +7,8 @@
   {%load static%}
 
   <link rel="stylesheet" href="{% static 'css/detail.css' %}">
-
+  <link rel="stylesheet" href="{% static 'css/share-card.css' %}">
+  <script src="{% static 'js/display-share-card.js' %}" defer></script>
 </head>
 
 <body>
@@ -17,30 +18,40 @@
 
   <ul>
     {% for item in shopping_list.items.all %}
-      <li>
-        {{ item.quantity }} x
-        <a href="{% url 'products:detail' item.product.pk %}">{{ item.product.name }}</a>
-      </li>
+    <li>
+      {{ item.quantity }} x
+      <a href="{% url 'products:detail' item.product.pk %}">{{ item.product.name }}</a>
+    </li>
     {% empty %}
-      <li>This list is empty.</li>
+    <li>This list is empty.</li>
     {% endfor %}
   </ul>
 
   {% if best %}
-    <p>
-      Cheapest option: buy everything in <strong>{{ best.supermarket.name }}</strong> for ${{ best.total }}
-      {% if not best.complete %}
-        (missing: {% for product in best.missing %}{{ product.name }}{% if not forloop.last %}, {% endif %}{% endfor %} — buy those elsewhere)
-      {% endif %}
-    </p>
-    {% if savings %}
-      <p>Estimated saving vs. the most expensive supermarket with everything on the list: ${{ savings }}</p>
+  <p>
+    Cheapest option: buy everything in <strong>{{ best.supermarket.name }}</strong> for ${{ best.total }}
+    {% if not best.complete %}
+    (missing: {% for product in best.missing %}{{ product.name }}{% if not forloop.last %}, {% endif %}{% endfor %} —
+    buy those elsewhere)
     {% endif %}
+  </p>
+  {% if savings %}
+  <p>Estimated saving vs. the most expensive supermarket with everything on the list: ${{ savings }}</p>
+  {% endif %}
   {% else %}
-    <p>No supermarket carries any of the products in this list yet.</p>
+  <p>No supermarket carries any of the products in this list yet.</p>
   {% endif %}
 
-  <a href="{% url 'home' %}?open_lists=true">Back</a>
+  <a href="{% url 'shopping_lists:edit' shopping_list.pk %}">Edit list</a>
+  <a href="{% url 'shopping_lists:delete' shopping_list.pk %}">Delete list</a>
+  <a href="{% url 'index' %}?open_lists=true">Back</a>
+
+  <button id="open-share-card" data-url="{% url 'shopping_lists:share' shopping_list.pk %}">Share</button>
+
+  <div class="share-card-overlay" id="share-card-overlay">
+    <div class="share-card-content" id="share-card-body-content">
+    </div>
+  </div>
 </body>
 
 </html>

@@ -92,3 +92,54 @@ body {
 /* =========================================
    FILTER SECTION
    ========================================= */
+.filter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 0 16px;
+  align-items: stretch;
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.filter-field label {
+  display: block;
+  font-size: 13px;
+  font-weight: bold;
+  color: #000;
+  visibility: visible;
+  height: auto;
+}
+
+.filter-field select,
+.filter-field input {
+  width: 100%;
+  padding: 6px 8px;
+  box-sizing: border-box;
+  font-size: 14px;
+  color: #000;
+  background-color: #fff;
+  text-indent: 0;
+  opacity: 1;
+  -webkit-text-fill-color: #000;
+  line-height: normal;
+  height: auto;
+  text-transform: none;
+}
+
+.filter-apply {
+  width: 100%;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.filter-clear {
+  display: block;
+  font-size: 13px;
+  text-align: center;
+}

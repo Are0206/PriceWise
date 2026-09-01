@@ -13,11 +13,11 @@
     rel="stylesheet">
   {% load static %}
 
-  <link rel="stylesheet" href="{% static 'css/header.css' %}">
-  <link rel="stylesheet" href="{% static 'css/body.css' %}">
-  <link rel="stylesheet" href="{% static 'css/general.css' %}">
-  <link rel="stylesheet" href="{% static 'css/list_panel.css' %}">
-
+  <link rel="stylesheet" href="{% static 'css/index/header.css' %}">
+  <link rel="stylesheet" href="{% static 'css/index/body.css' %}">
+  <link rel="stylesheet" href="{% static 'css/index/general.css' %}">
+  <link rel="stylesheet" href="{% static 'css/index/list_panel.css' %}">
+  
   <script>
     const shoppingListsUrl = "{% url 'shopping_lists:index' %}";
   </script>
@@ -31,13 +31,19 @@
   <div class="main-page">
     <div class="header">
       <div class="left-header">
-        <a href="{% url 'home' %}">
+        <a href="{% url 'index' %}">
           <p class="app-icon">PriceWise</p>
         </a>
       </div>
 
       <div class="middle-header">
-        <form action="" method="get">
+        <form action="{% url 'index' %}" method="get">
+
+          <!-- Carry the active filters so searching does not clear them -->
+          <input type="hidden" name="category" value="{{ category_filter }}">
+          <input type="hidden" name="min_price" value="{{ min_price }}">
+          <input type="hidden" name="max_price" value="{{ max_price }}">
+
           <div class="search-container">
 
             <select class="search-by-selector" name="search_by">
@@ -49,7 +55,7 @@
               </option>
             </select>
 
-            <input type="text" name="q" class="search-bar" placeholder="Search product" value="{{ request.GET.q }}">
+            <input type="text" name="q" class="search-bar" placeholder="Search product" value="{{ query }}">
 
             <button type="submit" class="search-button">
               <div class="search-button-div">
@@ -63,6 +69,15 @@
       </div>
 
       <div class="right-header">
+
+        <span class="user-area">
+          {% if user.is_authenticated %}
+            {{ user.username }}
+          {% else %}
+            <a href="{% url 'accounts:register' %}">Sign up</a>
+          {% endif %}
+        </span>
+
         <button class="shopping-list-anchor" id="shoppingListButton" type="button">
           <div class="shopping-list-container">
             <img class="shopping-list-icon" src="{% static 'img/icons/lists.png'%}">
@@ -79,13 +94,47 @@
 
       <div class="filter-section">
         <h1 style="color: black; font-size:20px; text-align: center;">Filter</h1>
-        <form action="{% url 'home' %}" method="get" id="categoryFilterForm">
-          <select class="search-by-selector" name="category" onchange="document.getElementById('categoryFilterForm').submit();">
-            <option value="">-- Category --</option>
-            {% for category in categories %}
-            <option value="{{ category.slug }}" {% if category_filter == category.slug %}selected{% endif %}>{{ category.name }}</option>
-            {% endfor %}
-          </select>
+
+        <form action="{% url 'index' %}" method="get" id="filterForm" class="filter-form">
+
+          <!-- Carry the active search so filtering does not clear it -->
+          <input type="hidden" name="q" value="{{ query }}">
+          <input type="hidden" name="search_by" value="{{ search_by }}">
+
+          <div class="filter-field">
+            <label for="category">Category</label>
+            <select id="category" name="category">
+              <option value="">-- Category --</option>
+              {% for category in categories %}
+              <option value="{{ category.slug }}" {% if category_filter == category.slug %}selected{% endif %}>{{ category.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="filter-field">
+            <label for="sort">Sort by price</label>
+            <select id="sort" name="sort">
+              <option value="">-- Sort --</option>
+              <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Price: low to high</option>
+              <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: high to low</option>
+            </select>
+          </div>
+
+          <div class="filter-field">
+            <label for="min_price">Min price</label>
+            <input type="number" id="min_price" name="min_price" min="0" step="any"
+              placeholder="0" value="{{ min_price }}">
+          </div>
+
+          <div class="filter-field">
+            <label for="max_price">Max price</label>
+            <input type="number" id="max_price" name="max_price" min="0" step="any"
+              placeholder="Any" value="{{ max_price }}">
+          </div>
+
+          <button type="submit" class="filter-apply">Apply</button>
+          <a href="{% url 'index' %}" class="filter-clear">Clear filters</a>
+
         </form>
       </div>
 
