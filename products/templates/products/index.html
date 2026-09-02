@@ -72,9 +72,14 @@
 
         <span class="user-area">
           {% if user.is_authenticated %}
-            {{ user.username }}
+            <span>Hola, {{ user.username }}</span>
+            <form action="/accounts/logout/" method="post" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit">Cerrar sesión</button>
+            </form>
           {% else %}
-            <a href="{% url 'accounts:register' %}">Sign up</a>
+            <a href="{% url 'accounts:register' %}">Registrarse</a>
+            <a href="{% url 'accounts:login' %}">Iniciar sesión</a>
           {% endif %}
         </span>
 
