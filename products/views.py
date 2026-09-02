@@ -1,7 +1,8 @@
 from django.db.models.aggregates import Min
-from django.shortcuts import get_object_or_404, render
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect, render
 
-from .models import Category, Product
+from .models import Favorite, Category, Product
 from .services import *
 
 #RF-9: View product details
@@ -34,6 +35,13 @@ def index(request):
     products = filter_products_by_price_range(products, min_price, max_price) # RF-14
     products = sort_products_by_price(products, sort)                        # RF-13
 
+    #RF-17
+    user_favorite_ids = []
+    if request.user.is_authenticated:
+        user_favorite_ids = list(
+            Favorite.objects.filter(user=request.user).values_list('product_id', flat=True)
+        )
+
     return render(
         request,
         "products/index.html",
@@ -46,5 +54,19 @@ def index(request):
             "min_price": min_price_raw,
             "max_price": max_price_raw,
             "sort": sort,
+            "user_favorite_ids": user_favorite_ids,
         }
     )
+
+
+#RF-17 Mark products as favorites
+@login_required
+def toggle_favorite(request, product_id):
+    if request.method == 'POST':
+        product = get_object_or_404(Product, id=product_id)
+        favorite, created = Favorite.objects.get_or_create(user=request.user, product=product)
+
+        if not created:
+            favorite.delete()
+
+    return redirect(request.META.get('HTTP_REFERER', '/'))
