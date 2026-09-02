@@ -160,6 +160,21 @@
               <a href="{% url 'products:detail' product.pk %}">
                 <button>View Details</button>
               </a>
+              <br>
+              {% if user.is_authenticated %}
+                <form action="{% url 'products:toggle_favorite' product.id %}" method="post">
+                  {% csrf_token %}
+                  {% if product.id in user_favorite_ids %}
+                    <button type="submit" style="background-color: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">
+                      Quitar de Favoritos
+                    </button>
+                  {% else %}
+                    <button type="submit" style="background-color: #38bdf8; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">
+                      Agregar a Favoritos
+                    </button>
+                  {% endif %}
+                </form>
+              {% endif %}
             </div>
           </div>
 
