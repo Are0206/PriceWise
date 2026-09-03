@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-  <title>Create account - PriceWise</title>
+  <title>Log in - PriceWise</title>
   <style>
     body {
       font-family: Arial, Helvetica, sans-serif;
@@ -10,8 +9,7 @@
       margin: 0;
       padding: 0;
     }
-
-    .register-container {
+    .login-container {
       max-width: 420px;
       margin: 50px auto;
       padding: 30px;
@@ -19,29 +17,25 @@
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
-
-    .register-container h1 {
+    .login-container h1 {
       text-align: center;
       font-size: 24px;
       color: #062925;
       margin-top: 0;
       margin-bottom: 24px;
     }
-
-    .register-form p {
+    .login-form p {
       display: block;
       margin: 0 0 18px 0;
     }
-
-    .register-form label {
+    .login-form label {
       display: block;
       font-size: 14px;
       font-weight: bold;
       color: #000;
       margin-bottom: 5px;
     }
-
-    .register-form input {
+    .login-form input {
       display: block;
       width: 100%;
       padding: 9px;
@@ -51,28 +45,8 @@
       background-color: #fff;
       border: 1px solid #999;
       border-radius: 4px;
-      -webkit-text-fill-color: #000;
     }
-
-    .register-form .helptext {
-      display: block;
-      font-size: 12px;
-      color: #666;
-      margin-top: 4px;
-    }
-
-    .register-form ul {
-      font-size: 12px;
-      color: #666;
-      margin: 6px 0 0 0;
-      padding-left: 18px;
-    }
-
-    .register-form ul li {
-      margin-bottom: 3px;
-    }
-
-    .register-form button {
+    .login-form button {
       width: 100%;
       padding: 11px;
       font-size: 15px;
@@ -84,7 +58,6 @@
       cursor: pointer;
       margin-top: 6px;
     }
-
     .errorlist {
       list-style: none;
       padding: 0;
@@ -92,7 +65,6 @@
       color: #c00;
       font-size: 13px;
     }
-
     .back-link {
       display: block;
       text-align: center;
@@ -102,50 +74,27 @@
     }
   </style>
 </head>
-
 <body>
-  <div class="register-container">
-    <h1>Create your account</h1>
+  <div class="login-container">
+    <h1>Log in to PriceWise</h1>
 
-    <form method="post" class="register-form">
+    <form method="post" class="login-form">
       {% csrf_token %}
-
       {{ form.non_field_errors }}
 
       <p>
         <label for="{{ form.username.id_for_label }}">Username</label>
         {{ form.username.errors }}
         {{ form.username }}
-        <span class="helptext">{{ form.username.help_text }}</span>
       </p>
 
       <p>
-        <label for="{{ form.email.id_for_label }}">Email</label>
-        {{ form.email.errors }}
-        {{ form.email }}
-        <span class="helptext">Required. Used to recover your account.</span>
+        <label for="{{ form.password.id_for_label }}">Password</label>
+        {{ form.password.errors }}
+        {{ form.password }}
       </p>
 
-      <p>
-        <label for="{{ form.password1.id_for_label }}">Password</label>
-        {{ form.password1.errors }}
-        {{ form.password1 }}
-        <ul>
-          <li>Your password can't be too similar to your other personal information.</li>
-          <li>Your password must contain at least 8 characters.</li>
-          <li>Your password can't be a commonly used password.</li>
-          <li>Your password can't be entirely numeric.</li>
-        </ul>
-      </p>
-
-      <p>
-        <label for="{{ form.password2.id_for_label }}">Confirm password</label>
-        {{ form.password2.errors }}
-        {{ form.password2 }}
-        <span class="helptext">Enter the same password as before, for verification.</span>
-      </p>
-
-      <button type="submit">Create account</button>
+      <button type="submit">Log in</button>
     </form>
 
     <a href="/" class="back-link">Back to PriceWise</a>
