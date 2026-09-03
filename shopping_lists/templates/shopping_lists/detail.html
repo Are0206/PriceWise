@@ -6,47 +6,99 @@
 
   {%load static%}
 
+  <!--Fonts-->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+
+  <!--Styles-->
   <link rel="stylesheet" href="{% static 'css/detail.css' %}">
   <link rel="stylesheet" href="{% static 'css/share-card.css' %}">
   <script src="{% static 'js/display-share-card.js' %}" defer></script>
+
 </head>
 
 <body>
-  <h1>{{ shopping_list.name }}</h1>
-  <p>Created: {{ shopping_list.created_at }}</p>
-  <p>Last modified: {{ shopping_list.updated_at }}</p>
+  <div class="header-div">
+    <div class="title-div">
+      <h1>{{ shopping_list.name }}</h1>
+      <p class="created-label">Created: {{ shopping_list.created_at }} &middot Last modified: {{shopping_list.updated_at }}</p>
+    </div>
 
-  <ul>
-    {% for item in shopping_list.items.all %}
-    <li>
-      {{ item.quantity }} x
-      <a href="{% url 'products:detail' item.product.pk %}">{{ item.product.name }}</a>
-    </li>
-    {% empty %}
-    <li>This list is empty.</li>
-    {% endfor %}
-  </ul>
+    <div class="header-buttons">
+      <a href="{% url 'shopping_lists:edit' shopping_list.pk %}"><button class="edit-button">EDIT</button></a>
+      <button id="open-share-card" data-url="{% url 'shopping_lists:share' shopping_list.pk %}" class="share-button">
+        SHARE
+      </button>
+      <a href="{% url 'shopping_lists:delete' shopping_list.pk %}"><button class="delete-button">DELETE</button></a>
+    </div>
+  </div>
 
-  {% if best %}
-  <p>
-    Cheapest option: buy everything in <strong>{{ best.supermarket.name }}</strong> for ${{ best.total }}
-    {% if not best.complete %}
-    (missing: {% for product in best.missing %}{{ product.name }}{% if not forloop.last %}, {% endif %}{% endfor %} —
-    buy those elsewhere)
-    {% endif %}
-  </p>
-  {% if savings %}
-  <p>Estimated saving vs. the most expensive supermarket with everything on the list: ${{ savings }}</p>
-  {% endif %}
-  {% else %}
-  <p>No supermarket carries any of the products in this list yet.</p>
-  {% endif %}
+  <div class="content-div">
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Quantity</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in shopping_list.items.all %}
+        <tr>
+          <td><a href="{% url 'products:detail' item.product.pk %}">{{ item.product.name }}</a></td>
+          <td>{{ item.quantity }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="2">This list is empty.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
 
-  <a href="{% url 'shopping_lists:edit' shopping_list.pk %}">Edit list</a>
-  <a href="{% url 'shopping_lists:delete' shopping_list.pk %}">Delete list</a>
-  <a href="{% url 'index' %}?open_lists=true">Back</a>
+    <div class="savings-totals-div">
+      <div class="savings-text-div">
+        {% if best %}
+        <p class="supermarket-text">
+          Cheapest in <strong>{{ best.supermarket.name }}</strong>
+          {% if not best.complete %}
+          (missing: {% for product in best.missing %}{{ product.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+          - buy those elsewhere)
+          {% endif %}
+        </p>
+        {% endif %}
 
-  <button id="open-share-card" data-url="{% url 'shopping_lists:share' shopping_list.pk %}">Share</button>
+        {% if savings %}
+        <p class="estimated-text">Estimated saving vs. the most expensive supermarket with everything on the list</p>
+        {% endif %}
+      </div>
+      <div class="savings-money-div">
+        <div class="totals-div">
+          <p class="totals-text">Total</p>
+          {% if best %}
+          <p class="totals">${{ best.total }}</p>
+          {% if not best.complete %}
+          <p>$0</p>
+          {% endif %}
+          {% endif %}
+        </div>
+        <div class="savings-div">
+          <p class="savings-text">Savings</p>
+          {% if savings %}
+          <p class="savings">${{ savings }}</p>
+          {% else %} 
+          <p>$0</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <a href="{% url 'index' %}?open_lists=true"><button class="back-button">Back</button></a>
 
   <div class="share-card-overlay" id="share-card-overlay">
     <div class="share-card-content" id="share-card-body-content">

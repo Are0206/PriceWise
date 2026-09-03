@@ -1,8 +1,210 @@
-* {
-  font-family: Cabin, Helvetica, sans-serif;
+h1{
+  font-family: "DM Serif Display", serif;
+  font-weight: 400;
+  font-style: normal;
+  color: #1a1a1a;
+}
+p{
+  margin: 0;
+  font-family: "DM Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal
+}
+a{
+  color: #1a1a1a;
+  font-family: "DM Sans", sans-serif;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+body {
+  background-color: #fbf9f5;
+  padding: 30px 200px;
+}
+
+/*HEADER */
+
+.header-div,
+.savings-totals-div,
+.header-buttons,
+.savings-money-div{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.title-div{
+  flex: 4;
+}
+
+.header-buttons{
+  flex: 1;
+  height: 32px;
+  margin-right: 20px;
+}
+
+.header-buttons button,
+.back-button{
+  font-family: "DM Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+  border-radius: 3px;
+  background:none;
+  padding: 6px 22px;
+  margin: 0px 10px;
+  vertical-align: top;
+  font-size: 12px;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+}
+
+.edit-button,
+.share-button{
+  color: #1a1a1a;
+  border: 2px solid #eae7e0;
+}
+.edit-button:hover,
+.share-button:hover{
+  color: #eae7e0;
+  border: 2px solid #1a1a1a;
+  background-color: #1a1a1a;
+  transition: all, 0.5s;
+}
+
+.back-button{
+  border: none;
+  border-radius: 3px;
+  padding: 8px 22px;
+  color: #eae7e0;
+  background-color: #1a1a1a;
+  transition: all, 0.5s;
+}
+.back-button:hover{
+  padding: 9px 20px;
+}
+
+.delete-button{
+  color: #D87268;
+  border: 2px solid #c8785a;
+  transition: all, 0.5s;
+}
+.delete-button:hover{
+  color: white;
+  background-color: #c8785a;
+}
+
+.header-div h1{
+  color: black;
+  margin-top: 0px;
+  margin-bottom: 10px;
+}
+.header-div .created-label{
+  color: #969696;
+  margin-bottom: 30px;
+}
+
+
+.content-div{
+  padding: 0px 6px;
+  margin-bottom: 30px;
+}
+
+
+/*TABLE */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "DM Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+th,
+td {
+  border: 1px solid rgb(241,240,236);;
+}
+
+th {
+  background-color: rgb(244, 243, 238);
+  color: rgb(171,170,168);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 8px 20px;
+}
+
+/* Alineaciones específicas según el diseño de la tabla */
+th:nth-child(1),
+td:nth-child(1) {
+  text-align: left; /* Producto */
+  border-right: none;
+}
+
+th:nth-child(2),
+td:nth-child(2) {
+  text-align: center; /* Cantidad */
+  border-left: none;  
+  color: rgb(171,170,168);
+}
+
+
+/* Color y estilo para el contenido de las filas */
+td {
+  padding: 12px 20px;
+  font-size: 15px;
+}
+
+/*SAVINGS FOOTER */
+
+.savings-totals-div{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(241,240,236);
+  padding: 25px 30px;
+  margin-top: 24px;
+  border-radius: 2px;
+}
+
+.savings-text-div{
+  flex: 5;
+}
+
+.savings-text-div,
+.savings{
+  color: #5a7850;
+}
+
+.savings-text-div .supermarket-text{
+  font-size: 15px;
   font-weight: bold;
 }
 
-body{
-  padding:20px;
+.savings-text-div .estimated-text{
+  font-size: 13px;
+  font-weight: 300;
+}
+
+.savings-money-div{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 2;
+}
+
+.totals-text,
+.savings-text{
+  font-size: 14px;
+  font-weight: 500;
+  color:#1a1a1a;
+}
+
+.totals,
+.savings{
+  font-size: 20px;
+  font-weight: 700;
 }
