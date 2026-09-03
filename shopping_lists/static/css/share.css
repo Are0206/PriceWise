@@ -1,0 +1,112 @@
+.share-wrapper {
+  padding: 35px 40px;
+  width: 90vw;
+  max-width: 500px;
+}
+
+p, button{
+  font-family: "DM Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin-top: 20px;
+}
+
+.share-title-div{
+  margin-bottom: 25px;
+}
+
+.share-title{
+  font-family: "DM Serif Display", serif;
+  font-weight: 500;
+  font-style: normal;
+  color: #1a1a1a;
+  font-size: 23px;
+  margin: 0;
+}
+
+.shopping-list-name{
+  font-size: 14px;
+  margin-top: 10px;
+  color: #969696;
+  margin-top: 5px;
+}
+
+.share-type-div{
+  margin-bottom: -20px;
+}
+
+.link-type-button{
+  font-size: 13px;
+  font-weight: 500;
+  font-style: normal;
+  letter-spacing: 0.4px;
+  color: #1a1a1a;
+  background-color: #fbf9f5;
+  border: none;
+  border-bottom: 2px solid;
+  padding: 6px 22px;
+}
+
+.link-text, .link-permissions-text{
+  font-size: 14px;
+  color: rgb(171,170,168);
+  margin-top: 20px;
+  margin-bottom: 7px;
+}
+
+.share-label-columns{
+  height: 35px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.copy-button,.link-input{
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.link-input{
+  flex: 1;
+  border: 0.5px solid rgb(241,240,236);
+  border-radius: 2px;
+  padding: 8px 15px;
+  color: rgb(171,170,168);
+  background-color: rgb(241, 237, 231);
+}
+
+.copy-button,
+.read-permission-button,
+.edit-permission-button{
+  font-size: 13px;
+  font-weight: 300;
+  font-style: normal;
+  font-size: 12px;
+  letter-spacing: 0.4px;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.copy-button{
+  color: #eae7e0;
+  background-color: #1a1a1a;
+  padding: 6px 14px;
+}
+
+.read-permission-button,
+.edit-permission-button{
+  padding: 8px 20px;
+  margin-right: 10px;
+}
+
+.active-permission {
+  background-color: #1a1a1a;
+  color: #eae7e0;
+  border-color: #1a1a1a;
+}

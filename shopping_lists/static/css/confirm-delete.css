@@ -1,0 +1,51 @@
+.delete-wrapper {
+  padding: 35px 40px;
+  width: 90vw;
+  max-width: 500px;
+}
+
+.delete-title {
+  font-family: "DM Serif Display", serif;
+  font-weight: 500;
+  font-style: normal;
+  color: #1a1a1a;
+  font-size: 23px;
+  margin: 0;
+}
+
+.delete-text {
+  font-size: 14px;
+  margin-top: 10px;
+  margin-bottom: 50px;
+  padding-right: 80px;
+  color: #969696;
+}
+
+.delete-buttons-div {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 15px;
+}
+
+.confirm-delete-button,
+.cancel-button {
+  font-weight: 600;
+  border-radius: 3px;
+  background: none;
+  padding: 6px 22px;
+  font-size: 12px;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+}
+
+.cancel-button {
+  color: #1a1a1a;
+  border: 2px solid #eae7e0;
+}
+
+.confirm-delete-button {
+  border: 2px solid #1a1a1a;
+  color: #eae7e0;
+  background-color: #1a1a1a;
+}

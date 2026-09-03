@@ -1,20 +1,14 @@
-<!DOCTYPE html>
-<html>
+<div class="delete-wrapper">
+  <h1 class="delete-title">Delete "{{ shopping_list.name }}"?</h1>
+  <p class="delete-text">This list and its {{ shopping_list.items.count}} product{{ shopping_list.items.count|pluralize}} 
+    will be deleted permanently. This can't be undone.</p>
 
-<head>
-  <title>Delete {{ shopping_list.name }} - PriceWise</title>
-</head>
+  <div class="delete-buttons-div">
+    <button class="cancel-button btn-close">Cancel</button>
 
-<body>
-  <h1>Delete "{{ shopping_list.name }}"?</h1>
-  <p>This list and its {{ shopping_list.items.count }} product{{ shopping_list.items.count|pluralize }} will be deleted permanently. This can't be undone.</p>
-
-  <form method="post">
-    {% csrf_token %}
-    <button type="submit">Delete</button>
-  </form>
-
-  <a href="{% url 'shopping_lists:detail' shopping_list.pk %}">Cancel</a>
-</body>
-
-</html>
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" class="confirm-delete-button">Delete</button>
+    </form>
+  </div>
+</div>

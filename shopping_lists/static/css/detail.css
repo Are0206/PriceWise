@@ -1,3 +1,9 @@
+p, a, button{
+  font-family: "DM Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
 h1{
   font-family: "DM Serif Display", serif;
   font-weight: 400;
@@ -6,21 +12,19 @@ h1{
 }
 p{
   margin: 0;
-  font-family: "DM Sans", sans-serif;
-  font-optical-sizing: auto;
   font-weight: 500;
   font-style: normal
 }
 a{
   color: #1a1a1a;
-  font-family: "DM Sans", sans-serif;
   font-size: 14px;
   text-decoration: none;
 }
 
 body {
   background-color: #fbf9f5;
-  padding: 30px 200px;
+  padding: 0px 240px;
+  padding-top: 40px;
 }
 
 /*HEADER */
@@ -46,14 +50,11 @@ body {
 
 .header-buttons button,
 .back-button{
-  font-family: "DM Sans", sans-serif;
-  font-optical-sizing: auto;
   font-weight: 600;
-  font-style: normal;
   border-radius: 3px;
   background:none;
-  padding: 6px 22px;
   margin: 0px 10px;
+  padding: 6px 22px;
   vertical-align: top;
   font-size: 12px;
   letter-spacing: 0.4px;
@@ -79,6 +80,7 @@ body {
   padding: 8px 22px;
   color: #eae7e0;
   background-color: #1a1a1a;
+  margin-top: 20px;
   transition: all, 0.5s;
 }
 .back-button:hover{
@@ -124,7 +126,7 @@ table {
 
 th,
 td {
-  border: 1px solid rgb(241,240,236);;
+  border: 1px solid rgb(241,240,236);
 }
 
 th {

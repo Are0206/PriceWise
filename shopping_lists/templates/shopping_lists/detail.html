@@ -17,9 +17,9 @@
 
   <!--Styles-->
   <link rel="stylesheet" href="{% static 'css/detail.css' %}">
-  <link rel="stylesheet" href="{% static 'css/share-card.css' %}">
-  <script src="{% static 'js/display-share-card.js' %}" defer></script>
-
+  <link rel="stylesheet" href="{% static 'css/card-overlay.css' %}">
+  <link rel="stylesheet" href="{% static 'css/share.css' %}">
+  <link rel="stylesheet" href="{% static 'css/confirm-delete.css' %}">
 </head>
 
 <body>
@@ -34,7 +34,9 @@
       <button id="open-share-card" data-url="{% url 'shopping_lists:share' shopping_list.pk %}" class="share-button">
         SHARE
       </button>
-      <a href="{% url 'shopping_lists:delete' shopping_list.pk %}"><button class="delete-button">DELETE</button></a>
+      <button id="open-delete-card" data-url="{% url 'shopping_lists:delete' shopping_list.pk %}" class="delete-button">
+        DELETE
+      </button>
     </div>
   </div>
 
@@ -100,10 +102,16 @@
 
   <a href="{% url 'index' %}?open_lists=true"><button class="back-button">Back</button></a>
 
-  <div class="share-card-overlay" id="share-card-overlay">
-    <div class="share-card-content" id="share-card-body-content">
+  <!--cards (share, delete)-->
+  <div class="card-overlay" id="card-overlay">
+    <div class="card-content" id="card-body-content">
     </div>
   </div>
+
+  <!--Scripts-->
+  <script src="{% static 'js/display-share-card.js' %}" defer></script>
+  <script src="{% static 'js/display-confirm-delete.js' %}" defer></script>
+
 </body>
 
 </html>
