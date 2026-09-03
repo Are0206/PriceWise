@@ -1,62 +1,55 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const openBtn = document.getElementById('open-share-card');
-  const cardOverlay = document.getElementById('share-card-overlay');
-  const cardBody = document.getElementById('share-card-body-content');
+  const openShareBtn = document.getElementById('open-share-card');
+  const overlay = document.getElementById('card-overlay');
+  const bodyContent = document.getElementById('card-body-content');
 
-  if (openBtn) {
-    openBtn.addEventListener('click', () => {
-      loadShareCard(openBtn.dataset.url);
+  //Abrir panel de Share
+  if (openShareBtn) {
+    openShareBtn.addEventListener('click', () => {
+      loadShareCard(openShareBtn.dataset.url);
     });
   }
 
   async function loadShareCard(url) {
     try {
-      const response = await fetch(url, {
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest'
-        }
-      });
+      const response = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+      if (!response.ok) throw new Error("Error loading share card");
 
-      if (!response.ok) {
-        throw new Error("Error loading share card");
-      }
-
-      const html = await response.text();
-      cardBody.innerHTML = html;
-      cardOverlay.classList.add('active');
+      bodyContent.innerHTML = await response.text();
+      overlay.classList.add('active');
     } catch (error) {
       console.error(error);
     }
   }
 
-  cardBody.addEventListener('click', (e) => {
-    const closeBtn = e.target.closest('.btn-close');
-    if (closeBtn) {
-      cardOverlay.classList.remove('active');
-      return;
-    }
+  //Lógica interna de la tarjeta Share
+  if (bodyContent) {
+    bodyContent.addEventListener('click', (e) => {
 
-    const permissionLink = e.target.closest('.share-permissions-div a');
-    if (permissionLink) {
-      e.preventDefault();
-      loadShareCard(permissionLink.href);
-      return;
-    }
-
-    const copyBtn = e.target.closest('#copy-btn');
-    if (copyBtn) {
-      const linkInput = cardBody.querySelector('#share-link-input');
-      if (linkInput) {
-        linkInput.select();
-        linkInput.setSelectionRange(0, 99999);
-        navigator.clipboard.writeText(linkInput.value);
+      // Cambiar permisos
+      const permissionLink = e.target.closest('.share-permissions-div a');
+      if (permissionLink) {
+        e.preventDefault();
+        loadShareCard(permissionLink.href);
       }
-    }
-  });
 
-  cardOverlay.addEventListener('click', (e) => {
-    if (e.target === cardOverlay) {
-      cardOverlay.classList.remove('active');
+      // Copiar link
+      const copyBtn = e.target.closest('#copy-btn');
+      if (copyBtn) {
+        const linkInput = bodyContent.querySelector('#share-link-input');
+        if (linkInput) {
+          linkInput.select();
+          linkInput.setSelectionRange(0, 99999);
+          navigator.clipboard.writeText(linkInput.value);
+        }
+      }
+    });
+  }
+
+  //Cerrar al hacer clic en el fondo o en un botón de cerrar
+  document.addEventListener('click', (e) => {
+    if (e.target === overlay || e.target.closest('.btn-close')) {
+      overlay.classList.remove('active');
     }
   });
 });

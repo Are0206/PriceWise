@@ -1,27 +1,30 @@
 {% load static %}
-
-<div class="share-title-div">
-  <p>Share Shopping List</p>
-  <p>{{ shopping_list.name }}</p>
-</div>
-
-<div class="share-type-div">
-  <div class="share-type-columns">
-    <button>Link</button>
-    <button>User</button>
+ <link rel="stylesheet" href="{% static 'css/share.css' %}">
+ 
+<div class="share-wrapper">
+  <div class="share-title-div">
+    <p class="share-title">Share Shopping List</p>
+    <p class="shopping-list-name">"{{ shopping_list.name }}"</p>
   </div>
-</div>
 
-<div class="share-link-generator-div">
-  <p>link to {{ share_permission }} shopping list</p>
-  <div class="share-label-columns">
-    <input type="text" id="share-link-input" value="{{ share_url  }}" readonly>
-    <button id="copy-btn">Copy</button>
+  <div class="share-type-div">
+    <div class="share-type-columns">
+      <button class="link-type-button">LINK</button>
+    </div>
   </div>
-</div>
+  <hr>
+  <div class="share-link-generator-div">
+    <p class="link-text">link to {{ share_permission }} shopping list</p>
+    <div class="share-label-columns">
+      <input class="link-input" type="text" id="share-link-input" value="{{ share_url  }}" readonly>
+      <button class="copy-button" id="copy-btn">COPY</button>
+    </div>
+  </div>
 
-<div class="share-permissions-div">
-  <p>Link permissions</p>
-  <a href="{% url 'shopping_lists:share' shopping_list.pk %}?permission=read">Read Only</a>
-  <a href="{% url 'shopping_lists:share' shopping_list.pk %}?permission=edit">Edit</a>
+  <div class="share-permissions-div">
+    <p class="link-permissions-text">LINK PERMISSIONS</p>
+    <a href="{% url 'shopping_lists:share' shopping_list.pk %}?permission=read"><button class="read-permission-button {% if share_permission == 'read' %}active-permission{% endif %}">Read Only</button></a>
+    <a href="{% url 'shopping_lists:share' shopping_list.pk %}?permission=edit"><button class="edit-permission-button {% if share_permission == 'edit' %}active-permission{% endif %}">Edit</button></a>
+  </div>
+  <hr>
 </div>
