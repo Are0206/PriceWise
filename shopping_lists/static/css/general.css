@@ -1,0 +1,44 @@
+:root{
+  --primary-text-color: #1a1a1a;
+  --background-color: #fbf9f5;
+  --secundary-text-color: rgb(171,170,168);
+  --default-border-color: rgb(241,240,236);
+  --primary-input-color: rgb(241, 237, 231);
+}
+
+p, a, button, select, 
+input, label{
+  font-family: "DM Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+h1{
+  font-family: "DM Serif Display", serif;
+  font-weight: 400;
+  font-style: normal;
+  color: var(--primary-text-color);
+}
+p{
+  margin: 0;
+  font-weight: 500;
+  font-style: normal
+}
+a{
+  color: var(--primary-text-color);
+  font-size: 14px;
+  text-decoration: none;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin-top: 20px;
+}
+
+
+body {
+  background-color: var(--background-color);
+  padding: 0px 240px;
+  padding-top: 40px;
+}

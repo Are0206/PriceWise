@@ -3,23 +3,38 @@
 
 <head>
   <title>{{ title }} - PriceWise</title>
+
+  {% load static %}
+
+  <!--Fonts-->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'css/form.css' %}">
+  <link rel="stylesheet" href="{% static 'css/general.css' %}">
 </head>
 
 <body>
-  <h1>{{ title }}</h1>
+  <h1 class="edit-title">{{ title }}</h1>
 
   <form method="post">
     {% csrf_token %}
 
     {{ form.as_p }}
+    <hr>
 
-    <h3>Products</h3>
+    <h1 class="products-title">Products</h1>
 
     {{ formset.management_form }}
 
-    <div id="items-container">
+    <div id="items-container" class="products-div">
       {% for item_form in formset %}
-        <div class="item-form">
+        <div class="item-form" class="form-div">
           {{ item_form.id }}
           {{ item_form.product }}
           {{ item_form.quantity }}
@@ -37,12 +52,12 @@
       </div>
     </div>
 
-    <button type="button" id="add-item">+ Add product</button>
+    <button type="button" id="add-item" class="add-button">+ Add product</button>
 
-    <button type="submit">Save list</button>
+    <a href="{% url 'index' %}?open_lists=true"><button class="back-button">Back</button></a>
+    <button type="submit" class="save-list-button">Save</button>
   </form>
 
-  <a href="{% url 'index' %}?open_lists=true">Back</a>
 
   <script>
     (function () {
