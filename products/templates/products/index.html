@@ -3,14 +3,16 @@
 
 <head>
   <title>PriceWise</title>
+
+  <!--Fonts-->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lobster+Two:ital,wght@0,400;0,700;1,400;1,700&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+
   {% load static %}
 
   <link rel="stylesheet" href="{% static 'css/index/header.css' %}">
@@ -32,7 +34,7 @@
     <div class="header">
       <div class="left-header">
         <a href="{% url 'index' %}">
-          <p class="app-icon">PriceWise</p>
+          <h1 class="app-icon">PriceWise</h1>
         </a>
       </div>
 
@@ -48,10 +50,10 @@
 
             <select class="search-by-selector" name="search_by">
               <option class="search-by-selector" value="product" {% if search_by == 'product' %}selected{% endif %}>
-                Producto
+                Product
               </option>
               <option class="search-by-selector" value="supermarket" {% if search_by == 'supermarket' %}selected{% endif %}>
-                Supermercado
+                Supermarket
               </option>
             </select>
 
@@ -72,33 +74,28 @@
 
         <span class="user-area">
           {% if user.is_authenticated %}
-            <span>Hola, {{ user.username }}</span>
-            <form action="/accounts/logout/" method="post" style="display:inline;">
+            <span>Hi, {{ user.username }}</span>
+            <button class="shopping-list-button" id="shoppingListButton" type="button">
+              Shopping Lists
+            </button>
+            <form action="/accounts/logout/" method="post">
               {% csrf_token %}
-              <button type="submit">Cerrar sesión</button>
+              <button type="submit" class="log-out-button">Log out</button>
             </form>
           {% else %}
-            <a href="{% url 'accounts:register' %}">Registrarse</a>
-            <a href="{% url 'accounts:login' %}">Iniciar sesión</a>
+          <div class="user-area-div">
+            <a href="{% url 'accounts:login' %}"> Log in</a>
+            <a href="{% url 'accounts:register' %}">Register</a>
+          </div>
           {% endif %}
         </span>
 
-        <button class="shopping-list-anchor" id="shoppingListButton" type="button">
-          <div class="shopping-list-container">
-            <img class="shopping-list-icon" src="{% static 'img/icons/lists.png'%}">
-            <p class="shopping-list-text">Shopping Lists</p>
-          </div>
-        </button>
       </div>
-
-
     </div>
 
     <div class="page-body">
 
       <div class="filter-section">
-        <h1 style="color: black; font-size:20px; text-align: center;">Filter</h1>
-
         <form action="{% url 'index' %}" method="get" id="filterForm" class="filter-form">
 
           <!-- Carry the active search so filtering does not clear it -->
@@ -107,37 +104,54 @@
 
           <div class="filter-field">
             <label for="category">Category</label>
-            <select id="category" name="category">
-              <option value="">-- Category --</option>
+            <ul id="category" name="category">
               {% for category in categories %}
-              <option value="{{ category.slug }}" {% if category_filter == category.slug %}selected{% endif %}>{{ category.name }}</option>
+              <li>
+                <button type="submit" name="category" value="{{ category.slug }}" class="{% if category_filter == category.slug %}selected{% endif %}" >
+                  {{ category.name }}
+                </button>
+              </li>
               {% endfor %}
-            </select>
+            </ul>
           </div>
-
+          <hr>
           <div class="filter-field">
             <label for="sort">Sort by price</label>
-            <select id="sort" name="sort">
-              <option value="">-- Sort --</option>
-              <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Price: low to high</option>
-              <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: high to low</option>
-            </select>
+            <ul id="sort" name="sort">
+              <li>
+                <button type="submit" name="sort" value="price_asc" class="{% if sort == 'price_asc' %}selected{% endif %}">
+                  Price &uarr;
+                </button>
+              </li>
+              <li>
+                <button type="submit" name="sort" value="price_desc" class="{% if sort == 'price_desc' %}selected{% endif %}">
+                  Price &darr;
+                </button>
+              </li>
+            </ul>
           </div>
-
+          <hr>
           <div class="filter-field">
-            <label for="min_price">Min price</label>
-            <input type="number" id="min_price" name="min_price" min="0" step="any"
-              placeholder="0" value="{{ min_price }}">
+            <div class="price-range-field">
+              <div class="filter-field">
+                <label for="min_price">Min price</label>
+                <input type="number" id="min_price" name="min_price" min="0" step="any"
+                  placeholder="0" value="{{ min_price }}">
+              </div>
+
+              <div class="filter-field">
+                  <label for="max_price">Max price</label>
+                  <input type="number" id="max_price" name="max_price" min="0" step="any"
+                    placeholder="Any" value="{{ max_price }}">
+              </div>
+
+            </div>
           </div>
 
-          <div class="filter-field">
-            <label for="max_price">Max price</label>
-            <input type="number" id="max_price" name="max_price" min="0" step="any"
-              placeholder="Any" value="{{ max_price }}">
+          <div class="filter-buttons-section">
+            <button type="submit" class="filter-apply">Apply</button>
+            <a href="{% url 'index' %}"><button class="filter-clear">Clear</button></a>
           </div>
-
-          <button type="submit" class="filter-apply">Apply</button>
-          <a href="{% url 'index' %}" class="filter-clear">Clear filters</a>
 
         </form>
       </div>
@@ -157,19 +171,19 @@
               <p class="product-name">{{ product.name }}</p>
 
               <a href="{% url 'products:detail' product.pk %}">
-                <button>View Details</button>
+                <button class="view-details-button">View Details</button>
               </a>
               <br>
               {% if user.is_authenticated %}
                 <form action="{% url 'products:toggle_favorite' product.id %}" method="post">
                   {% csrf_token %}
                   {% if product.id in user_favorite_ids %}
-                    <button type="submit" style="background-color: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">
-                      Quitar de Favoritos
+                    <button type="submit" class="favorite-button">
+                      <img src="{% static 'img/icons/favorite-selected.png' %}">
                     </button>
                   {% else %}
-                    <button type="submit" style="background-color: #38bdf8; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">
-                      Agregar a Favoritos
+                    <button type="submit" class ="favorite-button">
+                      <img src="{% static 'img/icons/favorite-unselected.png' %}">
                     </button>
                   {% endif %}
                 </form>
