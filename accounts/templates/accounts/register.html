@@ -3,109 +3,26 @@
 
 <head>
   <title>Create account - PriceWise</title>
-  <style>
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background-color: #f2f2f2;
-      margin: 0;
-      padding: 0;
-    }
 
-    .register-container {
-      max-width: 420px;
-      margin: 50px auto;
-      padding: 30px;
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
+  <!--Fonts-->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 
-    .register-container h1 {
-      text-align: center;
-      font-size: 24px;
-      color: #062925;
-      margin-top: 0;
-      margin-bottom: 24px;
-    }
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
 
-    .register-form p {
-      display: block;
-      margin: 0 0 18px 0;
-    }
+  {% load static %}
 
-    .register-form label {
-      display: block;
-      font-size: 14px;
-      font-weight: bold;
-      color: #000;
-      margin-bottom: 5px;
-    }
-
-    .register-form input {
-      display: block;
-      width: 100%;
-      padding: 9px;
-      box-sizing: border-box;
-      font-size: 14px;
-      color: #000;
-      background-color: #fff;
-      border: 1px solid #999;
-      border-radius: 4px;
-      -webkit-text-fill-color: #000;
-    }
-
-    .register-form .helptext {
-      display: block;
-      font-size: 12px;
-      color: #666;
-      margin-top: 4px;
-    }
-
-    .register-form ul {
-      font-size: 12px;
-      color: #666;
-      margin: 6px 0 0 0;
-      padding-left: 18px;
-    }
-
-    .register-form ul li {
-      margin-bottom: 3px;
-    }
-
-    .register-form button {
-      width: 100%;
-      padding: 11px;
-      font-size: 15px;
-      font-weight: bold;
-      color: #fff;
-      background-color: #062925;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-top: 6px;
-    }
-
-    .errorlist {
-      list-style: none;
-      padding: 0;
-      margin: 0 0 8px 0;
-      color: #c00;
-      font-size: 13px;
-    }
-
-    .back-link {
-      display: block;
-      text-align: center;
-      margin-top: 18px;
-      font-size: 14px;
-      color: #062925;
-    }
-  </style>
+  <link rel="stylesheet" href="{% static 'css/register.css' %}">
+  <link rel="stylesheet" href="{% static 'css/general.css' %}">
 </head>
 
 <body>
   <div class="register-container">
-    <h1>Create your account</h1>
+    <h1>PriceWise</h1>
+    <p class="register-text">Create your account</p>
 
     <form method="post" class="register-form">
       {% csrf_token %}

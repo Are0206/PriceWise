@@ -37,21 +37,14 @@
 
 .close-panel {
     position: absolute;
-
     top: 15px;
     right: 20px;
     padding: 0;
-
-
     border: none;
-
     background: transparent;
-
     font-size: 28px;
     line-height: 35px;
-
     cursor: pointer;
-
     z-index: 1001;
 }
 
@@ -68,7 +61,6 @@
 #shoppingListContent {
     width: 100%;
     min-height: 100%;
-
     box-sizing: border-box;
 }
 
@@ -79,28 +71,24 @@
 
 .shopping-list-header {
     display: flex;
-
     justify-content: space-between;
     align-items: center;
-
-    background-color: #011A1C;
-
+    background-color: var(--primary-text-color);
     margin-bottom: 30px;
-
-    padding: 50px 50px 41px 50px;
+    padding: 45px 50px 41px 50px;
 }
 
 .shopping-list-header h1 {
+    color: white;
     margin: 0;
-    font-size: 24px;
+    font-size: 30px;
     font-weight: 600;
 }
 
 .shopping-list-header a {
-    text-decoration: none;
-    color: white;
     font-size: 14px;
-    top:0;
+    color: var(--secundary-text-color);
+    top: 0;
 }
 
 
@@ -131,9 +119,9 @@
     border-bottom: 1px solid #e5e5e5;
 }
 
-.shopping-list-item{
+.shopping-list-item {
     text-decoration: none;
-    color:black;
+    color: black;
     font-size: 16px;
     transition: background-color, 0.7s;
     transition: transform, 0.7s;
@@ -150,7 +138,7 @@
    ========================================= */
 
 .shopping-list-item:hover {
-    background-color: #f7f7f7;
+    background-color: rgba(182, 182, 182, 0.3);
     transform: translateY(-1px);
 }
 

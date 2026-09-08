@@ -1,0 +1,82 @@
+.login-container {
+  max-width: 420px;
+  margin: 50px auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.login-container h1 {
+  font-size: 35px;
+  text-align: center;
+  color: var(--primary-text-color);
+  margin: 0;
+}
+
+.log-in-text{
+  font-size: 10px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--secundary-text-color);
+  margin: 0;
+  margin-bottom: 24px;
+}
+
+.login-form p {
+  display: block;
+  margin: 0 0 18px 0;
+}
+
+.login-form label {
+  display: block;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--secundary-text-color);
+  margin-bottom: 5px;
+}
+
+.login-form input {
+  display: block;
+  width: 100%;
+  padding: 9px;
+  box-sizing: border-box;
+  font-size: 14px;
+  color: #000;
+  background-color: white;
+  border: 1px solid var(--secundary-text-color);
+  border-radius: 4px;
+}
+
+.login-form button {
+  width: 100%;
+  padding: 11px;
+  font-size: 13px;
+  color: #fff;
+  background-color: var(--primary-text-color);
+  text-transform: uppercase;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 6px;
+}
+
+.errorlist {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 8px 0;
+  color: #c00;
+  font-size: 13px;
+}
+
+.back-link {
+  display: block;
+  text-align: center;
+  margin-top: 18px;
+  font-size: 14px;
+  color: var(--secondary-text-color);
+  text-decoration: none;
+}
