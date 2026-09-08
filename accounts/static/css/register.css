@@ -1,4 +1,4 @@
-.login-container {
+.register-container {
   max-width: 420px;
   margin: 50px auto;
   padding: 30px;
@@ -7,14 +7,14 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.login-container h1 {
+.register-container h1 {
   font-size: 35px;
   text-align: center;
   color: var(--primary-text-color);
   margin: 0;
 }
 
-.log-in-text{
+.register-text{
   font-size: 10px;
   text-align: center;
   text-transform: uppercase;
@@ -24,12 +24,12 @@
   margin-bottom: 24px;
 }
 
-.login-form p {
+.register-form p {
   display: block;
   margin: 0 0 18px 0;
 }
 
-.login-form label {
+.register-form label {
   display: block;
   font-size: 10px;
   font-weight: bold;
@@ -39,19 +39,38 @@
   margin-bottom: 5px;
 }
 
-.login-form input {
+.register-form input {
   display: block;
   width: 100%;
   padding: 9px;
   box-sizing: border-box;
   font-size: 14px;
   color: #000;
-  background-color: white;
-  border: 1px solid var(--secundary-text-color);
+  background-color: #fff;
+  border: 1px solid #999;
   border-radius: 4px;
+  -webkit-text-fill-color: #000;
 }
 
-.login-form button {
+.register-form .helptext {
+  display: block;
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.register-form ul {
+  font-size: 12px;
+  color: #666;
+  margin: 6px 0 0 0;
+  padding-left: 18px;
+}
+
+.register-form ul li {
+  margin-bottom: 3px;
+}
+
+.register-form button {
   width: 100%;
   padding: 11px;
   font-size: 13px;

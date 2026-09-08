@@ -15,12 +15,13 @@
   {% load static %}
 
   <link rel="stylesheet" href="{% static 'css/login.css' %}">
+  <link rel="stylesheet" href="{% static 'css/general.css' %}">
 
 </head>
 <body>
   <div class="login-container">
     <h1>PriceWise</h1>
-    <p>Log in</p>
+    <p class="log-in-text">Log into your accout</p>
 
     <form method="post" class="login-form">
       {% csrf_token %}

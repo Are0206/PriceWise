@@ -1,0 +1,29 @@
+:root{
+  --primary-text-color: #1a1a1a;
+  --background-color: #fbf9f5;
+  --secundary-text-color: rgb(171,170,168);
+  --default-border-color: rgb(241,240,236);
+  --primary-input-color: #757575;
+  --secondary-background-color: #313131;
+}
+
+p, a, button, select, 
+input, label{
+  font-family: "DM Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+h1{
+  font-family: "DM Serif Display", serif;
+  font-weight: 400;
+  font-style: normal;
+  color: var(--primary-text-color);
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--background-color);
+  margin: 0;
+  padding: 0;
+}
