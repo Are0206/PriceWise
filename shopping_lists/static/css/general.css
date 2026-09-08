@@ -3,8 +3,7 @@
   --background-color: #fbf9f5;
   --secundary-text-color: rgb(171,170,168);
   --default-border-color: rgb(241,240,236);
-  --primary-input-color: #757575;
-  --secondary-background-color: #313131;
+  --primary-input-color: rgb(241, 237, 231);
 }
 
 p, a, button, select, 
@@ -20,15 +19,26 @@ h1{
   font-style: normal;
   color: var(--primary-text-color);
 }
-
-a {
+p{
+  margin: 0;
+  font-weight: 500;
+  font-style: normal
+}
+a{
+  color: var(--primary-text-color);
+  font-size: 14px;
   text-decoration: none;
 }
 
 hr {
   border: none;
-  border-top: 1px solid var(--primary-input-color);
-  width: 100%;
-  margin: 0;
-  margin-bottom: 5px;
+  border-top: 1px solid #e0e0e0;
+  margin-top: 20px;
+}
+
+
+body {
+  background-color: var(--background-color);
+  padding: 0px 240px;
+  padding-top: 40px;
 }

@@ -21,14 +21,9 @@ h1{
   color: var(--primary-text-color);
 }
 
-a {
-  text-decoration: none;
-}
-
-hr {
-  border: none;
-  border-top: 1px solid var(--primary-input-color);
-  width: 100%;
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--background-color);
   margin: 0;
-  margin-bottom: 5px;
+  padding: 0;
 }

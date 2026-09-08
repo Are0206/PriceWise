@@ -5,22 +5,32 @@
 .header {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
-  background-color: #011A1C;
-  height: 120px;
-  margin: 0;
+  gap: 10px;
+  background-color: var(--primary-text-color);
+  height: 90px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
   box-shadow: 0px 0.6px 10px 2px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
 }
 
-.left-header,
-.right-header {
+.left-header{
   flex: 1;
+  margin-left: 50px;
+}
+
+
+.right-header {
+  flex: 2;
   text-align: center;
 }
 
 .middle-header {
-  flex: 2;
+  flex: 3;
   max-width: 1000px;
 }
 
@@ -28,10 +38,9 @@
    PRICEWISE APPICON (LEFT HEADER)
    ========================================= */
 .app-icon {
-  font-family: "Bebas Neue", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-  font-size: 45px;
+  font-weight: 600;
+  font-size: 30px;
+  color: white;
   margin: 0px;
   cursor: pointer;
   transition: all, 1s;
@@ -47,17 +56,11 @@
    SEARCH BAR (MIDDLE-HEADER)
    ========================================= */
 
-.search-by-selector {
-  color: black;
-  padding-left: 5px;
-}
-
 .search-container {
   display: flex;
   flex-direction: row;
   width: auto;
   height: 40px;
-  box-shadow: 0px 6px 15px 0.1px rgba(0, 0, 0, 0.6);
   transition: transform, 1s;
 }
 
@@ -65,19 +68,31 @@
   transform: scaleX(5px);
 }
 
+.search-by-selector {
+  color: var(--primary-input-color);
+  background-color: var(--secondary-background-color);
+  border: 0.5px solid var(--primary-text-color);
+  border-radius: 8px;
+  padding-left: 5px;
+  padding-right: -13px;
+  margin-right: 20px;
+  outline: none;
+  }
+
 .search-bar {
+  color: var(--primary-input-color);
   padding-left: 15px;
   flex: 1;
   border: none;
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
   margin: 0px;
-  color: rgb(110, 108, 110);
+  background-color: var(--secondary-background-color);
 }
 
 .search-button {
   width: 60px;
-  background-color: rgb(234, 229, 237);
+  background-color: #1f1f1f;
   height: 100%;
   margin: 0px;
   display: flex;
@@ -87,12 +102,19 @@
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
   padding: 5px 10px;
+  padding-bottom: 1px;
   transition: all, 0.6s;
+}
+
+.search-bar,
+.search-button,
+.search-by-selector{
+  box-shadow: 0px 6px 10px 0.1px rgba(0, 0, 0, 0.3);
 }
 
 .search-button:hover {
   padding: 10px 54px;
-  background-color: rgb(248, 242, 251);
+  padding-bottom: 6px;
 }
 
 .search-icon {
@@ -104,63 +126,31 @@
    USER AREA(RIGHT HEADER)
    ========================================= */
 .user-area {
-  color: #fff;
-  margin-right: 12px;
-  font-size: 14px;
-}
-
-.user-area a {
-  color: #fff;
-  text-decoration: none;
-}
-
-.user-area a:hover {
-  text-decoration: underline;
-}
-
-/* =========================================
-   SHOPPING LIST ICON (RIGHT HEADER)
-   ========================================= */
-.app-icon {
-  font-family: "Bebas Neue", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-  font-size: 45px;
-  margin: 0px;
-  cursor: pointer;
-  transition: all, 1s;
-}
-
-.app-icon:hover {
-  letter-spacing: 1px
-}
-
-
-.shopping-list-anchor {
-  display: inline-block;
-}
-
-.shopping-list-container {
   display: flex;
-  flex-direction: column;
-  width: auto;
-  margin: 0;
-  padding: 0px;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  transition: all, 1s;
+  justify-content: flex-end;
+  gap: 15px;
+  color: #fff;
+  margin-right: 30px;
+  padding-left: auto;
 }
 
-.shopping-list-container:hover {
-  transform: translateX(5px);
+.user-area a, 
+.user-area button{
+  color: var(--primary-input-color);
+  font-size: 14.8px;
+  text-transform: uppercase;
+  text-decoration: none;
+  background-color: var(--primary-text-color);
+  padding: 6px 22px;
+  border: none;
+  cursor: pointer;
+  transition: all, 0.6s;
 }
 
-.shopping-list-icon {
-  height: auto;
-  width: 50px;
-  margin: 0px;
-}
-
-.shopping-list-text {
-  margin: 0px;
+.user-area a:hover, 
+.user-area button:hover{
+  letter-spacing: 0.8px;
+  
 }
