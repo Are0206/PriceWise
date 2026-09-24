@@ -2,13 +2,21 @@ from django.db.models.aggregates import Min
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .models import Favorite, Category, Product
+from .models import Favorite, Category, Product, Review
 from .services import *
 
 #RF-9: View product details
 def view_product_details(request, pk):
     product = get_object_or_404(Product, pk=pk)
-    return render(request, 'products/product_detail.html', {'product': product})
+    reviews = product.reviews.select_related('user')
+    user_review = None
+    if request.user.is_authenticated:
+        user_review = reviews.filter(user=request.user).first()
+    return render(request, 'products/product_detail.html', {
+        'product': product,
+        'reviews': reviews,
+        'user_review': user_review,
+    })
 
 #RF-8: Compare product prices
 def compare_product_prices(request, pk):
@@ -70,3 +78,34 @@ def toggle_favorite(request, product_id):
             favorite.delete()
 
     return redirect(request.META.get('HTTP_REFERER', '/'))
+
+
+#RF-30: Review products
+@login_required
+def submit_review(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+
+    if request.method == 'POST':
+        rating = request.POST.get('rating')
+        comment = request.POST.get('comment', '')
+
+        if rating in [str(n) for n in range(1, 6)]:
+            Review.objects.update_or_create(
+                user=request.user,
+                product=product,
+                defaults={'rating': rating, 'comment': comment},
+            )
+
+    return redirect('products:detail', pk=product.pk)
+
+
+#RF-31: Delete product reviews
+@login_required
+def delete_review(request, review_id):
+    review = get_object_or_404(Review, pk=review_id, user=request.user)
+    product_pk = review.product_id
+
+    if request.method == 'POST':
+        review.delete()
+
+    return redirect('products:detail', pk=product_pk)
