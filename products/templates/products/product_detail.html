@@ -11,8 +11,8 @@
   <div class="product-detail-container">
     <a href="{% url 'index' %}" class="back-link">&larr; Back</a>
 
-    {% if product.image_url %}
-      <img class="product-image" src="{{ product.image_url }}" alt="{{ product.name }}">
+    {% if product.image %}
+      <img class="product-image" src="{{ product.image.url }}" alt="{{ product.name }}">
     {% endif %}
 
     <h1 class="product-name">{{ product.name }}</h1>
@@ -22,6 +22,48 @@
     {% endif %}
 
     <a href="{% url 'products:compare' product.pk %}" class="compare-link">Compare prices across supermarkets</a>
+
+    <!-- RF-30/RF-31: reviews — base funcional, sin estilar todavía -->
+    <div class="product-reviews">
+      <h2>Reviews</h2>
+
+      {% if user.is_authenticated %}
+        <form method="post" action="{% url 'products:submit_review' product.pk %}">
+          {% csrf_token %}
+          <label>
+            Rating
+            <select name="rating" required>
+              <option value="">--</option>
+              {% for n in "12345" %}
+                <option value="{{ n }}" {% if user_review.rating == n|add:0 %}selected{% endif %}>{{ n }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <textarea name="comment" placeholder="Comment (optional)">{{ user_review.comment|default:'' }}</textarea>
+          <button type="submit">{% if user_review %}Update review{% else %}Submit review{% endif %}</button>
+        </form>
+
+        {% if user_review %}
+          <form method="post" action="{% url 'products:delete_review' user_review.pk %}">
+            {% csrf_token %}
+            <button type="submit">Delete my review</button>
+          </form>
+        {% endif %}
+      {% else %}
+        <p><a href="{% url 'accounts:login' %}">Log in</a> to leave a review.</p>
+      {% endif %}
+
+      <ul>
+        {% for review in reviews %}
+          <li>
+            <strong>{{ review.user.username }}</strong> — {{ review.rating }}/5
+            {% if review.comment %}: {{ review.comment }}{% endif %}
+          </li>
+        {% empty %}
+          <li>No reviews yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
   </div>
 </body>
 

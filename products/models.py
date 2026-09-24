@@ -67,3 +67,29 @@ class Favorite(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.product.name}"
+
+
+# RF-30/RF-31: Modelo de reseñas de productos
+class Review(models.Model):
+    RATING_CHOICES = [(i, str(i)) for i in range(1, 6)]
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='reviews'
+    )
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name='reviews'
+    )
+    rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
+    comment = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'product')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username} rated {self.product.name}: {self.rating}"
