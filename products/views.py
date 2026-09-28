@@ -2,7 +2,7 @@ from django.db.models.aggregates import Min
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .models import Favorite, Category, Product, Review
+from .models import Favorite, Category, Product, ProductReview
 from .services import *
 
 #RF-9: View product details
@@ -90,7 +90,7 @@ def submit_review(request, pk):
         comment = request.POST.get('comment', '')
 
         if rating in [str(n) for n in range(1, 6)]:
-            Review.objects.update_or_create(
+            ProductReview.objects.update_or_create(
                 user=request.user,
                 product=product,
                 defaults={'rating': rating, 'comment': comment},
@@ -102,7 +102,7 @@ def submit_review(request, pk):
 #RF-31: Delete product reviews
 @login_required
 def delete_review(request, review_id):
-    review = get_object_or_404(Review, pk=review_id, user=request.user)
+    review = get_object_or_404(ProductReview, pk=review_id, user=request.user)
     product_pk = review.product_id
 
     if request.method == 'POST':

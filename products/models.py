@@ -70,7 +70,7 @@ class Favorite(models.Model):
 
 
 # RF-30/RF-31: Modelo de reseñas de productos
-class Review(models.Model):
+class ProductReview(models.Model):
     RATING_CHOICES = [(i, str(i)) for i in range(1, 6)]
 
     user = models.ForeignKey(
