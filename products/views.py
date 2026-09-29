@@ -98,13 +98,6 @@ def submit_review(request, pk):
 
     return redirect('products:detail', pk=product.pk)
 
-def supermarkets_index(request):
-    supermarkets = Supermarket.objects.all()
-
-    return render(request, 'supermarkets/index.html', {
-        'supermarkets': supermarkets,
-    })
-
 #RF-31: Delete product reviews
 @login_required
 def delete_review(request, review_id):
@@ -115,6 +108,25 @@ def delete_review(request, review_id):
         review.delete()
 
     return redirect('products:detail', pk=product_pk)
+
+def supermarkets_index(request):
+    supermarkets = Supermarket.objects.all()
+
+    return render(request, 'supermarkets/index.html', {
+        'supermarkets': supermarkets,
+    })
+    
+def supermarkets_details(request, pk):
+    supermarket = get_object_or_404(Supermarket, pk=pk)
+    reviews = supermarket.supermarket_reviews.select_related('user')
+    user_review = None
+    if request.user.is_authenticated:
+        user_review = reviews.filter(user=request.user).first()
+    return render(request, 'supermarkets/details.html', {
+        'supermarket': supermarket,
+        'reviews': reviews,
+        'user_review': user_review,
+    })
 
 #RF-34: Review supermarkets
 @login_required
@@ -128,20 +140,20 @@ def submit_supermarket_review(request, pk):
         if rating in [str(n) for n in range(1, 6)]:
             SupermarketReview.objects.update_or_create(
                 user=request.user,
-                product=supermarket,
+                supermarket=supermarket,
                 defaults={'rating': rating, 'comment': comment},
             )
 
-    pass
+    return redirect('products:supermarkets_details', pk=supermarket.pk)
 
 
 #RF-35: Delete supermarkets reviews
 @login_required
 def delete_supermarket_review(request, review_id):
     review = get_object_or_404(SupermarketReview, pk=review_id, user=request.user)
-    supermarket_pk = review.product_id
+    supermarket_pk = review.supermarket_id
 
     if request.method == 'POST':
         review.delete()
 
-    pass
+    return redirect('products:supermarkets_details', pk=supermarket_pk)

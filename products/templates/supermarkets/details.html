@@ -1,0 +1,45 @@
+<div class="supermarket-detail-container">
+    <a href="{% url 'products:supermarkets_index' %}" class="back-link">&larr; Back</a>
+
+    <h1 class="supermarket-name">{{ supermarket.name }}</h1>
+
+<div class="supermarket-reviews">
+      <h2>Reviews</h2>
+
+      {% if user.is_authenticated %}
+        <form method="post" action="{% url 'products:submit_supermarket_review' supermarket.pk %}">
+          {% csrf_token %}
+          <label>
+            Rating
+            <select name="rating" required>
+              <option value="">--</option>
+              {% for n in "12345" %}
+                <option value="{{ n }}" {% if user_review.rating == n|add:0 %}selected{% endif %}>{{ n }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <textarea name="comment" placeholder="Comment (optional)">{{ user_review.comment|default:'' }}</textarea>
+          <button type="submit">{% if user_review %}Update review{% else %}Submit review{% endif %}</button>
+        </form>
+
+        {% if user_review %}
+          <form method="post" action="{% url 'products:delete_supermarket_review' user_review.pk %}">
+            {% csrf_token %}
+            <button type="submit">Delete my review</button>
+          </form>
+        {% endif %}
+      {% else %}
+        <p><a href="{% url 'accounts:login' %}">Log in</a> to leave a review.</p>
+      {% endif %}
+
+      <ul>
+        {% for review in reviews %}
+          <li>
+            <strong>{{ review.user.username }}</strong> — {{ review.rating }}/5
+            {% if review.comment %}: {{ review.comment }}{% endif %}
+          </li>
+        {% empty %}
+          <li>No reviews yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
