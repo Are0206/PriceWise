@@ -93,3 +93,28 @@ class ProductReview(models.Model):
 
     def __str__(self):
         return f"{self.user.username} rated {self.product.name}: {self.rating}"
+    
+# RF-34/RF-35: Modelo de reseñas de supermercados
+class SupermarketReview(models.Model):
+    RATING_CHOICES = [(i, str(i)) for i in range(1, 6)]
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='supermarket_reviews'
+    )
+    supermarket = models.ForeignKey(
+        Supermarket,
+        on_delete=models.CASCADE,
+        related_name='supermarket_reviews'
+    )
+    rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
+    comment = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'supermarket')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username} rated {self.supermarket.name}: {self.rating}"
