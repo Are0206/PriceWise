@@ -10,4 +10,5 @@ urlpatterns = [
     path('<uuid:pk>/edit/', views.edit_shopping_lists, name='edit'),
     path('<uuid:pk>/delete/', views.delete_shopping_lists, name='delete'),
     path('<uuid:pk>/share/', views.share_shopping_lists, name='share'),
+    path('<uuid:pk>/duplicate/', views.duplicate_shopping_lists, name='duplicate'),
 ]
