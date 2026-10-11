@@ -1,0 +1,32 @@
+{%load static%}
+
+  <link rel="stylesheet" href="{% static 'css/supermarket/index.css' %}">
+
+<div class="supermarket-section">
+  <div class="supermarkets-grid">
+
+    {% for supermarket in supermarkets %}
+
+    <div class="supermarket-card">
+
+      {% if supermarket.image %}
+      <img class="supermarket-image" src="{{ supermarket.image.url }}" alt="{{ supermarket.name }}">
+      {% endif %}
+
+      <div class="supermarket-details">
+        <p class="supermarket-name">{{ supermarket.name }}</p>
+
+        <a href="{% url 'products:supermarkets_details' supermarket.pk %}">
+            <button class="view-reviews-button">View reviews</button>
+        </a>
+      </div>
+    </div>
+
+    {% empty %}
+
+    <p>No supermarkets available.</p>
+
+    {% endfor %}
+
+  </div>
+</div>

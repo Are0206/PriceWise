@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Price, Product, Supermarket, Category, Review
+from .models import Price, Product, Supermarket, Category, ProductReview
 
 @admin.register(Supermarket)
 class SupermarketAdmin(admin.ModelAdmin):
@@ -20,7 +20,13 @@ class PriceAdmin(admin.ModelAdmin):
     list_display = ('product', 'supermarket', 'amount', 'updated_at')
     list_filter = ('supermarket',)
 
-@admin.register(Review)
+
+@admin.register(ProductReview)
 class ReviewAdmin(admin.ModelAdmin):
     list_display = ('product', 'user', 'rating', 'created_at')
+    list_filter = ('rating',)
+   
+@admin.register(SupermarketReview)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ('supermakret', 'user', 'rating', 'created_at')
     list_filter = ('rating',)

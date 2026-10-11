@@ -1,0 +1,21 @@
+.supermarkets-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  row-gap: 25px;
+  padding: 20px 70px;
+  place-items: center;
+}
+
+.supermarket-card{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 180px;
+  background-color: #f9f7f5;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  align-self: start;
+  position: relative;
+  transition: transform 1s ease;
+}
