@@ -71,10 +71,14 @@
       </div>
 
       <div class="right-header">
-
         <span class="user-area">
           {% if user.is_authenticated %}
             <span>Hi, {{ user.username }}</span>
+            <button>
+            <a href="{% url 'products:supermarkets_index' %}">
+              Supermarkets
+            </a>
+          </button>
             <button class="shopping-list-button" id="shoppingListButton" type="button">
               Shopping Lists
             </button>
@@ -158,7 +162,6 @@
 
       <div class="product-section">
         <div class="products-grid">
-
           {% for product in products %}
 
           <div class="product-card">

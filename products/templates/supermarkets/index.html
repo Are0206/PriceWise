@@ -16,8 +16,8 @@
       <div class="supermarket-details">
         <p class="supermarket-name">{{ supermarket.name }}</p>
 
-        <a>
-          <button class="view-details-button">View Details</button>
+        <a href="{% url 'products:supermarkets_details' supermarket.pk %}">
+            <button class="view-reviews-button">View reviews</button>
         </a>
       </div>
     </div>
