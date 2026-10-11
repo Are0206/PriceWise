@@ -32,6 +32,10 @@
 
     <div class="header-buttons">
       <a href="{% url 'shopping_lists:edit' shopping_list.pk %}"><button class="edit-button">EDIT</button></a>
+      <form method="post" action="{% url 'shopping_lists:duplicate' shopping_list.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="duplicate-button">DUPLICATE</button>
+      </form>
       <button id="open-share-card" data-url="{% url 'shopping_lists:share' shopping_list.pk %}" class="share-button">
         SHARE
       </button>

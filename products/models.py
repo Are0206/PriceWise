@@ -25,6 +25,7 @@ class Product(models.Model):
     name = models.CharField(max_length=200)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
     description = models.TextField(blank=True)
+    nutritional_info = models.TextField(blank=True, null=True) # RF-33: Información nutricional.
     image = models.ImageField(
         upload_to="products/",
         blank=True,

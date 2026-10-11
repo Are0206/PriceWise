@@ -23,9 +23,12 @@
 
     <a href="{% url 'products:compare' product.pk %}" class="compare-link">Compare prices across supermarkets</a>
 
+    <h2>Información Nutricional:</h2>
+    <p class="product-description" style="white-space: pre-line;">{{ product.nutritional_info|default:"Información nutricional no disponible." }}</p>
+
     <!-- RF-30/RF-31: reviews — base funcional, sin estilar todavía -->
     <div class="product-reviews">
-      <h2>Reviews</h2>
+      <h2>Reviews:</h2>
 
       {% if user.is_authenticated %}
         <form method="post" action="{% url 'products:submit_review' product.pk %}">

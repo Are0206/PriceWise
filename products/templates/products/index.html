@@ -82,6 +82,7 @@
             <button class="shopping-list-button" id="shoppingListButton" type="button">
               Shopping Lists
             </button>
+            <a href="{% url 'accounts:change_password' %}">Password</a>
             <form action="/accounts/logout/" method="post">
               {% csrf_token %}
               <button type="submit" class="log-out-button">Log out</button>
@@ -96,6 +97,14 @@
 
       </div>
     </div>
+
+    {% if messages %}
+    <div class="messages">
+      {% for message in messages %}
+      <p class="message">{{ message }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
 
     <div class="page-body">
 
