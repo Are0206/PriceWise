@@ -93,6 +93,7 @@
 .search-button {
   width: 60px;
   background-color: #1f1f1f;
+  border: 1px solid #1f1f1f;;
   height: 100%;
   margin: 0px;
   display: flex;

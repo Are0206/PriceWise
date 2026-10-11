@@ -1,7 +1,14 @@
-{%load static%}
+{% extends "base.html" %}
 
-  <link rel="stylesheet" href="{% static 'css/supermarket/index.css' %}">
+{% block title %} Supermercados - PriceWise{% endblock %}
 
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/supermarket/index.css' %}">
+{% endblock %}
+
+{% block content %}
 <div class="supermarket-section">
   <div class="supermarkets-grid">
 
@@ -30,3 +37,4 @@
 
   </div>
 </div>
+{% endblock %}

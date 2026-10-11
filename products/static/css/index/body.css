@@ -1,5 +1,5 @@
 body {
-  background-color: #FAF8F6;
+  padding: 0;
   padding-top: 120px;
   margin-left: 200px;
 }
@@ -21,7 +21,7 @@ body {
 
 .filter-section {
   width: 270px;
-  background-color: #F1EDE7;
+  background-color: #f1f0e7;
   position: fixed;
   padding: 20px 10px;
   top: 90px;
@@ -44,7 +44,7 @@ body {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   row-gap: 25px;
-  padding: 20px 70px;
+  padding: 20px 60px;
   place-items: center;
 }
 
@@ -82,9 +82,7 @@ body {
 }
 
 .view-details-button{
-  color: var(--default-border-color);
-  background-color: var(--primary-text-color);
-  border: 1px solid var(--primary-text-color);
+  color: white;
   font-size: 11px;
   border-radius: 2px;
   padding: 6px 18px;
@@ -151,7 +149,7 @@ body {
 }
 
 .filter-field label{
-  color: var(--secundary-text-color);
+  color: var(--primary-text-color);
   text-transform: uppercase;
   display: block;
   font-size: 10px;
@@ -183,11 +181,11 @@ body {
 
 .filter-field button:hover{
   background-color: var(--background-color);
-  border-left: 2px solid var(--primary-text-color);
+  border-left: 2px solid var(--savings-green-color);
 }
 
 .filter-field button.selected{
-  background-color: var(--primary-text-color);
+  background-color: var(--savings-green-color);
   color: white;
 }
 
@@ -231,12 +229,14 @@ body {
 
 .filter-apply{
   color: white;
-  background-color: var(--primary-text-color);
-  border: 2px solid var(--primary-text-color);
+  border-width: 2px;
+  border-style: solid;
 }
 
 .filter-clear{
-  border: 1.5px solid var(--primary-input-color);
+  color: var(--savings-green-color);
+  border-width: 1.5px;
+  border-style: solid;
   background: none;
 }
 
