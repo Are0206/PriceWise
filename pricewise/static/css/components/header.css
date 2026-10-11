@@ -1,0 +1,156 @@
+/* =========================================
+   HEADER STRUCTURE
+   ========================================= */
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  gap: 10px;
+  background-color: var(--primary-text-color);
+  height: 90px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  box-shadow: 0px 0.6px 10px 2px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.left-header{
+  flex: 1;
+  margin-left: 50px;
+}
+
+
+.right-header {
+  flex: 3;
+  text-align: center;
+}
+
+.middle-header {
+  flex: 3;
+  max-width: 1000px;
+}
+
+/* =========================================
+   PRICEWISE APPICON (LEFT HEADER)
+   ========================================= */
+.app-icon {
+  font-weight: 600;
+  font-size: 30px;
+  color: white;
+  margin: 0px;
+  cursor: pointer;
+  transition: all, 1s;
+}
+
+.app-icon:hover {
+  letter-spacing: 1px
+}
+
+
+
+/* =========================================
+   SEARCH BAR (MIDDLE-HEADER)
+   ========================================= */
+
+.search-container {
+  display: flex;
+  flex-direction: row;
+  width: auto;
+  height: 40px;
+  transition: transform, 1s;
+}
+
+.search-container:hover {
+  transform: scaleX(5px);
+}
+
+.search-by-selector {
+  color: var(--primary-input-color);
+  background-color: var(--secondary-background-color);
+  border: 0.5px solid var(--primary-text-color);
+  border-radius: 8px;
+  padding-left: 5px;
+  padding-right: -13px;
+  margin-right: 20px;
+  outline: none;
+  }
+
+.search-bar {
+  color: var(--primary-input-color);
+  padding-left: 15px;
+  flex: 1;
+  border: none;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  margin: 0px;
+  background-color: var(--secondary-background-color);
+}
+
+.search-button {
+  width: 60px;
+  background-color: #1f1f1f;
+  height: 100%;
+  margin: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0px;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  padding: 5px 10px;
+  padding-bottom: 1px;
+  transition: all, 0.6s;
+}
+
+.search-bar,
+.search-button,
+.search-by-selector{
+  box-shadow: 0px 6px 10px 0.1px rgba(0, 0, 0, 0.3);
+}
+
+.search-button:hover {
+  padding: 10px 54px;
+  padding-bottom: 6px;
+}
+
+.search-icon {
+  width: 30px;
+  height: auto;
+}
+
+/* =========================================
+   USER AREA(RIGHT HEADER)
+   ========================================= */
+.user-area {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 15px;
+  color: #fff;
+  margin-right: 30px;
+  padding-left: auto;
+}
+
+.user-area a, 
+.user-area button{
+  color: var(--primary-input-color);
+  font-size: 13.8px;
+  text-transform: uppercase;
+  text-decoration: none;
+  background-color: var(--primary-text-color);
+  padding: 6px 22px;
+  border: none;
+  cursor: pointer;
+  transition: all, 0.6s;
+}
+
+.user-area a:hover, 
+.user-area button:hover{
+  letter-spacing: 0.8px;
+  
+}

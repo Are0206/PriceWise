@@ -1,26 +1,16 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-  <title>{{ title }} - PriceWise</title>
+{% block title %}{{ title }} | PriceWise{% endblock %}
 
-  {% load static %}
+{% load static %}
 
-  <!--Fonts-->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}">
+<link rel="stylesheet" href="{% static 'css/general.css' %}">
+{% endblock %}
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="{% static 'css/form.css' %}">
-  <link rel="stylesheet" href="{% static 'css/general.css' %}">
-</head>
-
-<body>
-  <h1 class="edit-title">{{ title }}</h1>
+{% block content %}
+<h1 class="edit-title">{{ title }}</h1>
 
   <form method="post">
     {% csrf_token %}
@@ -74,6 +64,4 @@
       });
     })();
   </script>
-</body>
-
-</html>
+{% endblock %}

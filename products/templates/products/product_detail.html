@@ -1,14 +1,15 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-  <title>{{ product.name }} - PriceWise</title>
-  {% load static %}
+{% block title %}{{ product.name }} - PriceWise{% endblock %}
+
+{% load static %}
+
+{% block extra_css %}
   <link rel="stylesheet" href="{% static 'css/product_detail.css' %}">
-</head>
+{% endblock %}
 
-<body>
-  <div class="product-detail-container">
+{% block content %}
+<div class="product-detail-container">
     <a href="{% url 'index' %}" class="back-link">&larr; Back</a>
 
     {% if product.image %}
@@ -68,6 +69,4 @@
       </ul>
     </div>
   </div>
-</body>
-
-</html>
+{% endblock %}
