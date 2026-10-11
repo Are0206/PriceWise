@@ -6,7 +6,7 @@
   <div class="delete-buttons-div">
     <button class="cancel-button btn-close">Cancel</button>
 
-    <form method="post">
+    <form method="post" action="{% url 'shopping_lists:delete' shopping_list.pk %}">
       {% csrf_token %}
       <button type="submit" class="confirm-delete-button">Delete</button>
     </form>

@@ -33,12 +33,14 @@
 }
 
 .edit-button,
-.share-button{
+.share-button,
+.duplicate-button{
   color: var(--primary-text-color);
   border: 2px solid #eae7e0;
 }
 .edit-button:hover,
-.share-button:hover{
+.share-button:hover,
+.duplicate-button:hover{
   color: #eae7e0;
   border: 2px solid var(--primary-text-color);
   background-color: var(--primary-text-color);

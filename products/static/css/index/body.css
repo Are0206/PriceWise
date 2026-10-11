@@ -125,6 +125,16 @@ body {
 /* =========================================
    FILTER SECTION
    ========================================= */
+.supermarket-button p{
+  color: var(--primary-text-color);
+  position: absolute;
+  left: 20;
+
+  margin: 0;
+  margin-right: 100px;
+  margin-top: -25px;
+}
+
 .filter-form {
   display: flex;
   flex-direction: column;
@@ -140,7 +150,7 @@ body {
   width: 100%;
 }
 
-.filter-field label {
+.filter-field label{
   color: var(--secundary-text-color);
   text-transform: uppercase;
   display: block;
@@ -255,4 +265,19 @@ body {
         grid-template-columns: 1fr;
         padding: 20px;
     }
+}
+
+
+/* Confirmation / error notices shown after an action (e.g. password change) */
+.messages {
+  margin: 16px 30px 0 30px;
+}
+
+.message {
+  margin: 0 0 8px 0;
+  padding: 10px 14px;
+  border-left: 4px solid #1a7f37;
+  background-color: #fff;
+  font-size: 14px;
+  color: var(--primary-text-color);
 }
