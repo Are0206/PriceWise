@@ -31,7 +31,9 @@ class Product(models.Model):
         blank=True,
         null=True
     )
-
+    def get_cheapest_price(self): #RF-32
+        return self.prices.select_related('supermarket').order_by('amount').first()
+    
     def __str__(self):
         return self.name
 
