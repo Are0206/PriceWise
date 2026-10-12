@@ -16,20 +16,20 @@
 <div class="header-div">
     <div class="title-div">
       <h1>{{ shopping_list.name }}</h1>
-      <p class="created-label">Created: {{ shopping_list.created_at }} &middot Last modified: {{shopping_list.updated_at }}</p>
+      <p class="created-label">Creado: {{ shopping_list.created_at }} &middot Ultima modificacion: {{shopping_list.updated_at }}</p>
     </div>
 
     <div class="header-buttons">
       <a href="{% url 'shopping_lists:edit' shopping_list.pk %}"><button class="edit-button">EDIT</button></a>
       <form method="post" action="{% url 'shopping_lists:duplicate' shopping_list.pk %}">
         {% csrf_token %}
-        <button type="submit" class="duplicate-button">DUPLICATE</button>
+        <button type="submit" class="duplicate-button">DUPLICAR</button>
       </form>
       <button id="open-share-card" data-url="{% url 'shopping_lists:share' shopping_list.pk %}" class="share-button">
-        SHARE
+        COMPARTIR
       </button>
       <button id="open-delete-card" data-url="{% url 'shopping_lists:delete' shopping_list.pk %}" class="delete-button">
-        DELETE
+        BORRAR
       </button>
     </div>
   </div>
@@ -38,8 +38,8 @@
     <table>
       <thead>
         <tr>
-          <th>Product</th>
-          <th>Quantity</th>
+          <th>Producto</th>
+          <th>Cantidad</th>
         </tr>
       </thead>
       <tbody>
@@ -50,7 +50,7 @@
         </tr>
         {% empty %}
         <tr>
-          <td colspan="2">This list is empty.</td>
+          <td colspan="2">Esta lista esta vacia.</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -60,16 +60,16 @@
       <div class="savings-text-div">
         {% if best %}
         <p class="supermarket-text">
-          Cheapest in <strong>{{ best.supermarket.name }}</strong>
+          Mas barato en <strong>{{ best.supermarket.name }}</strong>
           {% if not best.complete %}
-          (missing: {% for product in best.missing %}{{ product.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
-          - buy those elsewhere)
+          (Faltan: {% for product in best.missing %}{{ product.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+          - comprar esos en otro lado)
           {% endif %}
         </p>
         {% endif %}
 
         {% if savings %}
-        <p class="estimated-text">Estimated saving vs. the most expensive supermarket with everything on the list</p>
+        <p class="estimated-text">Ahorro estimado vs. el supermercado mas caro</p>
         {% endif %}
       </div>
       <div class="savings-money-div">
@@ -83,7 +83,7 @@
           {% endif %}
         </div>
         <div class="savings-div">
-          <p class="savings-text">Savings</p>
+          <p class="savings-text">Ahorro</p>
           {% if savings %}
           <p class="savings">${{ savings }}</p>
           {% else %} 
@@ -94,7 +94,7 @@
     </div>
   </div>
 
-  <a href="{% url 'index' %}?open_lists=true"><button class="back-button">Back</button></a>
+  <a href="{% url 'index' %}?open_lists=true"><button class="back-button">Volver</button></a>
 
   <!--cards (share, delete)-->
   <div class="card-overlay" id="card-overlay">

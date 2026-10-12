@@ -18,7 +18,7 @@
     {{ form.as_p }}
     <hr>
 
-    <h1 class="products-title">Products</h1>
+    <h1 class="products-title">Productos</h1>
 
     {{ formset.management_form }}
 
@@ -28,7 +28,7 @@
           {{ item_form.id }}
           {{ item_form.product }}
           {{ item_form.quantity }}
-          {{ item_form.DELETE }} <label>Remove</label>
+          {{ item_form.DELETE }} <label>Remover</label>
         </div>
       {% endfor %}
     </div>
@@ -38,14 +38,14 @@
         {{ formset.empty_form.id }}
         {{ formset.empty_form.product }}
         {{ formset.empty_form.quantity }}
-        {{ formset.empty_form.DELETE }} <label>Remove</label>
+        {{ formset.empty_form.DELETE }} <label>Remover</label>
       </div>
     </div>
 
-    <button type="button" id="add-item" class="add-button">+ Add product</button>
+    <button type="button" id="add-item" class="add-button">+ Añadir producto</button>
 
-    <a href="{% url 'index' %}?open_lists=true"><button class="back-button">Back</button></a>
-    <button type="submit" class="save-list-button">Save</button>
+    <a href="{% url 'index' %}?open_lists=true"><button class="back-button">Volver</button></a>
+    <button type="submit" class="save-list-button">Guardar</button>
   </form>
 
 

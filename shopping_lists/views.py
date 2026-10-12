@@ -57,7 +57,7 @@ def edit_shopping_lists(request, pk):
     return render(request, 'shopping_lists/form.html', {
         'form': form,
         'formset': formset,
-        'title': 'Edit shopping list',
+        'title': 'Editar shopping list',
     })
 
 #RF-5: Delete shopping lists

@@ -3,27 +3,27 @@
 .header-div,
 .savings-totals-div,
 .header-buttons,
-.savings-money-div{
+.savings-money-div {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
 
-.title-div{
+.title-div {
   flex: 4;
 }
 
-.header-buttons{
+.header-buttons {
   flex: 1;
   height: 32px;
   margin-right: 20px;
 }
 
 .header-buttons button,
-.back-button{
+.back-button {
   font-weight: 600;
   border-radius: 3px;
-  background:none;
+  background: none;
   margin: 0px 10px;
   padding: 6px 22px;
   vertical-align: top;
@@ -34,20 +34,21 @@
 
 .edit-button,
 .share-button,
-.duplicate-button{
+.duplicate-button {
   color: var(--primary-text-color);
   border: 2px solid #eae7e0;
 }
+
 .edit-button:hover,
 .share-button:hover,
-.duplicate-button:hover{
+.duplicate-button:hover {
   color: #eae7e0;
   border: 2px solid var(--primary-text-color);
   background-color: var(--primary-text-color);
   transition: all, 0.5s;
 }
 
-.back-button{
+.back-button {
   border: none;
   border-radius: 3px;
   padding: 8px 22px;
@@ -56,32 +57,35 @@
   margin-top: 20px;
   transition: all, 0.5s;
 }
-.back-button:hover{
+
+.back-button:hover {
   padding: 9px 20px;
 }
 
-.delete-button{
+.delete-button {
   color: #c8785a;
   border: 2px solid #c8785a;
   transition: all, 0.5s;
 }
-.delete-button:hover{
+
+.delete-button:hover {
   color: white;
   background-color: #c8785a;
 }
 
-.header-div h1{
+.header-div h1 {
   color: var(--primary-text-color);
   margin-top: 0px;
   margin-bottom: 10px;
 }
-.header-div .created-label{
+
+.header-div .created-label {
   color: var(--secundary-text-color);
   margin-bottom: 30px;
 }
 
 
-.content-div{
+.content-div {
   padding: 0px 6px;
   margin-bottom: 30px;
 }
@@ -115,14 +119,16 @@ th {
 /* Alineaciones específicas según el diseño de la tabla */
 th:nth-child(1),
 td:nth-child(1) {
-  text-align: left; /* Producto */
+  text-align: left;
+  /* Producto */
   border-right: none;
 }
 
 th:nth-child(2),
 td:nth-child(2) {
-  text-align: center; /* Cantidad */
-  border-left: none;  
+  text-align: center;
+  /* Cantidad */
+  border-left: none;
   color: var(--secundary-text-color);
 }
 
@@ -135,36 +141,36 @@ td {
 
 /*SAVINGS FOOTER */
 
-.savings-totals-div{
+.savings-totals-div {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgb(241,240,236);
+  background-color: rgb(241, 240, 236);
   padding: 25px 30px;
   margin-top: 24px;
   border-radius: 2px;
 }
 
-.savings-text-div{
+.savings-text-div {
   flex: 5;
 }
 
 .savings-text-div,
-.savings{
+.savings {
   color: #5a7850;
 }
 
-.savings-text-div .supermarket-text{
+.savings-text-div .supermarket-text {
   font-size: 15px;
   font-weight: bold;
 }
 
-.savings-text-div .estimated-text{
+.savings-text-div .estimated-text {
   font-size: 13px;
   font-weight: 300;
 }
 
-.savings-money-div{
+.savings-money-div {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -172,14 +178,46 @@ td {
 }
 
 .totals-text,
-.savings-text{
+.savings-text {
   font-size: 14px;
   font-weight: 500;
-  color:var(--primary-text-color);
+  color: var(--primary-text-color);
 }
 
 .totals,
-.savings{
+.savings {
   font-size: 20px;
   font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .header-div {
+    flex-direction: column;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .header-buttons {
+    justify-content: flex-start;
+  }
+
+  .savings-totals-div {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+    padding: 25px 20px;
+  }
+
+  .savings-text-div {
+    flex: none;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .savings-money-div {
+    flex: none;
+    width: 100%;
+    box-sizing: border-box;
+    justify-content: space-between;
+  }
 }

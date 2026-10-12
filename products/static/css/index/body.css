@@ -1,6 +1,4 @@
 body {
-  padding: 0;
-  padding-top: 120px;
   margin-left: 200px;
 }
 
@@ -44,7 +42,7 @@ body {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   row-gap: 25px;
-  padding: 20px 60px;
+  padding: 20px 0px;
   place-items: center;
 }
 
@@ -81,7 +79,7 @@ body {
   margin-top: 12px;
 }
 
-.view-details-button{
+.view-details-button {
   color: white;
   font-size: 11px;
   border-radius: 2px;
@@ -100,7 +98,7 @@ body {
 }
 
 
-.favorite-button{
+.favorite-button {
   background-color: var(--primary-text-color);
   border: none;
   border-bottom-left-radius: 8px;
@@ -114,7 +112,8 @@ body {
   align-items: center;
   justify-content: center;
 }
-.favorite-button img{
+
+.favorite-button img {
   height: 22px;
   width: 22px;
   object-fit: contain;
@@ -123,7 +122,7 @@ body {
 /* =========================================
    FILTER SECTION
    ========================================= */
-.supermarket-button p{
+.supermarket-button p {
   color: var(--primary-text-color);
   position: absolute;
   left: 20;
@@ -148,7 +147,7 @@ body {
   width: 100%;
 }
 
-.filter-field label{
+.filter-field label {
   color: var(--primary-text-color);
   text-transform: uppercase;
   display: block;
@@ -159,16 +158,16 @@ body {
   height: auto;
 }
 
-.filter-field ul{
+.filter-field ul {
   padding: 0;
   padding-left: 4px;
 }
 
-.filter-field li{
+.filter-field li {
   list-style: none;
 }
 
-.filter-field button{
+.filter-field button {
   width: 100%;
   background: none;
   color: var(--primary-input-color);
@@ -179,12 +178,12 @@ body {
   cursor: pointer;
 }
 
-.filter-field button:hover{
+.filter-field button:hover {
   background-color: var(--background-color);
   border-left: 2px solid var(--savings-green-color);
 }
 
-.filter-field button.selected{
+.filter-field button.selected {
   background-color: var(--savings-green-color);
   color: white;
 }
@@ -206,7 +205,7 @@ body {
 }
 
 .price-range-field,
-.filter-buttons-section{
+.filter-buttons-section {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -214,12 +213,12 @@ body {
   gap: 5px;
 }
 
-.price-range-field input{
+.price-range-field input {
   border: 1.5px solid var(--primary-input-color);
   border-radius: 2px;
 }
 
-.filter-buttons-section button{
+.filter-buttons-section button {
   padding: 6px 22px;
   border-radius: 2px;
   text-transform: uppercase;
@@ -227,13 +226,13 @@ body {
   cursor: pointer;
 }
 
-.filter-apply{
+.filter-apply {
   color: white;
   border-width: 2px;
   border-style: solid;
 }
 
-.filter-clear{
+.filter-clear {
   color: var(--savings-green-color);
   border-width: 1.5px;
   border-style: solid;
@@ -242,29 +241,29 @@ body {
 
 /*MEDIA QUERYS*/
 @media (max-width: 900px) {
-    .products-grid {
-        grid-template-columns: repeat(4, 1fr);
-    }
+  .products-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 @media (max-width: 600px) {
-    .products-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 @media (max-width: 400px) {
-    .products-grid {
-        grid-template-columns: repeat(2, 1fr);
-        padding: 20px 30px;
-    }
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 20px 30px;
+  }
 }
 
 @media (max-width: 200px) {
-    .products-grid {
-        grid-template-columns: 1fr;
-        padding: 20px;
-    }
+  .products-grid {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
 }
 
 
@@ -280,4 +279,27 @@ body {
   background-color: #fff;
   font-size: 14px;
   color: var(--primary-text-color);
+}
+
+
+/*
+MEdia query
+*/
+
+@media (max-width: 900px) {
+  body{
+    padding-left: 0;
+    padding-right: 0;
+    margin: 0;
+  }
+  .filter-section {
+    display: none;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 12px;
+    padding: 20px 0px;
+    place-items: center;
+  }
 }

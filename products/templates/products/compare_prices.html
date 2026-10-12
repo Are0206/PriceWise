@@ -10,16 +10,16 @@
 
 {% block content %}
 <div class="compare-prices-container">
-  <a href="{% url 'products:detail' product.pk %}" class="back-link">&larr; Back to {{ product.name }}</a>
+  <a href="{% url 'products:detail' product.pk %}" class="back-link">&larr; Volver a {{ product.name }}</a>
 
   <h1 class="product-name">{{ product.name }}</h1>
-  <p class="compare-subtitle">Price by supermarket</p>
+  <p class="compare-subtitle">Precio por supermercado</p>
 
   <table class="compare-prices-table">
     <thead>
       <tr>
-        <th>Supermarket</th>
-        <th>Price</th>
+        <th>Supermercado</th>
+        <th>Precio</th>
       </tr>
     </thead>
     <tbody>
@@ -30,7 +30,7 @@
         </tr>
       {% empty %}
         <tr>
-          <td colspan="2">No prices available yet for this product.</td>
+          <td colspan="2">Aun no hay precios disponibles.</td>
         </tr>
       {% endfor %}
     </tbody>

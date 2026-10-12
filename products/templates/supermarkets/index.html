@@ -24,14 +24,14 @@
         <p class="supermarket-name">{{ supermarket.name }}</p>
 
         <a href="{% url 'products:supermarkets_details' supermarket.pk %}">
-            <button class="view-reviews-button">View reviews</button>
+            <button class="view-reviews-button">Ver reseñas</button>
         </a>
       </div>
     </div>
 
     {% empty %}
 
-    <p>No supermarkets available.</p>
+    <p>No hay supermercados disponibles.</p>
 
     {% endfor %}
 
