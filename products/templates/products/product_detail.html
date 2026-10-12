@@ -22,6 +22,12 @@
       <p class="product-description">{{ product.description }}</p>
     {% endif %}
 
+    {% if cheapest_price %}
+    <p>El precio más barato del producto es: <strong style="color: #1a7f37;">${{ cheapest_price.amount }}</strong>. En el supermercado <strong style="color: #1a7f37;">"{{ cheapest_price.supermarket.name }}"</strong>.</p>
+    {% else %}
+    <p>No hay precios disponibles para este producto.</p>
+    {% endif %}
+
     <a href="{% url 'products:compare' product.pk %}" class="compare-link">Compare prices across supermarkets</a>
 
     <h2>Información Nutricional:</h2>

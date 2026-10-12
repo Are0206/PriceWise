@@ -8,12 +8,14 @@ from .services import *
 #RF-9: View product details
 def view_product_details(request, pk):
     product = get_object_or_404(Product, pk=pk)
+    cheapest_price = product.prices.select_related('supermarket').order_by('amount').first() #RF-32
     reviews = product.reviews.select_related('user')
     user_review = None
     if request.user.is_authenticated:
         user_review = reviews.filter(user=request.user).first()
     return render(request, 'products/product_detail.html', {
         'product': product,
+        'cheapest_price': cheapest_price, #RF-32
         'reviews': reviews,
         'user_review': user_review,
     })
