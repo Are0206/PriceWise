@@ -44,3 +44,10 @@ button {
   background-color: var(--savings-green-color);
   border: 1px solid var(--savings-green-color);
 }
+
+@media(max-width: 900px){
+  body{
+    padding: 180px 10px;
+    padding-bottom: 0;
+  }
+}
