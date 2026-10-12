@@ -89,7 +89,14 @@
               <a href="{% url 'products:detail' product.pk %}">
                 <button class="view-details-button">Ver Detalles</button>
               </a>
-              <br>
+              {% with cheapest=product.get_cheapest_price %}
+                {% if cheapest %}
+                <p><strong style="color: #1a7f37;">${{ cheapest.amount }}</strong></p>
+                {% else %}
+                <p>No hay precios disponibles para este producto.</p>
+                {% endif %}
+              {% endwith %}
+
               {% if user.is_authenticated %}
                 <form action="{% url 'products:toggle_favorite' product.id %}" method="post">
                   {% csrf_token %}
