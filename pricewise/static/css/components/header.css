@@ -25,7 +25,7 @@
 
 
 .right-header {
-  flex: 2;
+  flex: 3;
   text-align: center;
 }
 
@@ -93,6 +93,7 @@
 .search-button {
   width: 60px;
   background-color: #1f1f1f;
+  border: 1px solid #1f1f1f;;
   height: 100%;
   margin: 0px;
   display: flex;
@@ -139,7 +140,7 @@
 .user-area a, 
 .user-area button{
   color: var(--primary-input-color);
-  font-size: 14.8px;
+  font-size: 13.8px;
   text-transform: uppercase;
   text-decoration: none;
   background-color: var(--primary-text-color);

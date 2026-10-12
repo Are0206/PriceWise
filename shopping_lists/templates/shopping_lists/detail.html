@@ -1,30 +1,19 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-  <title>{{ shopping_list.name }} - PriceWise</title>
+{% block title %}{{ shopping_list.name }} - PriceWise{% endblock %}
 
-  {%load static%}
+{% load static %}
 
-  <!--Fonts-->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/detail.css' %}">
+<link rel="stylesheet" href="{% static 'css/card-overlay.css' %}">
+<link rel="stylesheet" href="{% static 'css/share.css' %}">
+<link rel="stylesheet" href="{% static 'css/confirm-delete.css' %}">
+<link rel="stylesheet" href="{% static 'css/general.css' %}">
+{% endblock %}
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
-
-  <!--Styles-->
-  <link rel="stylesheet" href="{% static 'css/detail.css' %}">
-  <link rel="stylesheet" href="{% static 'css/card-overlay.css' %}">
-  <link rel="stylesheet" href="{% static 'css/share.css' %}">
-  <link rel="stylesheet" href="{% static 'css/confirm-delete.css' %}">
-  <link rel="stylesheet" href="{% static 'css/general.css' %}">
-</head>
-
-<body>
-  <div class="header-div">
+{% block content %}
+<div class="header-div">
     <div class="title-div">
       <h1>{{ shopping_list.name }}</h1>
       <p class="created-label">Created: {{ shopping_list.created_at }} &middot Last modified: {{shopping_list.updated_at }}</p>
@@ -32,6 +21,10 @@
 
     <div class="header-buttons">
       <a href="{% url 'shopping_lists:edit' shopping_list.pk %}"><button class="edit-button">EDIT</button></a>
+      <form method="post" action="{% url 'shopping_lists:duplicate' shopping_list.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="duplicate-button">DUPLICATE</button>
+      </form>
       <button id="open-share-card" data-url="{% url 'shopping_lists:share' shopping_list.pk %}" class="share-button">
         SHARE
       </button>
@@ -112,7 +105,4 @@
   <!--Scripts-->
   <script src="{% static 'js/display-share-card.js' %}" defer></script>
   <script src="{% static 'js/display-confirm-delete.js' %}" defer></script>
-
-</body>
-
-</html>
+{% endblock %}

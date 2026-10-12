@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
-from .models import Category, Price, Product, Review, Supermarket
+from .models import Category, Price, Product, ProductReview, Supermarket
 
 
 class ProductDetailViewTests(TestCase):
@@ -74,7 +74,7 @@ class ReviewTests(TestCase):
             {'rating': '4'},
         )
         self.assertRedirects(response, f"/accounts/login/?next=/products/{self.product.pk}/review/")
-        self.assertFalse(Review.objects.filter(product=self.product).exists())
+        self.assertFalse(ProductReview.objects.filter(product=self.product).exists())
 
     def test_logged_in_user_can_submit_review(self):
         self.client.login(username='tester', password='testpass123')
@@ -83,7 +83,7 @@ class ReviewTests(TestCase):
             {'rating': '4', 'comment': 'Bueno'},
         )
         self.assertRedirects(response, reverse('products:detail', args=[self.product.pk]))
-        review = Review.objects.get(product=self.product, user=self.user)
+        review = ProductReview.objects.get(product=self.product, user=self.user)
         self.assertEqual(review.rating, 4)
         self.assertEqual(review.comment, 'Bueno')
 
@@ -92,24 +92,24 @@ class ReviewTests(TestCase):
         self.client.post(reverse('products:submit_review', args=[self.product.pk]), {'rating': '4'})
         self.client.post(reverse('products:submit_review', args=[self.product.pk]), {'rating': '5'})
 
-        self.assertEqual(Review.objects.filter(product=self.product, user=self.user).count(), 1)
-        self.assertEqual(Review.objects.get(product=self.product, user=self.user).rating, 5)
+        self.assertEqual(ProductReview.objects.filter(product=self.product, user=self.user).count(), 1)
+        self.assertEqual(ProductReview.objects.get(product=self.product, user=self.user).rating, 5)
 
     def test_owner_can_delete_own_review(self):
-        review = Review.objects.create(user=self.user, product=self.product, rating=3)
+        review = ProductReview.objects.create(user=self.user, product=self.product, rating=3)
         self.client.login(username='tester', password='testpass123')
 
         response = self.client.post(reverse('products:delete_review', args=[review.pk]))
 
         self.assertRedirects(response, reverse('products:detail', args=[self.product.pk]))
-        self.assertFalse(Review.objects.filter(pk=review.pk).exists())
+        self.assertFalse(ProductReview.objects.filter(pk=review.pk).exists())
 
     def test_user_cannot_delete_someone_elses_review(self):
         other_user = User.objects.create_user(username='other', password='testpass123')
-        review = Review.objects.create(user=other_user, product=self.product, rating=3)
+        review = ProductReview.objects.create(user=other_user, product=self.product, rating=3)
         self.client.login(username='tester', password='testpass123')
 
         response = self.client.post(reverse('products:delete_review', args=[review.pk]))
 
         self.assertEqual(response.status_code, 404)
-        self.assertTrue(Review.objects.filter(pk=review.pk).exists())
+        self.assertTrue(ProductReview.objects.filter(pk=review.pk).exists())

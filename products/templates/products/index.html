@@ -1,98 +1,15 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-  <title>PriceWise</title>
+{% block title %}Productos - PriceWise{% endblock %}
 
-  <!--Fonts-->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+{% load static %}
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/index/body.css' %}">
+{% endblock %}
 
-  {% load static %}
-
-  <link rel="stylesheet" href="{% static 'css/index/header.css' %}">
-  <link rel="stylesheet" href="{% static 'css/index/body.css' %}">
-  <link rel="stylesheet" href="{% static 'css/index/general.css' %}">
-  <link rel="stylesheet" href="{% static 'css/index/list_panel.css' %}">
-
-  <script>
-    const shoppingListsUrl = "{% url 'shopping_lists:index' %}";
-  </script>
-
-  <script src="{% static 'js/shopping-list-panel.js' %}" defer>
-  </script>
-</head>
-
-<body>
-
+{% block content %}
   <div class="main-page">
-    <div class="header">
-      <div class="left-header">
-        <a href="{% url 'index' %}">
-          <h1 class="app-icon">PriceWise</h1>
-        </a>
-      </div>
-
-      <div class="middle-header">
-        <form action="{% url 'index' %}" method="get">
-
-          <!-- Carry the active filters so searching does not clear them -->
-          <input type="hidden" name="category" value="{{ category_filter }}">
-          <input type="hidden" name="min_price" value="{{ min_price }}">
-          <input type="hidden" name="max_price" value="{{ max_price }}">
-
-          <div class="search-container">
-
-            <select class="search-by-selector" name="search_by">
-              <option class="search-by-selector" value="product" {% if search_by == 'product' %}selected{% endif %}>
-                Product
-              </option>
-              <option class="search-by-selector" value="supermarket" {% if search_by == 'supermarket' %}selected{% endif %}>
-                Supermarket
-              </option>
-            </select>
-
-            <input type="text" name="q" class="search-bar" placeholder="Search product" value="{{ query }}">
-
-            <button type="submit" class="search-button">
-              <div class="search-button-div">
-                <img class="search-icon" src="{% static 'img/icons/search.png'%}">
-              </div>
-            </button>
-
-          </div>
-        </form>
-
-      </div>
-
-      <div class="right-header">
-
-        <span class="user-area">
-          {% if user.is_authenticated %}
-            <span>Hi, {{ user.username }}</span>
-            <button class="shopping-list-button" id="shoppingListButton" type="button">
-              Shopping Lists
-            </button>
-            <form action="/accounts/logout/" method="post">
-              {% csrf_token %}
-              <button type="submit" class="log-out-button">Log out</button>
-            </form>
-          {% else %}
-          <div class="user-area-div">
-            <a href="{% url 'accounts:login' %}"> Log in</a>
-            <a href="{% url 'accounts:register' %}">Register</a>
-          </div>
-          {% endif %}
-        </span>
-
-      </div>
-    </div>
-
     <div class="page-body">
 
       <div class="filter-section">
@@ -158,7 +75,6 @@
 
       <div class="product-section">
         <div class="products-grid">
-
           {% for product in products %}
 
           <div class="product-card">
@@ -173,7 +89,14 @@
               <a href="{% url 'products:detail' product.pk %}">
                 <button class="view-details-button">View Details</button>
               </a>
-              <br>
+              {% with cheapest=product.get_cheapest_price %}
+                {% if cheapest %}
+                <p><strong style="color: #1a7f37;">${{ cheapest.amount }}</strong></p>
+                {% else %}
+                <p>No hay precios disponibles para este producto.</p>
+                {% endif %}
+              {% endwith %}
+
               {% if user.is_authenticated %}
                 <form action="{% url 'products:toggle_favorite' product.id %}" method="post">
                   {% csrf_token %}
@@ -202,18 +125,4 @@
 
     </div>
   </div>
-
-
-  <div id="shoppingListPanel" class="shopping-list-panel">
-
-    <button id="closeShoppingList" class="close-panel" type="button">
-      ×
-    </button>
-
-    <div id="shoppingListContent"></div>
-
-  </div>
-
-</body>
-
-</html>
+{% endblock %}

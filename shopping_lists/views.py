@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
 from .forms import ShoppingListForm, ShoppingListItemFormSet
-from .models import ShoppingList
+from .models import ShoppingList, ShoppingListItem
 from .services import *
 
 def index(request):
@@ -72,6 +72,33 @@ def delete_shopping_lists(request, pk):
     return render(request, 'shopping_lists/confirm_delete.html', {
         'shopping_list': shopping_list,
     })
+
+#RF-37: Duplicate shopping lists
+def duplicate_shopping_lists(request, pk):
+
+    original = get_object_or_404(ShoppingList, pk=pk)
+
+    if request.method != 'POST':
+        return redirect('shopping_lists:detail', pk=original.pk)
+
+    # ShoppingList uses a UUID primary key whose default is computed when the
+    # instance is built, not when it is saved. Setting pk = None and saving
+    # would leave it empty, so the copy is created explicitly.
+    name_field = ShoppingList._meta.get_field('name')
+    copy_name = f"{original.name} (copy)"[:name_field.max_length]
+
+    with transaction.atomic():
+        copy = ShoppingList.objects.create(name=copy_name)
+        ShoppingListItem.objects.bulk_create([
+            ShoppingListItem(
+                shopping_list=copy,
+                product=item.product,
+                quantity=item.quantity,
+            )
+            for item in original.items.all()
+        ])
+
+    return redirect('shopping_lists:detail', pk=copy.pk)
 
 #RF-15: Share shopping lists 
 def share_shopping_lists(request, pk):

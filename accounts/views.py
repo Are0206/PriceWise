@@ -1,6 +1,8 @@
-from django.contrib.auth import login, logout
+from django.contrib import messages
+from django.contrib.auth import login, logout, update_session_auth_hash
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.shortcuts import redirect, render
-from django.contrib.auth.forms import AuthenticationForm
 
 from .forms import RegisterForm
 
@@ -36,3 +38,23 @@ def logout_view(request):
     if request.method == 'POST':
         logout(request)
     return redirect('/')
+
+
+#RF-36: Change account password
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            user = form.save()
+            # Saving a new password rotates the session hash, which would log
+            # this user out on the next request. This re-signs their session
+            # so only other devices are logged out.
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Your password has been changed.')
+            return redirect('index')
+    else:
+        form = PasswordChangeForm(user=request.user)
+
+    return render(request, 'accounts/change_password.html', {'form': form})
