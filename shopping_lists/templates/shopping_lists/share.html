@@ -3,7 +3,7 @@
  
 <div class="share-wrapper">
   <div class="share-title-div">
-    <p class="share-title">Share Shopping List</p>
+    <p class="share-title">Compartir mi Shopping List</p>
     <p class="shopping-list-name">"{{ shopping_list.name }}"</p>
   </div>
 
@@ -14,15 +14,15 @@
   </div>
   <hr>
   <div class="share-link-generator-div">
-    <p class="link-text">link to {{ share_permission }} shopping list</p>
+    <p class="link-text">link para {{ share_permission }} shopping list</p>
     <div class="share-label-columns">
       <input class="link-input" type="text" id="share-link-input" value="{{ share_url  }}" readonly>
-      <button class="copy-button" id="copy-btn">COPY</button>
+      <button class="copy-button" id="copy-btn">COPIAR</button>
     </div>
   </div>
 
   <div class="share-permissions-div">
-    <p class="link-permissions-text">LINK PERMISSIONS</p>
+    <p class="link-permissions-text">PERMISOS</p>
     <a href="{% url 'shopping_lists:share' shopping_list.pk %}?permission=read"><button class="read-permission-button {% if share_permission == 'read' %}active-permission{% endif %}">Read Only</button></a>
     <a href="{% url 'shopping_lists:share' shopping_list.pk %}?permission=edit"><button class="edit-permission-button {% if share_permission == 'edit' %}active-permission{% endif %}">Edit</button></a>
   </div>

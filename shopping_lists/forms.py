@@ -11,11 +11,11 @@ class ShoppingListForm(forms.ModelForm):
         fields = ['name']
         widgets = {
             'name': forms.TextInput(attrs={
-                'placeholder': 'e.g. Weekly groceries',
+                'placeholder': 'e.j. Mercado Semanal',
                 'class': 'form-input',
             })
         }
-        labels = {'name': 'List name'}
+        labels = {'name': 'Nombre de la lista'}
 
 
 class ShoppingListItemForm(forms.ModelForm):

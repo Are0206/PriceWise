@@ -10,7 +10,7 @@
 
 {% block content %}
 <div class="product-detail-container">
-    <a href="{% url 'index' %}" class="back-link">&larr; Back</a>
+    <a href="{% url 'index' %}" class="back-link">&larr; Volver</a>
 
     {% if product.image %}
       <img class="product-image" src="{{ product.image.url }}" alt="{{ product.name }}">
@@ -22,14 +22,14 @@
       <p class="product-description">{{ product.description }}</p>
     {% endif %}
 
-    <a href="{% url 'products:compare' product.pk %}" class="compare-link">Compare prices across supermarkets</a>
+    <a href="{% url 'products:compare' product.pk %}" class="compare-link">Comparar precios a traves de supermercados</a>
 
     <h2>Información Nutricional:</h2>
     <p class="product-description" style="white-space: pre-line;">{{ product.nutritional_info|default:"Información nutricional no disponible." }}</p>
 
     <!-- RF-30/RF-31: reviews — base funcional, sin estilar todavía -->
     <div class="product-reviews">
-      <h2>Reviews:</h2>
+      <h2>Reseñas:</h2>
 
       {% if user.is_authenticated %}
         <form method="post" action="{% url 'products:submit_review' product.pk %}">
@@ -43,18 +43,18 @@
               {% endfor %}
             </select>
           </label>
-          <textarea name="comment" placeholder="Comment (optional)">{{ user_review.comment|default:'' }}</textarea>
-          <button type="submit">{% if user_review %}Update review{% else %}Submit review{% endif %}</button>
+          <textarea name="comment" placeholder="Comentario (opcional)">{{ user_review.comment|default:'' }}</textarea>
+          <button type="submit">{% if user_review %}Update review{% else %}Publicar reseña{% endif %}</button>
         </form>
 
         {% if user_review %}
           <form method="post" action="{% url 'products:delete_review' user_review.pk %}">
             {% csrf_token %}
-            <button type="submit">Delete my review</button>
+            <button type="submit">Borrar mi reseña</button>
           </form>
         {% endif %}
       {% else %}
-        <p><a href="{% url 'accounts:login' %}">Log in</a> to leave a review.</p>
+        <p><a href="{% url 'accounts:login' %}">Inicia sesion</a> para dejar una reseña.</p>
       {% endif %}
 
       <ul>
@@ -64,7 +64,7 @@
             {% if review.comment %}: {{ review.comment }}{% endif %}
           </li>
         {% empty %}
-          <li>No reviews yet.</li>
+          <li>No hay reseñas aun.</li>
         {% endfor %}
       </ul>
     </div>
