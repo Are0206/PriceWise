@@ -37,6 +37,13 @@
 /* =========================================
    PRICEWISE APPICON (LEFT HEADER)
    ========================================= */
+.pricewise-icon {
+  max-height: 50px;
+  width:100%;
+  object-fit: contain;
+  display: block;
+}
+
 .app-icon {
   font-weight: 600;
   font-size: 30px;
