@@ -2,7 +2,7 @@
 
 {% block title %}{{ product.name }} - PriceWise{% endblock %}
 
-{% load static %}
+{% load static money %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/compare_prices.css' %}">
@@ -26,7 +26,7 @@
       {% for price in prices %}
         <tr {% if forloop.first %}class="cheapest"{% endif %}>
           <td>{{ price.supermarket.name }}</td>
-          <td>${{ price.amount }}</td>
+          <td>${{ price.amount|money }}</td>
         </tr>
       {% empty %}
         <tr>

@@ -45,6 +45,10 @@ class ComparePricesViewTests(TestCase):
         prices = list(response.context['prices'])
         self.assertEqual([p.supermarket.name for p in prices], ['Carulla', 'Jumbo', 'Exito'])
 
+    def test_prices_use_dots_for_thousands(self):
+        response = self.client.get(reverse('products:compare', args=[self.product.pk]))
+        self.assertContains(response, '$2.900,00')
+
     def test_cheapest_supermarket_is_highlighted(self):
         response = self.client.get(reverse('products:compare', args=[self.product.pk]))
         self.assertContains(response, 'class="cheapest"')
@@ -59,7 +63,7 @@ class ComparePricesViewTests(TestCase):
         lonely_product = Product.objects.create(name='Producto sin precios', category=category)
         response = self.client.get(reverse('products:compare', args=[lonely_product.pk]))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'No prices available yet')
+        self.assertContains(response, 'Aun no hay precios disponibles')
 
 
 class ReviewTests(TestCase):
