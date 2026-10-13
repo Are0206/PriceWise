@@ -2,7 +2,7 @@
 
 {% block title %}Productos - PriceWise{% endblock %}
 
-{% load static %}
+{% load static money %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/index/body.css' %}">
@@ -91,7 +91,7 @@
               </a>
               {% with cheapest=product.get_cheapest_price %}
                 {% if cheapest %}
-                <p><strong style="color: #1a7f37;">${{ cheapest.amount }}</strong></p>
+                <p><strong style="color: #1a7f37;">${{ cheapest.amount|money }}</strong></p>
                 {% else %}
                 <p>No hay precios disponibles para este producto.</p>
                 {% endif %}

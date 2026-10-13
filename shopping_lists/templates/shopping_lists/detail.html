@@ -2,7 +2,7 @@
 
 {% block title %}{{ shopping_list.name }} - PriceWise{% endblock %}
 
-{% load static %}
+{% load static money %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/detail.css' %}">
@@ -76,7 +76,7 @@
         <div class="totals-div">
           <p class="totals-text">Total</p>
           {% if best %}
-          <p class="totals">${{ best.total }}</p>
+          <p class="totals">${{ best.total|money }}</p>
           {% if not best.complete %}
           <p>$0</p>
           {% endif %}
@@ -85,7 +85,7 @@
         <div class="savings-div">
           <p class="savings-text">Ahorro</p>
           {% if savings %}
-          <p class="savings">${{ savings }}</p>
+          <p class="savings">${{ savings|money }}</p>
           {% else %} 
           <p>$0</p>
           {% endif %}
