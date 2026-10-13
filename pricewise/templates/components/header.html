@@ -50,6 +50,7 @@
       <button class="shopping-list-button" id="shoppingListButton" type="button">
         Listas
       </button>
+      <a href="{% url 'accounts:change_password' %}">Password</a>
       <form action="/accounts/logout/" method="post">
         {% csrf_token %}
         <button type="submit" class="log-out-button">Cerrar sesion</button>
