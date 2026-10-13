@@ -2,7 +2,7 @@
 
 {% block title %}{{ product.name }} - PriceWise{% endblock %}
 
-{% load static %}
+{% load static money %}
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'css/product_detail.css' %}">
@@ -23,7 +23,7 @@
     {% endif %}
 
     {% if cheapest_price %}
-    <p>El precio más barato del producto es: <strong style="color: #1a7f37;">${{ cheapest_price.amount }}</strong>. En el supermercado <strong style="color: #1a7f37;">"{{ cheapest_price.supermarket.name }}"</strong>.</p>
+    <p>El precio más barato del producto es: <strong style="color: #1a7f37;">${{ cheapest_price.amount|money }}</strong>. En el supermercado <strong style="color: #1a7f37;">"{{ cheapest_price.supermarket.name }}"</strong>.</p>
     {% else %}
     <p>No hay precios disponibles para este producto.</p>
     {% endif %}
