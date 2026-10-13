@@ -2,7 +2,7 @@
 <header class="header">
   <div class="left-header">
     <a href="{% url 'index' %}">
-      <h1 class="app-icon">PriceWise</h1>
+      <img src="{% static 'img/icons/pricewise-icon.png' %}" class="pricewise-icon">
     </a>
   </div>
 
@@ -18,14 +18,14 @@
 
         <select class="search-by-selector" name="search_by">
           <option class="search-by-selector" value="product" {% if search_by == 'product' %}selected{% endif %}>
-            Product
+            Producto
           </option>
           <option class="search-by-selector" value="supermarket" {% if search_by == 'supermarket' %}selected{% endif %}>
-            Supermarket
+            Supermercado
           </option>
         </select>
 
-        <input type="text" name="q" class="search-bar" placeholder="Search product" value="{{ query }}">
+        <input type="text" name="q" class="search-bar" placeholder="Buscar producto" value="{{ query }}">
 
         <button type="submit" class="search-button">
           <div class="search-button-div">
@@ -41,23 +41,24 @@
   <div class="right-header">
     <span class="user-area">
       {% if user.is_authenticated %}
-      <span>Hi, {{ user.username }}</span>
+      <span>Hola, {{ user.username }}</span>
       <button>
         <a href="{% url 'products:supermarkets_index' %}">
-          Supermarkets
+          Supermercados
         </a>
       </button>
       <button class="shopping-list-button" id="shoppingListButton" type="button">
-        Shopping Lists
+        Listas
       </button>
+      <a href="{% url 'accounts:change_password' %}">Password</a>
       <form action="/accounts/logout/" method="post">
         {% csrf_token %}
-        <button type="submit" class="log-out-button">Log out</button>
+        <button type="submit" class="log-out-button">Cerrar sesion</button>
       </form>
       {% else %}
       <div class="user-area-div">
-        <a href="{% url 'accounts:login' %}"> Log in</a>
-        <a href="{% url 'accounts:register' %}">Register</a>
+        <a href="{% url 'accounts:login' %}">Inicar sesion</a>
+        <a href="{% url 'accounts:register' %}">Regristrarse</a>
       </div>
       {% endif %}
     </span>

@@ -2,11 +2,10 @@
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   row-gap: 25px;
-  padding: 20px 70px;
   place-items: center;
 }
 
-.supermarket-card{
+.supermarket-card {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -18,4 +17,14 @@
   align-self: start;
   position: relative;
   transition: transform 1s ease;
+}
+
+
+@media (max-width: 900px) {
+  .supermarkets-grid {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 12px;
+    padding: 20px 0px;
+    place-items: center;
+  }
 }
