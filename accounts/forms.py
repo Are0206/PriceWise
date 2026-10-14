@@ -13,7 +13,7 @@ class RegisterForm(UserCreationForm):
 
     email = forms.EmailField(
         required=True,
-        help_text='Required. Used to recover your account.',
+        help_text='Lo usamos para recuperar tu cuenta.',
     )
 
     class Meta(UserCreationForm.Meta):
@@ -24,5 +24,5 @@ class RegisterForm(UserCreationForm):
 
         email = self.cleaned_data['email']
         if User.objects.filter(email__iexact=email).exists():
-            raise forms.ValidationError('An account with this email already exists.')
+            raise forms.ValidationError('Ya existe una cuenta con este correo.')
         return email
