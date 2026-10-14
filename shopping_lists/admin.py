@@ -9,5 +9,5 @@ class ShoppingListItemInline(admin.TabularInline):
 
 @admin.register(ShoppingList)
 class ShoppingListAdmin(admin.ModelAdmin):
-    list_display = ('name', 'created_at', 'updated_at')
+    list_display = ('name', 'owner', 'created_at', 'updated_at')
     inlines = [ShoppingListItemInline]

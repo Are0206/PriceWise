@@ -16,7 +16,9 @@
       </a>
     </li>
     {% empty %}
-    <li class="empty-state">Aún no tienes listas.</li>
+    <li class="empty-state">
+      {% if user.is_authenticated %}Aún no tienes listas.{% else %}<a href="{% url 'accounts:login' %}" class="text-link">Inicia sesión</a> para crear y ver tus listas.{% endif %}
+    </li>
     {% endfor %}
   </ul>
 

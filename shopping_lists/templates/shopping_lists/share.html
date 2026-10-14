@@ -5,19 +5,12 @@
   </div>
 
   <div class="share-link-generator-div">
-    <label class="field-label" for="share-link-input">
-      {% if share_permission == 'edit' %}Enlace con permiso de edición{% else %}Enlace de solo lectura{% endif %}
-    </label>
+    <label class="field-label" for="share-link-input">Enlace para compartir</label>
     <div class="share-label-columns">
       <input class="link-input" type="text" id="share-link-input" value="{{ share_url }}" readonly>
       <button type="button" class="btn btn--dark" id="copy-btn">Copiar</button>
     </div>
-  </div>
-
-  <div class="share-permissions-div">
-    <p class="field-label">Permisos</p>
-    <a href="{% url 'shopping_lists:share' shopping_list.pk %}?permission=read" class="btn {% if share_permission == 'read' %}btn--dark{% else %}btn--outline{% endif %}">Solo lectura</a>
-    <a href="{% url 'shopping_lists:share' shopping_list.pk %}?permission=edit" class="btn {% if share_permission == 'edit' %}btn--dark{% else %}btn--outline{% endif %}">Puede editar</a>
+    <p class="helptext">Quien tenga el enlace puede ver la lista, pero solo tú puedes cambiarla.</p>
   </div>
 
   <div class="share-footer">
