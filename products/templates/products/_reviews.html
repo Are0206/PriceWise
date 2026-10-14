@@ -33,7 +33,7 @@ Expects: reviews, user_review, submit_url, delete_url (only when user_review exi
       </form>
     {% endif %}
   {% else %}
-    <p class="muted"><a href="{% url 'accounts:login' %}" class="text-link">Inicia sesión</a> para dejar una reseña.</p>
+    <p class="muted"><a href="{% url 'accounts:login' %}?next={{ request.get_full_path|urlencode }}" class="text-link">Inicia sesión</a> para dejar una reseña.</p>
   {% endif %}
 
   <ul class="review-list">

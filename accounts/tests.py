@@ -26,3 +26,18 @@ class AuthPagesTests(TestCase):
     def test_wrong_password_shows_spanish_error(self):
         response = self.client.post(reverse('accounts:login'), {'username': 'nadie', 'password': 'x'})
         self.assertContains(response, 'Por favor')
+
+
+class LoginRedirectTests(TestCase):
+    def setUp(self):
+        User.objects.create_user(username='ana', password='clave-segura-1')
+
+    def test_login_returns_to_the_page_in_next(self):
+        response = self.client.post(reverse('accounts:login'), {
+            'username': 'ana', 'password': 'clave-segura-1', 'next': '/products/supermarkets/'})
+        self.assertRedirects(response, '/products/supermarkets/', fetch_redirect_response=False)
+
+    def test_login_ignores_next_pointing_to_another_site(self):
+        response = self.client.post(reverse('accounts:login'), {
+            'username': 'ana', 'password': 'clave-segura-1', 'next': 'https://evil.example.com/'})
+        self.assertRedirects(response, '/', fetch_redirect_response=False)
