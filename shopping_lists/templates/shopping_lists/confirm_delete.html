@@ -1,14 +1,15 @@
 <div class="delete-wrapper">
-  <h1 class="delete-title">Delete "{{ shopping_list.name }}"?</h1>
-  <p class="delete-text">This list and its {{ shopping_list.items.count}} product{{ shopping_list.items.count|pluralize}} 
-    will be deleted permanently. This can't be undone.</p>
+  <h1 class="delete-title">¿Borrar «{{ shopping_list.name }}»?</h1>
+  {% with count=shopping_list.items.count %}
+  <p class="delete-text">Se borrarán la lista y {{ count }} producto{{ count|pluralize }}. Esta acción no se puede deshacer.</p>
+  {% endwith %}
 
   <div class="delete-buttons-div">
-    <button class="cancel-button btn-close">Cancel</button>
+    <button type="button" class="btn btn--outline btn-close">Cancelar</button>
 
     <form method="post" action="{% url 'shopping_lists:delete' shopping_list.pk %}">
       {% csrf_token %}
-      <button type="submit" class="confirm-delete-button">Delete</button>
+      <button type="submit" class="btn btn--danger">Borrar</button>
     </form>
   </div>
 </div>

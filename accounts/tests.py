@@ -16,3 +16,13 @@ class ChangePasswordTests(TestCase):
         }, follow=True)
         self.assertContains(response, 'Tu contraseña se cambió correctamente.')
         self.assertTrue(response.wsgi_request.user.is_authenticated)
+
+
+class AuthPagesTests(TestCase):
+    def test_login_and_register_pages_are_in_spanish(self):
+        self.assertContains(self.client.get(reverse('accounts:login')), 'Iniciar sesión')
+        self.assertContains(self.client.get(reverse('accounts:register')), 'Crea tu cuenta')
+
+    def test_wrong_password_shows_spanish_error(self):
+        response = self.client.post(reverse('accounts:login'), {'username': 'nadie', 'password': 'x'})
+        self.assertContains(response, 'Por favor')
