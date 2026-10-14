@@ -1,40 +1,64 @@
+/* =========================================
+   DESIGN TOKENS — the only place colors, fonts and radii are defined.
+   Every page stylesheet uses these variables.
+   ========================================= */
 :root{
   --primary-text-color: #1a1a1a;
+  --secondary-text-color: #6b6964;
   --background-color: #FAF8F6;
-  --secundary-text-color: rgb(171,170,168);
-  --default-border-color: rgb(241,240,236);
+  --surface-color: #ffffff;
+  --muted-surface-color: #f1f0ec;
+  --default-border-color: #e4e1da;
   --primary-input-color: #757575;
   --secondary-background-color: #313131;
+  --on-dark-text: #f1f0ec;
+  --on-dark-muted: #b5b3ad;
   --savings-green-color: #1A7F37;
+  --savings-text-color: #4a6741;
+  --danger-color: #a4553a;
+  --error-color: #b42318;
+  --radius: 4px;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 8px 13px rgba(0, 0, 0, 0.15);
+  --serif: "DM Serif Display", serif;
+  --sans: "DM Sans", sans-serif;
 }
 
 body{
   background-color: var(--background-color);
+  color: var(--primary-text-color);
+  font-family: var(--sans);
   padding: 0px 120px;
   padding-top: 120px;
 }
 
-p, a, button, select, 
-input, label{
-  font-family: "DM Sans", sans-serif;
+p, a, button, select,
+input, label, textarea, td, th, li{
+  font-family: var(--sans);
   font-optical-sizing: auto;
   font-style: normal;
 }
 
-h1{
-  font-family: "DM Serif Display", serif;
+h1, h2{
+  font-family: var(--serif);
   font-weight: 400;
   font-style: normal;
   color: var(--primary-text-color);
 }
 
+h2{
+  font-size: 22px;
+  margin: 32px 0 12px;
+}
+
 a {
   text-decoration: none;
+  color: inherit;
 }
 
 hr {
   border: none;
-  border-top: 1px solid var(--primary-input-color);
+  border-top: 1px solid var(--default-border-color);
   width: 100%;
   margin: 0;
   margin-bottom: 5px;
@@ -45,9 +69,236 @@ button {
   border: 1px solid var(--savings-green-color);
 }
 
+:focus-visible {
+  outline: 2px solid var(--savings-green-color);
+  outline-offset: 2px;
+}
+
+/* =========================================
+   BUTTONS
+   ========================================= */
+.btn {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 8px 22px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  background: none;
+  color: var(--primary-text-color);
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.btn--primary {
+  background-color: var(--savings-green-color);
+  border-color: var(--savings-green-color);
+  color: #fff;
+}
+
+.btn--primary:hover {
+  background-color: #156b2e;
+  border-color: #156b2e;
+}
+
+.btn--dark {
+  background-color: var(--primary-text-color);
+  border-color: var(--primary-text-color);
+  color: var(--background-color);
+}
+
+.btn--dark:hover {
+  background-color: var(--secondary-background-color);
+  border-color: var(--secondary-background-color);
+}
+
+.btn--outline {
+  border-color: var(--default-border-color);
+}
+
+.btn--outline:hover {
+  background-color: var(--primary-text-color);
+  border-color: var(--primary-text-color);
+  color: var(--background-color);
+}
+
+.btn--danger {
+  border-color: var(--danger-color);
+  color: var(--danger-color);
+}
+
+.btn--danger:hover {
+  background-color: var(--danger-color);
+  color: #fff;
+}
+
+/* =========================================
+   LAYOUT AND SURFACES
+   ========================================= */
+.page {
+  max-width: 760px;
+  margin: 0 auto 40px;
+}
+
+.page--wide {
+  max-width: 1100px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: var(--secondary-text-color);
+}
+
+.back-link:hover {
+  color: var(--primary-text-color);
+}
+
+.card {
+  background-color: var(--surface-color);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+}
+
+.muted {
+  color: var(--secondary-text-color);
+}
+
+.price {
+  color: var(--savings-green-color);
+  font-weight: 700;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.empty-state {
+  color: var(--secondary-text-color);
+  padding: 16px 0;
+}
+
+/* =========================================
+   TABLES
+   ========================================= */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-weight: 500;
+}
+
+.data-table th,
+.data-table td {
+  border-bottom: 1px solid var(--default-border-color);
+  text-align: left;
+}
+
+.data-table th {
+  background-color: var(--muted-surface-color);
+  color: var(--secondary-text-color);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 8px 20px;
+}
+
+.data-table td {
+  padding: 12px 20px;
+  font-size: 15px;
+}
+
+/* =========================================
+   FORMS
+   ========================================= */
+.field {
+  display: block;
+  margin: 0 0 18px 0;
+}
+
+.field label,
+.field-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--secondary-text-color);
+  margin-bottom: 5px;
+}
+
+.field input,
+.field select,
+.field textarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 12px;
+  font-size: 14px;
+  color: var(--primary-text-color);
+  background-color: var(--surface-color);
+  border: 1px solid var(--default-border-color);
+  border-radius: var(--radius);
+}
+
+.field textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.helptext {
+  display: block;
+  font-size: 12px;
+  color: var(--secondary-text-color);
+  margin-top: 4px;
+}
+
+.errorlist {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 8px 0;
+  color: var(--error-color);
+  font-size: 13px;
+}
+
+/* =========================================
+   MESSAGES (confirmations after an action)
+   ========================================= */
+.messages {
+  list-style: none;
+  max-width: 760px;
+  margin: 0 auto 20px;
+  padding: 0;
+}
+
+.message {
+  padding: 10px 14px;
+  border-left: 4px solid var(--savings-green-color);
+  background-color: var(--surface-color);
+  font-size: 14px;
+}
+
+.message--error {
+  border-left-color: var(--error-color);
+}
+
 @media(max-width: 900px){
   body{
-    padding: 180px 10px;
+    padding: 180px 16px;
     padding-bottom: 0;
   }
 }

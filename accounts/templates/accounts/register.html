@@ -1,71 +1,57 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-  <title>Create account - PriceWise</title>
+{% block title %}Crear cuenta | PriceWise{% endblock %}
 
-  <!--Fonts-->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+{% load static %}
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
 
-  {% load static %}
+{% block content %}
+<div class="card auth-card">
+  <h1>Crea tu cuenta</h1>
+  <p class="auth-subtitle">Compara tu mercado y ahorra en cada compra.</p>
 
-  <link rel="stylesheet" href="{% static 'css/register.css' %}">
-  <link rel="stylesheet" href="{% static 'css/general.css' %}">
-</head>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
 
-<body>
-  <div class="register-container">
-    <h1>PriceWise</h1>
-    <p class="register-text">Create your account</p>
+    <div class="field">
+      <label for="{{ form.username.id_for_label }}">Usuario</label>
+      {{ form.username.errors }}
+      {{ form.username }}
+      <span class="helptext">Hasta 150 caracteres: letras, números y @ . + - _</span>
+    </div>
 
-    <form method="post" class="register-form">
-      {% csrf_token %}
+    <div class="field">
+      <label for="{{ form.email.id_for_label }}">Correo electrónico</label>
+      {{ form.email.errors }}
+      {{ form.email }}
+      <span class="helptext">Lo usamos para recuperar tu cuenta.</span>
+    </div>
 
-      {{ form.non_field_errors }}
+    <div class="field">
+      <label for="{{ form.password1.id_for_label }}">Contraseña</label>
+      {{ form.password1.errors }}
+      {{ form.password1 }}
+      <ul class="password-rules">
+        <li>Al menos 8 caracteres.</li>
+        <li>No puede parecerse a tu usuario ni a tu correo.</li>
+        <li>No puede ser una contraseña común.</li>
+        <li>No puede tener solo números.</li>
+      </ul>
+    </div>
 
-      <p>
-        <label for="{{ form.username.id_for_label }}">Username</label>
-        {{ form.username.errors }}
-        {{ form.username }}
-        <span class="helptext">{{ form.username.help_text }}</span>
-      </p>
+    <div class="field">
+      <label for="{{ form.password2.id_for_label }}">Confirmar contraseña</label>
+      {{ form.password2.errors }}
+      {{ form.password2 }}
+    </div>
 
-      <p>
-        <label for="{{ form.email.id_for_label }}">Email</label>
-        {{ form.email.errors }}
-        {{ form.email }}
-        <span class="helptext">Required. Used to recover your account.</span>
-      </p>
+    <button type="submit" class="btn btn--primary">Crear cuenta</button>
+  </form>
 
-      <p>
-        <label for="{{ form.password1.id_for_label }}">Password</label>
-        {{ form.password1.errors }}
-        {{ form.password1 }}
-        <ul>
-          <li>Your password can't be too similar to your other personal information.</li>
-          <li>Your password must contain at least 8 characters.</li>
-          <li>Your password can't be a commonly used password.</li>
-          <li>Your password can't be entirely numeric.</li>
-        </ul>
-      </p>
-
-      <p>
-        <label for="{{ form.password2.id_for_label }}">Confirm password</label>
-        {{ form.password2.errors }}
-        {{ form.password2 }}
-        <span class="helptext">Enter the same password as before, for verification.</span>
-      </p>
-
-      <button type="submit">Create account</button>
-    </form>
-
-    <a href="/" class="back-link">Back to PriceWise</a>
-  </div>
-</body>
-</html>
+  <p class="auth-links">¿Ya tienes cuenta? <a href="{% url 'accounts:login' %}">Inicia sesión</a></p>
+</div>
+{% endblock %}

@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
           linkInput.select();
           linkInput.setSelectionRange(0, 99999);
           navigator.clipboard.writeText(linkInput.value);
+          copyBtn.textContent = '¡Copiado!';
         }
       }
     });

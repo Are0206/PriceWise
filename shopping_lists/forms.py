@@ -11,7 +11,7 @@ class ShoppingListForm(forms.ModelForm):
         fields = ['name']
         widgets = {
             'name': forms.TextInput(attrs={
-                'placeholder': 'e.j. Mercado Semanal',
+                'placeholder': 'Ej.: Mercado de la semana',
                 'class': 'form-input',
             })
         }
@@ -23,6 +23,7 @@ class ShoppingListItemForm(forms.ModelForm):
     class Meta:
         model = ShoppingListItem
         fields = ['product', 'quantity']
+        labels = {'product': 'Producto', 'quantity': 'Cantidad'}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -1,48 +1,37 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Log in - PriceWise</title>
+{% extends "base.html" %}
 
-  <!--Fonts-->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+{% block title %}Iniciar sesión | PriceWise{% endblock %}
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+{% load static %}
 
-  {% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
 
-  <link rel="stylesheet" href="{% static 'css/login.css' %}">
-  <link rel="stylesheet" href="{% static 'css/general.css' %}">
+{% block content %}
+<div class="card auth-card">
+  <h1>Iniciar sesión</h1>
+  <p class="auth-subtitle">Entra para guardar favoritos y dejar reseñas.</p>
 
-</head>
-<body>
-  <div class="login-container">
-    <h1>PriceWise</h1>
-    <p class="log-in-text">Log into your accout</p>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
 
-    <form method="post" class="login-form">
-      {% csrf_token %}
-      {{ form.non_field_errors }}
+    <div class="field">
+      <label for="{{ form.username.id_for_label }}">Usuario</label>
+      {{ form.username.errors }}
+      {{ form.username }}
+    </div>
 
-      <p>
-        <label for="{{ form.username.id_for_label }}">Username</label>
-        {{ form.username.errors }}
-        {{ form.username }}
-      </p>
+    <div class="field">
+      <label for="{{ form.password.id_for_label }}">Contraseña</label>
+      {{ form.password.errors }}
+      {{ form.password }}
+    </div>
 
-      <p>
-        <label for="{{ form.password.id_for_label }}">Password</label>
-        {{ form.password.errors }}
-        {{ form.password }}
-      </p>
+    <button type="submit" class="btn btn--primary">Iniciar sesión</button>
+  </form>
 
-      <button type="submit">Log in</button>
-    </form>
-
-    <a href="/" class="back-link">Back to PriceWise</a>
-  </div>
-</body>
-</html>
+  <p class="auth-links">¿No tienes cuenta? <a href="{% url 'accounts:register' %}">Regístrate</a></p>
+</div>
+{% endblock %}
