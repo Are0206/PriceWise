@@ -6,29 +6,39 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/form.css' %}">
-<link rel="stylesheet" href="{% static 'css/general.css' %}">
 {% endblock %}
 
 {% block content %}
+<div class="page">
 <h1 class="edit-title">{{ title }}</h1>
 
-  <form method="post">
+  <form method="post" class="card list-form">
     {% csrf_token %}
 
-    {{ form.as_p }}
+    {% for field in form %}
+    <div class="field">
+      {{ field.label_tag }}
+      {{ field.errors }}
+      {{ field }}
+    </div>
+    {% endfor %}
     <hr>
 
-    <h1 class="products-title">Productos</h1>
+    <h2 class="products-title">Productos</h2>
+    {{ formset.non_form_errors }}
 
     {{ formset.management_form }}
 
     <div id="items-container" class="products-div">
       {% for item_form in formset %}
-        <div class="item-form" class="form-div">
+        <div class="item-form">
           {{ item_form.id }}
+          {{ item_form.product.errors }}
+          <label class="visually-hidden" for="{{ item_form.product.id_for_label }}">Producto</label>
           {{ item_form.product }}
+          <label class="visually-hidden" for="{{ item_form.quantity.id_for_label }}">Cantidad</label>
           {{ item_form.quantity }}
-          {{ item_form.DELETE }} <label>Remover</label>
+          <label class="remove-label">{{ item_form.DELETE }} Quitar</label>
         </div>
       {% endfor %}
     </div>
@@ -36,17 +46,22 @@
     <div id="empty-form-template" style="display: none;">
       <div class="item-form">
         {{ formset.empty_form.id }}
+        <label class="visually-hidden" for="{{ formset.empty_form.product.id_for_label }}">Producto</label>
         {{ formset.empty_form.product }}
+        <label class="visually-hidden" for="{{ formset.empty_form.quantity.id_for_label }}">Cantidad</label>
         {{ formset.empty_form.quantity }}
-        {{ formset.empty_form.DELETE }} <label>Remover</label>
+        <label class="remove-label">{{ formset.empty_form.DELETE }} Quitar</label>
       </div>
     </div>
 
-    <button type="button" id="add-item" class="add-button">+ Añadir producto</button>
+    <button type="button" id="add-item" class="add-button">+ Agregar producto</button>
 
-    <a href="{% url 'index' %}?open_lists=true"><button class="back-button">Volver</button></a>
-    <button type="submit" class="save-list-button">Guardar</button>
+    <div class="form-actions">
+      <a href="{% url 'index' %}?open_lists=true" class="btn btn--outline">Cancelar</a>
+      <button type="submit" class="btn btn--primary">Guardar lista</button>
+    </div>
   </form>
+</div>
 
 
   <script>

@@ -44,7 +44,7 @@ async function openShoppingListPanel() {
         console.error(error);
 
         shoppingListContent.innerHTML =
-            "<p>Error loading shopping lists.</p>";
+            "<p class=\"empty-state\">No se pudieron cargar tus listas. Intenta de nuevo.</p>";
     }
 }
 

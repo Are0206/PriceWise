@@ -1,42 +1,23 @@
 <div class="shopping-list-panel-content">
 
   <div class="shopping-list-header">
-
-    <h1>Shopping Lists</h1>
-
-    <a href="{% url 'shopping_lists:create' %}">
-      + Create list
-    </a>
-
+    <h1>Mis listas</h1>
+    <a href="{% url 'shopping_lists:create' %}">+ Crear lista</a>
   </div>
 
-
   <ul class="shopping-list-items">
-
     {% for shopping_list in shopping_lists %}
-
-    <a href="{% url 'shopping_lists:detail' shopping_list.pk %}">
-      <li class="shopping-list-item">
-
-
-        {{ shopping_list.name }}
-
-
-        <span>
-          ({{ shopping_list.items.count }} products)
-        </span>
-
-      </li>
-    </a>
-
-    {% empty %}
-
     <li>
-      No lists yet.
+      <a href="{% url 'shopping_lists:detail' shopping_list.pk %}" class="shopping-list-item">
+        {{ shopping_list.name }}
+        {% with count=shopping_list.items.count %}
+        <span>{{ count }} producto{{ count|pluralize }}</span>
+        {% endwith %}
+      </a>
     </li>
-
+    {% empty %}
+    <li class="empty-state">Aún no tienes listas.</li>
     {% endfor %}
-
   </ul>
 
 </div>

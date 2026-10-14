@@ -33,7 +33,7 @@ def create_shopping_lists(request):
     return render(request, 'shopping_lists/form.html', {
         'form': form,
         'formset': formset,
-        'title': 'Create shopping list',
+        'title': 'Crear lista',
     })
 
 #RF-4: Edit shopping lists
@@ -57,7 +57,7 @@ def edit_shopping_lists(request, pk):
     return render(request, 'shopping_lists/form.html', {
         'form': form,
         'formset': formset,
-        'title': 'Editar shopping list',
+        'title': 'Editar lista',
     })
 
 #RF-5: Delete shopping lists
@@ -85,7 +85,7 @@ def duplicate_shopping_lists(request, pk):
     # instance is built, not when it is saved. Setting pk = None and saving
     # would leave it empty, so the copy is created explicitly.
     name_field = ShoppingList._meta.get_field('name')
-    copy_name = f"{original.name} (copy)"[:name_field.max_length]
+    copy_name = f"{original.name} (copia)"[:name_field.max_length]
 
     with transaction.atomic():
         copy = ShoppingList.objects.create(name=copy_name)

@@ -1,0 +1,48 @@
+/* Reviews block shared by product and supermarket detail pages */
+.review-form {
+  margin-bottom: 12px;
+}
+
+.review-actions,
+.review-delete {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.review-delete {
+  margin-bottom: 20px;
+}
+
+.text-link {
+  color: var(--savings-green-color);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.review-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.review-item {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--default-border-color);
+}
+
+.review-meta {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  margin: 0;
+}
+
+.review-rating {
+  color: var(--savings-green-color);
+  font-weight: 700;
+}
+
+.review-comment {
+  margin: 6px 0 0;
+  line-height: 1.5;
+}
