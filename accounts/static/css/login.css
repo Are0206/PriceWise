@@ -19,7 +19,7 @@
   text-align: center;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: var(--secundary-text-color);
+  color: var(--secondary-text-color);
   margin: 0;
   margin-bottom: 24px;
 }
@@ -35,7 +35,7 @@
   font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: var(--secundary-text-color);
+  color: var(--secondary-text-color);
   margin-bottom: 5px;
 }
 
@@ -47,7 +47,7 @@
   font-size: 14px;
   color: #000;
   background-color: white;
-  border: 1px solid var(--secundary-text-color);
+  border: 1px solid var(--secondary-text-color);
   border-radius: 4px;
 }
 

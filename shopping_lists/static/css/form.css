@@ -30,12 +30,12 @@ input[type="number"]{
 }
 
 input[type="checkbox"]{
-  accent-color: var(--primary-input-color);
+  accent-color: var(--savings-green-color);
 }
 
 .add-button{
   display: block;
-  color: var(--secundary-text-color);
+  color: var(--secondary-text-color);
   margin-top: 7px;
   margin-bottom: 20px;
   background: none;

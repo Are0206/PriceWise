@@ -52,7 +52,7 @@ def change_password(request):
             # this user out on the next request. This re-signs their session
             # so only other devices are logged out.
             update_session_auth_hash(request, user)
-            messages.success(request, 'Your password has been changed.')
+            messages.success(request, 'Tu contraseña se cambió correctamente.')
             return redirect('index')
     else:
         form = PasswordChangeForm(user=request.user)

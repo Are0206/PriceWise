@@ -1,11 +1,4 @@
-:root{
-  --primary-text-color: #1a1a1a;
-  --background-color: #fbf9f5;
-  --secundary-text-color: rgb(171,170,168);
-  --default-border-color: rgb(241,240,236);
-  --primary-input-color: rgb(241, 237, 231);
-}
-
+/* Tokens live in pricewise/static/css/base.css */
 p, a, button, select, 
 input, label{
   font-family: "DM Sans", sans-serif;

@@ -9,11 +9,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
 
     <!-- css -->
     <link rel="stylesheet" href="{% static 'css/components/header.css' %}">
@@ -26,12 +22,20 @@
     {% include "components/header.html" %}
 
     <main>
+        {% if messages %}
+        <ul class="messages" role="status">
+          {% for message in messages %}
+          <li class="message{% if message.tags == 'error' %} message--error{% endif %}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+
         {% block content %}
         {% endblock %}
     </main>
 
     <div id="shoppingListPanel" class="shopping-list-panel">
-      <button id="closeShoppingList" class="close-panel" type="button">
+      <button id="closeShoppingList" class="close-panel" type="button" aria-label="Cerrar listas">
         ×
       </button>
       <div id="shoppingListContent"></div>

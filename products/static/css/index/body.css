@@ -267,21 +267,6 @@ body {
 }
 
 
-/* Confirmation / error notices shown after an action (e.g. password change) */
-.messages {
-  margin: 16px 30px 0 30px;
-}
-
-.message {
-  margin: 0 0 8px 0;
-  padding: 10px 14px;
-  border-left: 4px solid #1a7f37;
-  background-color: #fff;
-  font-size: 14px;
-  color: var(--primary-text-color);
-}
-
-
 /*
 MEdia query
 */

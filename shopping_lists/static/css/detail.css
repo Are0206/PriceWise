@@ -80,7 +80,7 @@
 }
 
 .header-div .created-label {
-  color: var(--secundary-text-color);
+  color: var(--secondary-text-color);
   margin-bottom: 30px;
 }
 
@@ -108,7 +108,7 @@ td {
 
 th {
   background-color: rgb(244, 243, 238);
-  color: var(--secundary-text-color);
+  color: var(--secondary-text-color);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.05em;
@@ -129,7 +129,7 @@ td:nth-child(2) {
   text-align: center;
   /* Cantidad */
   border-left: none;
-  color: var(--secundary-text-color);
+  color: var(--secondary-text-color);
 }
 
 

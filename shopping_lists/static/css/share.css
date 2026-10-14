@@ -65,7 +65,7 @@
   border-radius: 2px;
   padding: 8px 15px;
   color: rgb(171,170,168);
-  background-color: var(--primary-input-color);
+  background-color: var(--muted-surface-color);
 }
 
 .copy-button,
