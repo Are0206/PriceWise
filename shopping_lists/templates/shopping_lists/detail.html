@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ shopping_list.name }} - PriceWise{% endblock %}
+{% block title %}{{ shopping_list.name }} | PriceWise{% endblock %}
 
 {% load static money %}
 
@@ -9,37 +9,35 @@
 <link rel="stylesheet" href="{% static 'css/card-overlay.css' %}">
 <link rel="stylesheet" href="{% static 'css/share.css' %}">
 <link rel="stylesheet" href="{% static 'css/confirm-delete.css' %}">
-<link rel="stylesheet" href="{% static 'css/general.css' %}">
 {% endblock %}
 
 {% block content %}
+<div class="page page--wide">
 <div class="header-div">
     <div class="title-div">
       <h1>{{ shopping_list.name }}</h1>
-      <p class="created-label">Creado: {{ shopping_list.created_at }} &middot Ultima modificacion: {{shopping_list.updated_at }}</p>
+      <p class="created-label">Creada el {{ shopping_list.created_at|date:"j \d\e F \d\e Y"|lower }} &middot; Última modificación: {{ shopping_list.updated_at|date:"j \d\e F, g:i a"|lower }}</p>
     </div>
 
+    {% if is_owner %}
     <div class="header-buttons">
-      <a href="{% url 'shopping_lists:edit' shopping_list.pk %}"><button class="edit-button">EDIT</button></a>
+      <a href="{% url 'shopping_lists:edit' shopping_list.pk %}" class="btn btn--outline">Editar</a>
       <form method="post" action="{% url 'shopping_lists:duplicate' shopping_list.pk %}">
         {% csrf_token %}
-        <button type="submit" class="duplicate-button">DUPLICAR</button>
+        <button type="submit" class="btn btn--outline">Duplicar</button>
       </form>
-      <button id="open-share-card" data-url="{% url 'shopping_lists:share' shopping_list.pk %}" class="share-button">
-        COMPARTIR
-      </button>
-      <button id="open-delete-card" data-url="{% url 'shopping_lists:delete' shopping_list.pk %}" class="delete-button">
-        BORRAR
-      </button>
+      <button type="button" id="open-share-card" data-url="{% url 'shopping_lists:share' shopping_list.pk %}" class="btn btn--outline">Compartir</button>
+      <button type="button" id="open-delete-card" data-url="{% url 'shopping_lists:delete' shopping_list.pk %}" class="btn btn--danger">Borrar</button>
     </div>
+    {% endif %}
   </div>
 
   <div class="content-div">
-    <table>
+    <table class="data-table">
       <thead>
         <tr>
-          <th>Producto</th>
-          <th>Cantidad</th>
+          <th scope="col">Producto</th>
+          <th scope="col">Cantidad</th>
         </tr>
       </thead>
       <tbody>
@@ -50,7 +48,7 @@
         </tr>
         {% empty %}
         <tr>
-          <td colspan="2">Esta lista esta vacia.</td>
+          <td colspan="2" class="empty-state">Esta lista está vacía.</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -60,16 +58,15 @@
       <div class="savings-text-div">
         {% if best %}
         <p class="supermarket-text">
-          Mas barato en <strong>{{ best.supermarket.name }}</strong>
+          Más barato en <strong>{{ best.supermarket.name }}</strong>
           {% if not best.complete %}
-          (Faltan: {% for product in best.missing %}{{ product.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
-          - comprar esos en otro lado)
+          (no tiene: {% for product in best.missing %}{{ product.name }}{% if not forloop.last %}, {% endif %}{% endfor %}; cómpralos en otro supermercado)
           {% endif %}
         </p>
         {% endif %}
 
         {% if savings %}
-        <p class="estimated-text">Ahorro estimado vs. el supermercado mas caro</p>
+        <p class="estimated-text">Ahorro estimado frente al supermercado más caro.</p>
         {% endif %}
       </div>
       <div class="savings-money-div">
@@ -77,24 +74,28 @@
           <p class="totals-text">Total</p>
           {% if best %}
           <p class="totals">${{ best.total|money }}</p>
-          {% if not best.complete %}
-          <p>$0</p>
-          {% endif %}
+          {% else %}
+          <p class="totals">$0</p>
           {% endif %}
         </div>
         <div class="savings-div">
           <p class="savings-text">Ahorro</p>
           {% if savings %}
           <p class="savings">${{ savings|money }}</p>
-          {% else %} 
-          <p>$0</p>
+          {% else %}
+          <p class="savings">$0</p>
           {% endif %}
         </div>
       </div>
     </div>
   </div>
 
-  <a href="{% url 'index' %}?open_lists=true"><button class="back-button">Volver</button></a>
+  {% if is_owner %}
+  <a href="{% url 'index' %}?open_lists=true" class="btn btn--dark back-button">Volver a mis listas</a>
+  {% else %}
+  <a href="{% url 'index' %}" class="btn btn--dark back-button">Ir a PriceWise</a>
+  {% endif %}
+</div>
 
   <!--cards (share, delete)-->
   <div class="card-overlay" id="card-overlay">

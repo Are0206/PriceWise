@@ -11,8 +11,7 @@
     width: 450px;
     height: 100vh;
 
-    background-color: white;
-    box-shadow: 10px 10px 10px 10px rgba(0, 0, 0, 1);
+    background-color: var(--background-color);
 
     z-index: 1000;
 
@@ -87,7 +86,7 @@
 
 .shopping-list-header a {
     font-size: 14px;
-    color: var(--secundary-text-color);
+    color: var(--on-dark-muted);
     top: 0;
 }
 
@@ -116,20 +115,19 @@
 
     padding: 15px 5px;
 
-    border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid var(--default-border-color);
 }
 
 .shopping-list-item {
     text-decoration: none;
-    color: black;
+    color: var(--primary-text-color);
     font-size: 16px;
-    transition: background-color, 0.7s;
-    transition: transform, 0.7s;
+    transition: background-color 0.2s, transform 0.2s;
 }
 
 .shopping-list-item span {
     font-size: 14px;
-    color: #777;
+    color: var(--secondary-text-color);
 }
 
 
@@ -138,7 +136,7 @@
    ========================================= */
 
 .shopping-list-item:hover {
-    background-color: rgba(182, 182, 182, 0.3);
+    background-color: var(--muted-surface-color);
     transform: translateY(-1px);
 }
 
@@ -147,8 +145,8 @@
    MENSAJE CUANDO NO HAY LISTAS
    ========================================= */
 
-.shopping-list-items li:not(.shopping-list-item) {
-    color: #777;
+.shopping-list-items .empty-state {
+    color: var(--secondary-text-color);
 
     padding: 20px 5px;
 }

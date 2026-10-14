@@ -1,30 +1,19 @@
-{% load static %}
- <link rel="stylesheet" href="{% static 'css/share.css' %}">
- 
 <div class="share-wrapper">
   <div class="share-title-div">
-    <p class="share-title">Compartir mi Shopping List</p>
-    <p class="shopping-list-name">"{{ shopping_list.name }}"</p>
+    <h1 class="share-title">Compartir lista</h1>
+    <p class="shopping-list-name">«{{ shopping_list.name }}»</p>
   </div>
 
-  <div class="share-type-div">
-    <div class="share-type-columns">
-      <button class="link-type-button">LINK</button>
-    </div>
-  </div>
-  <hr>
   <div class="share-link-generator-div">
-    <p class="link-text">link para {{ share_permission }} shopping list</p>
+    <label class="field-label" for="share-link-input">Enlace para compartir</label>
     <div class="share-label-columns">
-      <input class="link-input" type="text" id="share-link-input" value="{{ share_url  }}" readonly>
-      <button class="copy-button" id="copy-btn">COPIAR</button>
+      <input class="link-input" type="text" id="share-link-input" value="{{ share_url }}" readonly>
+      <button type="button" class="btn btn--dark" id="copy-btn">Copiar</button>
     </div>
+    <p class="helptext">Quien tenga el enlace puede ver la lista, pero solo tú puedes cambiarla.</p>
   </div>
 
-  <div class="share-permissions-div">
-    <p class="link-permissions-text">PERMISOS</p>
-    <a href="{% url 'shopping_lists:share' shopping_list.pk %}?permission=read"><button class="read-permission-button {% if share_permission == 'read' %}active-permission{% endif %}">Read Only</button></a>
-    <a href="{% url 'shopping_lists:share' shopping_list.pk %}?permission=edit"><button class="edit-permission-button {% if share_permission == 'edit' %}active-permission{% endif %}">Edit</button></a>
+  <div class="share-footer">
+    <button type="button" class="btn btn--outline btn-close">Cerrar</button>
   </div>
-  <hr>
 </div>
