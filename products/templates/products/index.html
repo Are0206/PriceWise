@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Productos - PriceWise{% endblock %}
+{% block title %}Productos | PriceWise{% endblock %}
 
 {% load static money %}
 
@@ -20,8 +20,8 @@
           <input type="hidden" name="search_by" value="{{ search_by }}">
 
           <div class="filter-field">
-            <label for="category">Categorias</label>
-            <ul id="category" name="category">
+            <p class="field-label">Categorías</p>
+            <ul>
               {% for category in categories %}
               <li>
                 <button type="submit" name="category" value="{{ category.slug }}" class="{% if category_filter == category.slug %}selected{% endif %}" >
@@ -33,16 +33,16 @@
           </div>
           <hr>
           <div class="filter-field">
-            <label for="sort">Ordenar por precio</label>
-            <ul id="sort" name="sort">
+            <p class="field-label">Ordenar por precio</p>
+            <ul>
               <li>
                 <button type="submit" name="sort" value="price_asc" class="{% if sort == 'price_asc' %}selected{% endif %}">
-                  Precio &uarr;
+                  Menor precio
                 </button>
               </li>
               <li>
                 <button type="submit" name="sort" value="price_desc" class="{% if sort == 'price_desc' %}selected{% endif %}">
-                  Precio &darr;
+                  Mayor precio
                 </button>
               </li>
             </ul>
@@ -51,23 +51,23 @@
           <div class="filter-field">
             <div class="price-range-field">
               <div class="filter-field">
-                <label for="min_price">Precio minimo</label>
+                <label for="min_price">Precio mínimo</label>
                 <input type="number" id="min_price" name="min_price" min="0" step="any"
                   placeholder="0" value="{{ min_price }}">
               </div>
 
               <div class="filter-field">
-                  <label for="max_price">Precio maximo</label>
+                  <label for="max_price">Precio máximo</label>
                   <input type="number" id="max_price" name="max_price" min="0" step="any"
-                    placeholder="Any" value="{{ max_price }}">
+                    placeholder="Sin límite" value="{{ max_price }}">
               </div>
 
             </div>
           </div>
 
           <div class="filter-buttons-section">
-            <button type="submit" class="filter-apply">Aplicar</button>
-            <a href="{% url 'index' %}"><button class="filter-clear">Limpiar</button></a>
+            <button type="submit" class="btn btn--primary">Aplicar</button>
+            <a href="{% url 'index' %}" class="btn btn--outline">Limpiar</a>
           </div>
 
         </form>
@@ -86,14 +86,12 @@
             <div class="product-details">
               <p class="product-name">{{ product.name }}</p>
 
-              <a href="{% url 'products:detail' product.pk %}">
-                <button class="view-details-button">Ver Detalles</button>
-              </a>
+              <a href="{% url 'products:detail' product.pk %}" class="btn btn--primary view-details-button">Ver detalles</a>
               {% with cheapest=product.get_cheapest_price %}
                 {% if cheapest %}
-                <p><strong style="color: #1a7f37;">${{ cheapest.amount|money }}</strong></p>
+                <p class="price">${{ cheapest.amount|money }}</p>
                 {% else %}
-                <p>No hay precios disponibles para este producto.</p>
+                <p class="muted">Sin precios disponibles.</p>
                 {% endif %}
               {% endwith %}
 
@@ -101,12 +99,12 @@
                 <form action="{% url 'products:toggle_favorite' product.id %}" method="post">
                   {% csrf_token %}
                   {% if product.id in user_favorite_ids %}
-                    <button type="submit" class="favorite-button">
-                      <img src="{% static 'img/icons/favorite-selected.png' %}">
+                    <button type="submit" class="favorite-button" aria-label="Quitar de favoritos">
+                      <img src="{% static 'img/icons/favorite-selected.png' %}" alt="">
                     </button>
                   {% else %}
-                    <button type="submit" class ="favorite-button">
-                      <img src="{% static 'img/icons/favorite-unselected.png' %}">
+                    <button type="submit" class="favorite-button" aria-label="Agregar a favoritos">
+                      <img src="{% static 'img/icons/favorite-unselected.png' %}" alt="">
                     </button>
                   {% endif %}
                 </form>
@@ -116,7 +114,7 @@
 
           {% empty %}
 
-          <p>No hay productos disponibles</p>
+          <p class="empty-state">No hay productos que coincidan con tu búsqueda.</p>
 
           {% endfor %}
 

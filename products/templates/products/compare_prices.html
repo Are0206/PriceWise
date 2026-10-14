@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ product.name }} - PriceWise{% endblock %}
+{% block title %}Comparar precios: {{ product.name }} | PriceWise{% endblock %}
 
 {% load static money %}
 
@@ -9,31 +9,33 @@
 {% endblock %}
 
 {% block content %}
-<div class="compare-prices-container">
+<div class="page">
   <a href="{% url 'products:detail' product.pk %}" class="back-link">&larr; Volver a {{ product.name }}</a>
 
-  <h1 class="product-name">{{ product.name }}</h1>
-  <p class="compare-subtitle">Precio por supermercado</p>
+  <h1>{{ product.name }}</h1>
+  <p class="muted">Precio por supermercado, del más barato al más caro.</p>
 
-  <table class="compare-prices-table">
-    <thead>
-      <tr>
-        <th>Supermercado</th>
-        <th>Precio</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for price in prices %}
-        <tr {% if forloop.first %}class="cheapest"{% endif %}>
-          <td>{{ price.supermarket.name }}</td>
-          <td>${{ price.amount|money }}</td>
-        </tr>
-      {% empty %}
+  <div class="card table-card">
+    <table class="data-table compare-prices-table">
+      <thead>
         <tr>
-          <td colspan="2">Aun no hay precios disponibles.</td>
+          <th scope="col">Supermercado</th>
+          <th scope="col">Precio</th>
         </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        {% for price in prices %}
+          <tr {% if forloop.first %}class="cheapest"{% endif %}>
+            <td>{{ price.supermarket.name }}{% if forloop.first %} <span class="badge">Más barato</span>{% endif %}</td>
+            <td>${{ price.amount|money }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="2" class="empty-state">Aún no hay precios disponibles.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 {% endblock %}

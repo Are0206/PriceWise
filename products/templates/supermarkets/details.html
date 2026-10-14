@@ -1,57 +1,21 @@
 {% extends "base.html" %}
 
-{% block title %}Productos | PriceWise{% endblock %}
+{% block title %}{{ supermarket.name }} | PriceWise{% endblock %}
 
 {% load static %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/reviews.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="supermarket-detail-container">
-    <a href="{% url 'products:supermarkets_index' %}" class="back-link">&larr; Back</a>
+<div class="page">
+  <a href="{% url 'products:supermarkets_index' %}" class="back-link">&larr; Volver a supermercados</a>
 
-    <h1 class="supermarket-name">{{ supermarket.name }}</h1>
+  <h1>{{ supermarket.name }}</h1>
 
-  <div class="supermarket-reviews">
-    <h2>Reseñas</h2>
-
-    {% if user.is_authenticated %}
-      <form method="post" action="{% url 'products:submit_supermarket_review' supermarket.pk %}">
-        {% csrf_token %}
-        <label>
-          Rating
-          <select name="rating" required>
-            <option value="">--</option>
-            {% for n in "12345" %}
-              <option value="{{ n }}" {% if user_review.rating == n|add:0 %}selected{% endif %}>{{ n }}</option>
-            {% endfor %}
-          </select>
-        </label>
-        <textarea name="comment" placeholder="Comentario (opcional)">{{ user_review.comment|default:'' }}</textarea>
-        <button type="submit">{% if user_review %}Actualizar reseña{% else %}Publicar reseña{% endif %}</button>
-      </form>
-
-      {% if user_review %}
-        <form method="post" action="{% url 'products:delete_supermarket_review' user_review.pk %}">
-          {% csrf_token %}
-          <button type="submit">Borrar mi reseña</button>
-        </form>
-      {% endif %}
-    {% else %}
-      <p><a href="{% url 'accounts:login' %}">Inicia sesion</a> para dejar una reseña.</p>
-    {% endif %}
-
-    <ul>
-      {% for review in reviews %}
-        <li>
-          <strong>{{ review.user.username }}</strong> — {{ review.rating }}/5
-          {% if review.comment %}: {{ review.comment }}{% endif %}
-        </li>
-      {% empty %}
-        <li>No hay reseñas aun.</li>
-      {% endfor %}
-    </ul>
-  </div>
+  {% url 'products:submit_supermarket_review' supermarket.pk as submit_url %}
+  {% if user_review %}{% url 'products:delete_supermarket_review' user_review.pk as delete_url %}{% endif %}
+  {% include "products/_reviews.html" %}
 </div>
 {% endblock %}
