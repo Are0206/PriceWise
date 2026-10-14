@@ -31,19 +31,6 @@
   border-radius: var(--radius);
 }
 
-.share-permissions-div {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-  margin-top: 24px;
-}
-
-.share-permissions-div .field-label {
-  width: 100%;
-  margin: 0;
-}
-
 .share-footer {
   display: flex;
   justify-content: flex-end;

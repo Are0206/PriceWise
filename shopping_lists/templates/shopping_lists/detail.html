@@ -19,6 +19,7 @@
       <p class="created-label">Creada el {{ shopping_list.created_at|date:"j \d\e F \d\e Y"|lower }} &middot; Última modificación: {{ shopping_list.updated_at|date:"j \d\e F, g:i a"|lower }}</p>
     </div>
 
+    {% if is_owner %}
     <div class="header-buttons">
       <a href="{% url 'shopping_lists:edit' shopping_list.pk %}" class="btn btn--outline">Editar</a>
       <form method="post" action="{% url 'shopping_lists:duplicate' shopping_list.pk %}">
@@ -28,6 +29,7 @@
       <button type="button" id="open-share-card" data-url="{% url 'shopping_lists:share' shopping_list.pk %}" class="btn btn--outline">Compartir</button>
       <button type="button" id="open-delete-card" data-url="{% url 'shopping_lists:delete' shopping_list.pk %}" class="btn btn--danger">Borrar</button>
     </div>
+    {% endif %}
   </div>
 
   <div class="content-div">
@@ -88,7 +90,11 @@
     </div>
   </div>
 
+  {% if is_owner %}
   <a href="{% url 'index' %}?open_lists=true" class="btn btn--dark back-button">Volver a mis listas</a>
+  {% else %}
+  <a href="{% url 'index' %}" class="btn btn--dark back-button">Ir a PriceWise</a>
+  {% endif %}
 </div>
 
   <!--cards (share, delete)-->

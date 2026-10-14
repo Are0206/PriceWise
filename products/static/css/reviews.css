@@ -13,12 +13,6 @@
   margin-bottom: 20px;
 }
 
-.text-link {
-  color: var(--savings-green-color);
-  font-weight: 600;
-  text-decoration: underline;
-}
-
 .review-list {
   list-style: none;
   padding: 0;

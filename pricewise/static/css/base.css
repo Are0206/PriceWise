@@ -178,6 +178,12 @@ button {
   font-weight: 700;
 }
 
+.text-link {
+  color: var(--savings-green-color);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;
