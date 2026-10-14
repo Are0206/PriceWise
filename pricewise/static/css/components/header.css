@@ -190,3 +190,9 @@
     margin: 0;
   }
 }
+.user-area > span,
+.user-area a,
+.user-area button {
+  font-family: var(--sans);
+  white-space: nowrap;
+}
