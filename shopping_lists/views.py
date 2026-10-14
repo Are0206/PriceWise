@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
@@ -67,7 +68,9 @@ def delete_shopping_lists(request, pk):
 
     if request.method == 'POST':
         shopping_list.delete()
-        return redirect('shopping_lists:index')
+        messages.success(request, 'Lista borrada.')
+        # The lists index is only the panel fragment, so go home with the panel open.
+        return redirect(f"{reverse('index')}?open_lists=true")
 
     return render(request, 'shopping_lists/confirm_delete.html', {
         'shopping_list': shopping_list,
