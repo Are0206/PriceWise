@@ -266,9 +266,23 @@ MEdia query
     display: none;
   }
 
+  .product-section {
+    padding: 0;
+  }
+
+  .product-card {
+    width: 100%;
+  }
+
+  .product-details {
+    padding-left: 14px;
+    box-sizing: border-box;
+  }
+
   .products-grid {
     grid-template-columns: repeat(2, 1fr);
     row-gap: 12px;
+    column-gap: 12px;
     padding: 20px 0px;
     place-items: center;
   }
