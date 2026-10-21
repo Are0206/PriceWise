@@ -26,13 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (bodyContent) {
     bodyContent.addEventListener('click', (e) => {
 
-      // Cambiar permisos
-      const permissionLink = e.target.closest('.share-permissions-div a');
-      if (permissionLink) {
-        e.preventDefault();
-        loadShareCard(permissionLink.href);
-      }
-
       // Copiar link
       const copyBtn = e.target.closest('#copy-btn');
       if (copyBtn) {
@@ -41,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
           linkInput.select();
           linkInput.setSelectionRange(0, 99999);
           navigator.clipboard.writeText(linkInput.value);
+          copyBtn.textContent = '¡Copiado!';
         }
       }
     });

@@ -19,7 +19,7 @@ body {
 
 .filter-section {
   width: 270px;
-  background-color: #f1f0e7;
+  background-color: var(--muted-surface-color);
   position: fixed;
   padding: 20px 10px;
   top: 90px;
@@ -52,17 +52,17 @@ body {
   justify-content: center;
   align-items: center;
   width: 180px;
-  background-color: #f9f7f5;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background-color: var(--surface-color);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
   align-self: start;
   position: relative;
-  transition: transform 1s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .product-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 13px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-hover);
 }
 
 .product-image {
@@ -73,19 +73,22 @@ body {
 
 .product-name {
   font-size: 15px;
-  color: black;
+  color: var(--primary-text-color);
   margin: 10px;
   margin-left: 0;
   margin-top: 12px;
 }
 
 .view-details-button {
-  color: white;
+  align-self: flex-start;
+  min-height: 32px;
+  padding: 6px 16px;
   font-size: 11px;
-  border-radius: 2px;
-  padding: 6px 18px;
-  letter-spacing: 0.4px;
-  cursor: pointer;
+}
+
+.product-details .price,
+.product-details .muted {
+  font-size: 15px;
 }
 
 .product-details {
@@ -147,7 +150,9 @@ body {
   width: 100%;
 }
 
-.filter-field label {
+.filter-field label,
+.filter-field .field-label {
+  margin: 0 0 4px;
   color: var(--primary-text-color);
   text-transform: uppercase;
   display: block;
@@ -214,30 +219,10 @@ body {
 }
 
 .price-range-field input {
-  border: 1.5px solid var(--primary-input-color);
-  border-radius: 2px;
+  border: 1px solid var(--default-border-color);
+  border-radius: var(--radius);
 }
 
-.filter-buttons-section button {
-  padding: 6px 22px;
-  border-radius: 2px;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  cursor: pointer;
-}
-
-.filter-apply {
-  color: white;
-  border-width: 2px;
-  border-style: solid;
-}
-
-.filter-clear {
-  color: var(--savings-green-color);
-  border-width: 1.5px;
-  border-style: solid;
-  background: none;
-}
 
 /*MEDIA QUERYS*/
 @media (max-width: 900px) {
@@ -267,21 +252,6 @@ body {
 }
 
 
-/* Confirmation / error notices shown after an action (e.g. password change) */
-.messages {
-  margin: 16px 30px 0 30px;
-}
-
-.message {
-  margin: 0 0 8px 0;
-  padding: 10px 14px;
-  border-left: 4px solid #1a7f37;
-  background-color: #fff;
-  font-size: 14px;
-  color: var(--primary-text-color);
-}
-
-
 /*
 MEdia query
 */
@@ -296,9 +266,23 @@ MEdia query
     display: none;
   }
 
+  .product-section {
+    padding: 0;
+  }
+
+  .product-card {
+    width: 100%;
+  }
+
+  .product-details {
+    padding-left: 14px;
+    box-sizing: border-box;
+  }
+
   .products-grid {
     grid-template-columns: repeat(2, 1fr);
     row-gap: 12px;
+    column-gap: 12px;
     padding: 20px 0px;
     place-items: center;
   }

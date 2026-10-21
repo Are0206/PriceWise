@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %} Supermercados - PriceWise{% endblock %}
+{% block title %}Supermercados | PriceWise{% endblock %}
 
 {% load static %}
 
@@ -9,32 +9,19 @@
 {% endblock %}
 
 {% block content %}
-<div class="supermarket-section">
+<div class="page page--wide">
+  <h1>Supermercados</h1>
+  <p class="muted">Mira qué opinan otros compradores de cada supermercado y deja tu reseña.</p>
+
   <div class="supermarkets-grid">
-
     {% for supermarket in supermarkets %}
-
-    <div class="supermarket-card">
-
-      {% if supermarket.image %}
-      <img class="supermarket-image" src="{{ supermarket.image.url }}" alt="{{ supermarket.name }}">
-      {% endif %}
-
-      <div class="supermarket-details">
-        <p class="supermarket-name">{{ supermarket.name }}</p>
-
-        <a href="{% url 'products:supermarkets_details' supermarket.pk %}">
-            <button class="view-reviews-button">Ver reseñas</button>
-        </a>
-      </div>
-    </div>
-
+      <article class="card supermarket-card">
+        <h2 class="supermarket-name">{{ supermarket.name }}</h2>
+        <a href="{% url 'products:supermarkets_details' supermarket.pk %}" class="btn btn--primary">Ver reseñas</a>
+      </article>
     {% empty %}
-
-    <p>No hay supermercados disponibles.</p>
-
+      <p class="empty-state">No hay supermercados disponibles.</p>
     {% endfor %}
-
   </div>
 </div>
 {% endblock %}

@@ -8,6 +8,7 @@ Course project — ST0251, Universidad EAFIT.
  
 - Python 3.12 or newer
 - Django 6.0
+
 ## Setup
  
 Clone the repository and enter the project folder:
@@ -17,19 +18,19 @@ git clone https://github.com/Are0206/PriceWise.git
 cd PriceWise
 ```
  
-Install Django:
+Install the required dependencies from the requirements file (do not install libraries directly):
  
 ```bash
-pip install django
+pip install -r requirements.txt
 ```
  
-Create the database:
+Ensure your database is up to date with the latest migrations:
  
 ```bash
 python manage.py migrate
 ```
  
-Create an administrator account (you will be asked for a username and password):
+Create an administrator account. **This superuser account is required to log into the Django admin panel, where you can manage, add, edit, or delete products, supermarkets, categories, and prices.** You will be asked for a username and password:
  
 ```bash
 python manage.py createsuperuser
@@ -43,25 +44,44 @@ python manage.py runserver
  
 The application will be available at http://127.0.0.1:8000/
  
-## Loading data
+## Database and Data
  
-The database starts empty, so there is nothing to compare yet. Sign in to the admin
-panel at http://127.0.0.1:8000/admin/ with the superuser account and register, in this order:
- 
-1. **Supermarkets** — at least two, so comparisons have something to compare.
-2. **Products** — name, description, and image.
-3. **Prices** — one price per product per supermarket.
-Once there is data, the rest of the site works.
+The database is included in the repository, so it already contains the necessary information about products, supermarkets, and categories to use the app right away.
+
+To modify this data, add new products, or update prices, sign in to the admin panel at http://127.0.0.1:8000/admin/ using the superuser account you created earlier.
  
 ## Main URLs
  
+### Products & Supermarkets
 | URL | Description |
 |---|---|
 | `/` | Home page with product search |
 | `/products/<id>/` | Product details |
 | `/products/<id>/compare/` | Price comparison across supermarkets |
+| `/products/favorite/toggle/<id>/` | Toggle product favorite status |
+| `/products/<id>/review/` | Submit a product review |
+| `/products/review/<id>/delete/` | Delete a product review |
+| `/supermarkets/` | Supermarkets index list |
+| `/supermarkets/<id>` | Supermarket details |
+| `/supermarkets/<id>/review/` | Submit a supermarket review |
+| `/supermarkets/review/<id>/delete/` | Delete a supermarket review |
+
+### Shopping Lists
+| URL | Description |
+|---|---|
 | `/lists/` | All shopping lists |
-| `/lists/create/` | Create a shopping list |
-| `/lists/<id>/` | Shopping list details, with cheapest supermarket and estimated savings |
-| `/lists/<id>/edit/` | Edit a shopping list |
+| `/lists/create/` | Create a new shopping list |
+| `/lists/<uuid>/` | Shopping list details, with cheapest supermarket and estimated savings |
+| `/lists/<uuid>/edit/` | Edit a shopping list |
+| `/lists/<uuid>/delete/` | Delete a shopping list |
+| `/lists/<uuid>/share/` | Share a shopping list |
+| `/lists/<uuid>/duplicate/` | Duplicate a shopping list |
+
+### Accounts & Admin
+| URL | Description |
+|---|---|
+| `/accounts/register/` | Register a new account |
+| `/accounts/login/` | User login |
+| `/accounts/logout/` | User logout |
+| `/accounts/password/` | Change user password |
 | `/admin/` | Administration panel |

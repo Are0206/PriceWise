@@ -1,0 +1,52 @@
+{% comment %}
+Shared review block for products (RF-30/31) and supermarkets (RF-34/35).
+Expects: reviews, user_review, submit_url, delete_url (only when user_review exists).
+{% endcomment %}
+<section class="reviews" aria-labelledby="reviews-title">
+  <h2 id="reviews-title">Reseñas</h2>
+
+  {% if user.is_authenticated %}
+    <form method="post" action="{{ submit_url }}" class="card review-form">
+      {% csrf_token %}
+      <div class="field">
+        <label for="review-rating">Calificación</label>
+        <select id="review-rating" name="rating" required>
+          <option value="">Elige de 1 a 5</option>
+          {% for n in "12345" %}
+            <option value="{{ n }}" {% if user_review.rating == n|add:0 %}selected{% endif %}>{{ n }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label for="review-comment">Comentario (opcional)</label>
+        <textarea id="review-comment" name="comment">{{ user_review.comment|default:'' }}</textarea>
+      </div>
+      <div class="review-actions">
+        <button type="submit" class="btn btn--primary">{% if user_review %}Actualizar reseña{% else %}Publicar reseña{% endif %}</button>
+      </div>
+    </form>
+
+    {% if user_review %}
+      <form method="post" action="{{ delete_url }}" class="review-delete">
+        {% csrf_token %}
+        <button type="submit" class="btn btn--danger">Borrar mi reseña</button>
+      </form>
+    {% endif %}
+  {% else %}
+    <p class="muted"><a href="{% url 'accounts:login' %}?next={{ request.get_full_path|urlencode }}" class="text-link">Inicia sesión</a> para dejar una reseña.</p>
+  {% endif %}
+
+  <ul class="review-list">
+    {% for review in reviews %}
+      <li class="review-item">
+        <p class="review-meta">
+          <strong>{{ review.user.username }}</strong>
+          <span class="review-rating" aria-label="{{ review.rating }} de 5">{{ review.rating }}/5</span>
+        </p>
+        {% if review.comment %}<p class="review-comment">{{ review.comment }}</p>{% endif %}
+      </li>
+    {% empty %}
+      <li class="empty-state">Aún no hay reseñas.</li>
+    {% endfor %}
+  </ul>
+</section>

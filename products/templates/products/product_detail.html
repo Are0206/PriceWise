@@ -1,78 +1,50 @@
 {% extends "base.html" %}
 
-{% block title %}{{ product.name }} - PriceWise{% endblock %}
+{% block title %}{{ product.name }} | PriceWise{% endblock %}
 
-{% load static %}
+{% load static money %}
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'css/product_detail.css' %}">
+  <link rel="stylesheet" href="{% static 'css/reviews.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="product-detail-container">
-    <a href="{% url 'index' %}" class="back-link">&larr; Volver</a>
+<div class="page">
+  <a href="{% url 'index' %}" class="back-link">&larr; Volver</a>
 
+  <article class="card product-hero">
     {% if product.image %}
-      <img class="product-image" src="{{ product.image.url }}" alt="{{ product.name }}">
+      <img class="product-hero-image" src="{{ product.image.url }}" alt="{{ product.name }}">
     {% endif %}
 
-    <h1 class="product-name">{{ product.name }}</h1>
+    <div class="product-hero-info">
+      <h1>{{ product.name }}</h1>
 
-    {% if product.description %}
-      <p class="product-description">{{ product.description }}</p>
-    {% endif %}
-
-    {% if cheapest_price %}
-    <p>El precio más barato del producto es: <strong style="color: #1a7f37;">${{ cheapest_price.amount }}</strong>. En el supermercado <strong style="color: #1a7f37;">"{{ cheapest_price.supermarket.name }}"</strong>.</p>
-    {% else %}
-    <p>No hay precios disponibles para este producto.</p>
-    {% endif %}
-
-    <a href="{% url 'products:compare' product.pk %}" class="compare-link">Compare prices across supermarkets</a>
-
-    <h2>Información Nutricional:</h2>
-    <p class="product-description" style="white-space: pre-line;">{{ product.nutritional_info|default:"Información nutricional no disponible." }}</p>
-
-    <!-- RF-30/RF-31: reviews — base funcional, sin estilar todavía -->
-    <div class="product-reviews">
-      <h2>Reseñas:</h2>
-
-      {% if user.is_authenticated %}
-        <form method="post" action="{% url 'products:submit_review' product.pk %}">
-          {% csrf_token %}
-          <label>
-            Rating
-            <select name="rating" required>
-              <option value="">--</option>
-              {% for n in "12345" %}
-                <option value="{{ n }}" {% if user_review.rating == n|add:0 %}selected{% endif %}>{{ n }}</option>
-              {% endfor %}
-            </select>
-          </label>
-          <textarea name="comment" placeholder="Comentario (opcional)">{{ user_review.comment|default:'' }}</textarea>
-          <button type="submit">{% if user_review %}Update review{% else %}Publicar reseña{% endif %}</button>
-        </form>
-
-        {% if user_review %}
-          <form method="post" action="{% url 'products:delete_review' user_review.pk %}">
-            {% csrf_token %}
-            <button type="submit">Borrar mi reseña</button>
-          </form>
-        {% endif %}
-      {% else %}
-        <p><a href="{% url 'accounts:login' %}">Inicia sesion</a> para dejar una reseña.</p>
+      {% if product.description %}
+        <p class="muted">{{ product.description }}</p>
       {% endif %}
 
-      <ul>
-        {% for review in reviews %}
-          <li>
-            <strong>{{ review.user.username }}</strong> — {{ review.rating }}/5
-            {% if review.comment %}: {{ review.comment }}{% endif %}
-          </li>
-        {% empty %}
-          <li>No hay reseñas aun.</li>
-        {% endfor %}
-      </ul>
+      {% if cheapest_price %}
+        <p class="cheapest-price">
+          Precio más bajo: <span class="price">${{ cheapest_price.amount|money }}</span>
+          en <strong>{{ cheapest_price.supermarket.name }}</strong>.
+        </p>
+      {% else %}
+        <p class="muted">No hay precios disponibles para este producto.</p>
+      {% endif %}
+
+      <a href="{% url 'products:compare' product.pk %}" class="btn btn--outline">Comparar precios entre supermercados</a>
     </div>
-  </div>
+  </article>
+
+  <section aria-labelledby="nutrition-title">
+    <h2 id="nutrition-title">Información nutricional</h2>
+    <p class="nutritional-info{% if not product.nutritional_info %} muted{% endif %}">{{ product.nutritional_info|default:"Información nutricional no disponible." }}</p>
+  </section>
+
+  {% url 'products:submit_review' product.pk as submit_url %}
+  {% if user_review %}{% url 'products:delete_review' user_review.pk as delete_url %}{% endif %}
+  {% include "products/_reviews.html" %}
+</div>
 {% endblock %}
