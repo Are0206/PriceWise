@@ -82,6 +82,19 @@ def toggle_favorite(request, product_id):
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
+#RF-41: List favorite products
+@login_required
+def list_favorite_products(request):
+    products = (
+        Product.objects.filter(favorited_by__user=request.user)
+        .order_by('-favorited_by__created_at')
+    )
+    return render(request, 'products/favorites.html', {
+        'products': products,
+        'user_favorite_ids': [product.id for product in products],
+    })
+
+
 #RF-30: Review products
 @login_required
 def submit_review(request, pk):
@@ -112,14 +125,17 @@ def delete_review(request, review_id):
     return redirect('products:detail', pk=product_pk)
 
 def supermarkets_index(request):
-    supermarkets = Supermarket.objects.all()
+    
+    supermarkets = Supermarket.objects.prefetch_related('locations')
 
     return render(request, 'supermarkets/index.html', {
         'supermarkets': supermarkets,
     })
     
 def supermarkets_details(request, pk):
-    supermarket = get_object_or_404(Supermarket, pk=pk)
+    supermarket = get_object_or_404(
+        Supermarket.objects.prefetch_related('locations'), pk=pk
+    )
     reviews = supermarket.supermarket_reviews.select_related('user')
     user_review = None
     if request.user.is_authenticated:

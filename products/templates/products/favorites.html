@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Mis favoritos | PriceWise{% endblock %}
+
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/index/body.css' %}">
+<link rel="stylesheet" href="{% static 'css/favorites.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page page--wide">
+  <h1>Mis favoritos</h1>
+  <p class="muted">Los productos que marcaste con el corazón, del más reciente al más antiguo.</p>
+
+  <div class="products-grid favorites-grid">
+    {% for product in products %}
+      {% include "products/_product_card.html" %}
+    {% empty %}
+      <div class="empty-state">
+        <p>Aún no tienes productos favoritos.</p>
+        <a href="{% url 'index' %}" class="btn btn--primary">Explorar productos</a>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
