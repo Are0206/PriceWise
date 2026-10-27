@@ -43,6 +43,7 @@
       {% if user.is_authenticated %}
       <span>Hola, {{ user.username }}</span>
       <a href="{% url 'products:supermarkets_index' %}">Supermercados</a>
+      <a href="{% url 'products:favorites' %}">Favoritos</a>
       <button class="shopping-list-button" id="shoppingListButton" type="button">
         Listas
       </button>

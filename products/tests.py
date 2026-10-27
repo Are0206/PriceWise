@@ -1,8 +1,11 @@
+from datetime import timedelta
+
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 
-from .models import Category, Price, Product, ProductReview, Supermarket
+from .models import Category, Favorite, Price, Product, ProductReview, Supermarket
 
 
 class ProductDetailViewTests(TestCase):
@@ -127,3 +130,33 @@ class EmptyReviewsTests(TestCase):
         for url in (reverse('products:detail', args=[product.pk]),
                     reverse('products:supermarkets_details', args=[supermarket.pk])):
             self.assertContains(self.client.get(url), 'Aún no hay reseñas.')
+
+
+class FavoriteProductsListTests(TestCase):
+    def setUp(self):
+        category = Category.objects.create(name='Granos', slug='granos')
+        self.rice = Product.objects.create(name='Arroz Diana 500g', category=category)
+        self.beans = Product.objects.create(name='Frijol Cargamanto', category=category)
+        self.salt = Product.objects.create(name='Sal Refisal', category=category)
+        self.user = User.objects.create_user(username='ana', password='clave-segura-1')
+        other = User.objects.create_user(username='beto', password='clave-segura-2')
+        Favorite.objects.create(user=self.user, product=self.rice)
+        Favorite.objects.create(user=self.user, product=self.beans)
+        Favorite.objects.create(user=other, product=self.salt)
+        # Same-millisecond timestamps would make the order random; fix them.
+        Favorite.objects.filter(product=self.rice).update(created_at=timezone.now() - timedelta(days=1))
+
+    def test_anonymous_user_is_sent_to_login(self):
+        url = reverse('products:favorites')
+        self.assertRedirects(self.client.get(url), f"{reverse('accounts:login')}?next={url}")
+
+    def test_lists_only_the_users_favorites_newest_first(self):
+        self.client.login(username='ana', password='clave-segura-1')
+        response = self.client.get(reverse('products:favorites'))
+        self.assertEqual(list(response.context['products']), [self.beans, self.rice])
+        self.assertNotContains(response, 'Sal Refisal')
+
+    def test_shows_empty_state_without_favorites(self):
+        Favorite.objects.filter(user=self.user).delete()
+        self.client.login(username='ana', password='clave-segura-1')
+        self.assertContains(self.client.get(reverse('products:favorites')), 'Aún no tienes productos favoritos.')

@@ -1,0 +1,36 @@
+{% load static money %}
+{% comment %}Product card used by the catalog and the favorites page. Expects: product, user_favorite_ids.{% endcomment %}
+<div class="product-card">
+
+  {% if product.image %}
+  <img class="product-image" src="{{ product.image.url }}" alt="{{ product.name }}">
+  {% endif %}
+
+  <div class="product-details">
+    <p class="product-name">{{ product.name }}</p>
+
+    <a href="{% url 'products:detail' product.pk %}" class="btn btn--primary view-details-button">Ver detalles</a>
+    {% with cheapest=product.get_cheapest_price %}
+      {% if cheapest %}
+      <p class="price">${{ cheapest.amount|money }}</p>
+      {% else %}
+      <p class="muted">Sin precios disponibles.</p>
+      {% endif %}
+    {% endwith %}
+
+    {% if user.is_authenticated %}
+      <form action="{% url 'products:toggle_favorite' product.id %}" method="post">
+        {% csrf_token %}
+        {% if product.id in user_favorite_ids %}
+          <button type="submit" class="favorite-button" aria-label="Quitar de favoritos">
+            <img src="{% static 'img/icons/favorite-selected.png' %}" alt="">
+          </button>
+        {% else %}
+          <button type="submit" class="favorite-button" aria-label="Agregar a favoritos">
+            <img src="{% static 'img/icons/favorite-unselected.png' %}" alt="">
+          </button>
+        {% endif %}
+      </form>
+    {% endif %}
+  </div>
+</div>
