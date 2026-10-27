@@ -8,15 +8,19 @@ Expects: reviews, user_review, submit_url, delete_url (only when user_review exi
   {% if user.is_authenticated %}
     <form method="post" action="{{ submit_url }}" class="card review-form">
       {% csrf_token %}
-      <div class="field">
-        <label for="review-rating">Calificación</label>
-        <select id="review-rating" name="rating" required>
-          <option value="">Elige de 1 a 5</option>
-          {% for n in "12345" %}
-            <option value="{{ n }}" {% if user_review.rating == n|add:0 %}selected{% endif %}>{{ n }}</option>
+      <fieldset class="field star-input">
+        <legend class="field-label">Calificación</legend>
+        {# Highest first: with row-reverse, a checked or hovered star lights up itself and the ones before it. #}
+        <div class="star-input-row">
+          {% for n in "54321" %}
+            <input type="radio" id="rating-{{ n }}" name="rating" value="{{ n }}" required {% if user_review.rating == n|add:0 %}checked{% endif %}>
+            <label for="rating-{{ n }}" title="{{ n }} de 5">
+              <svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg>
+              <span class="visually-hidden">{{ n }} de 5 estrellas</span>
+            </label>
           {% endfor %}
-        </select>
-      </div>
+        </div>
+      </fieldset>
       <div class="field">
         <label for="review-comment">Comentario (opcional)</label>
         <textarea id="review-comment" name="comment">{{ user_review.comment|default:'' }}</textarea>

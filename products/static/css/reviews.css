@@ -27,7 +27,7 @@
 .review-meta {
   display: flex;
   gap: 12px;
-  align-items: baseline;
+  align-items: center;
   margin: 0;
 }
 
@@ -42,7 +42,7 @@
   width: 18px;
   height: 18px;
   fill: none;
-  stroke: var(--default-border-color);
+  stroke: var(--secondary-text-color);
   stroke-width: 1.5;
   stroke-linejoin: round;
 }
@@ -55,4 +55,68 @@
 .review-comment {
   margin: 6px 0 0;
   line-height: 1.5;
+}
+
+/* Star picker in the review form */
+.star-input {
+  border: none;
+  padding: 0;
+  margin: 0 0 18px;
+}
+
+.star-input-row {
+  display: inline-flex;
+  flex-direction: row-reverse;
+  gap: 4px;
+}
+
+.star-input input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.star-input label {
+  cursor: pointer;
+  padding: 2px;
+  border-radius: var(--radius);
+}
+
+.star-input .star {
+  width: 32px;
+  height: 32px;
+  transition: transform 0.15s ease, fill 0.15s ease;
+}
+
+.star-input input:checked ~ label .star {
+  fill: var(--savings-green-color);
+  stroke: var(--savings-green-color);
+}
+
+/* While hovering, preview the hovered value instead of the saved one */
+.star-input-row:hover input:checked ~ label .star {
+  fill: none;
+  stroke: var(--secondary-text-color);
+}
+
+.star-input-row:hover label:hover .star,
+.star-input-row:hover label:hover ~ label .star {
+  fill: var(--savings-green-color);
+  stroke: var(--savings-green-color);
+}
+
+.star-input label:hover .star {
+  transform: scale(1.12);
+}
+
+.star-input input:focus-visible + label {
+  outline: 2px solid var(--savings-green-color);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .star-input .star {
+    transition: none;
+  }
 }
