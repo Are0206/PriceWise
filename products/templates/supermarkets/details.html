@@ -6,6 +6,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/reviews.css' %}">
+<link rel="stylesheet" href="{% static 'css/supermarket/locations.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -13,6 +14,22 @@
   <a href="{% url 'products:supermarkets_index' %}" class="back-link">&larr; Volver a supermercados</a>
 
   <h1>{{ supermarket.name }}</h1>
+
+  <section class="locations">
+    <h2>Sedes</h2>
+    <ul class="locations-list">
+      {% for location in supermarket.locations.all %}
+        <li class="location">
+          {% if location.name %}
+            <span class="location-name">{{ location.name }}</span>
+          {% endif %}
+          <span class="location-address">{{ location.address }}</span>
+        </li>
+      {% empty %}
+        <li class="muted">Este supermercado todavía no tiene sedes registradas.</li>
+      {% endfor %}
+    </ul>
+  </section>
 
   {% url 'products:submit_supermarket_review' supermarket.pk as submit_url %}
   {% if user_review %}{% url 'products:delete_supermarket_review' user_review.pk as delete_url %}{% endif %}

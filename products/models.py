@@ -7,6 +7,40 @@ class Supermarket(models.Model):
     def __str__(self):
         return self.name
 
+
+# RF-44: sedes físicas de un supermercado.
+class SupermarketLocation(models.Model):
+    """Una sede de un supermercado. Un supermercado tiene muchas sedes."""
+
+    supermarket = models.ForeignKey(
+        Supermarket,
+        on_delete=models.CASCADE,
+        related_name="locations",
+    )
+    name = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text="Nombre de la sede, por ejemplo: Éxito Colombia. Opcional.",
+    )
+    address = models.CharField(
+        max_length=200,
+        help_text="Dirección de la sede, por ejemplo: Calle 10 #43-25, El Poblado.",
+    )
+
+    class Meta:
+        verbose_name = "Supermarket location"
+        verbose_name_plural = "Supermarket locations"
+        ordering = ["supermarket__name", "name", "address"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["supermarket", "address"],
+                name="unique_address_per_supermarket",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.supermarket.name} - {self.name or self.address}"
+
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(max_length=110, unique=True)
