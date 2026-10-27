@@ -9,6 +9,7 @@ urlpatterns = [
     path('<int:pk>/', views.view_product_details, name='detail'),
     path('<int:pk>/compare/', views.compare_product_prices, name='compare'),
     path('favorite/toggle/<int:product_id>/', views.toggle_favorite, name='toggle_favorite'),
+    path('favorites/', views.list_favorite_products, name='favorites'),
     path('<int:pk>/review/', views.submit_review, name='submit_review'),
     path('review/<int:review_id>/delete/', views.delete_review, name='delete_review'),
     

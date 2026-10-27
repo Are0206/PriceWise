@@ -82,6 +82,19 @@ def toggle_favorite(request, product_id):
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
+#RF-41: List favorite products
+@login_required
+def list_favorite_products(request):
+    products = (
+        Product.objects.filter(favorited_by__user=request.user)
+        .order_by('-favorited_by__created_at')
+    )
+    return render(request, 'products/favorites.html', {
+        'products': products,
+        'user_favorite_ids': [product.id for product in products],
+    })
+
+
 #RF-30: Review products
 @login_required
 def submit_review(request, pk):
