@@ -160,3 +160,24 @@ class FavoriteProductsListTests(TestCase):
         Favorite.objects.filter(user=self.user).delete()
         self.client.login(username='ana', password='clave-segura-1')
         self.assertContains(self.client.get(reverse('products:favorites')), 'Aún no tienes productos favoritos.')
+
+
+class StarRatingTests(TestCase):
+    def setUp(self):
+        category = Category.objects.create(name='Granos', slug='granos')
+        self.product = Product.objects.create(name='Arroz Diana 500g', category=category)
+        self.user = User.objects.create_user(username='ana', password='clave-segura-1')
+
+    def test_review_form_uses_five_star_radios(self):
+        self.client.login(username='ana', password='clave-segura-1')
+        response = self.client.get(reverse('products:detail', args=[self.product.pk]))
+        self.assertContains(response, 'type="radio"', count=5)
+        self.assertNotContains(response, 'id="review-rating"')
+
+    def test_saved_rating_is_checked_and_shown_as_stars(self):
+        ProductReview.objects.create(user=self.user, product=self.product, rating=4)
+        self.client.login(username='ana', password='clave-segura-1')
+        response = self.client.get(reverse('products:detail', args=[self.product.pk]))
+        self.assertContains(response, 'value="4" required checked')
+        self.assertContains(response, 'aria-label="4 de 5 estrellas"')
+        self.assertContains(response, 'star--filled', count=4)
