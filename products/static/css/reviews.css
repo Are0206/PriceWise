@@ -31,9 +31,25 @@
   margin: 0;
 }
 
-.review-rating {
-  color: var(--savings-green-color);
-  font-weight: 700;
+/* Stars: outlined in the border tone, filled in the brand green */
+.stars {
+  display: inline-flex;
+  gap: 2px;
+  vertical-align: middle;
+}
+
+.star {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: var(--default-border-color);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.star--filled {
+  fill: var(--savings-green-color);
+  stroke: var(--savings-green-color);
 }
 
 .review-comment {

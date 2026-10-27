@@ -41,7 +41,7 @@ Expects: reviews, user_review, submit_url, delete_url (only when user_review exi
       <li class="review-item">
         <p class="review-meta">
           <strong>{{ review.user.username }}</strong>
-          <span class="review-rating" aria-label="{{ review.rating }} de 5">{{ review.rating }}/5</span>
+          {% include "products/_stars.html" with rating=review.rating %}
         </p>
         {% if review.comment %}<p class="review-comment">{{ review.comment }}</p>{% endif %}
       </li>
