@@ -17,7 +17,16 @@
     {% for supermarket in supermarkets %}
       <article class="card supermarket-card">
         <h2 class="supermarket-name">{{ supermarket.name }}</h2>
-        <a href="{% url 'products:supermarkets_details' supermarket.pk %}" class="btn btn--primary">Ver reseñas</a>
+        {% with total=supermarket.locations.count %}
+          {% if total %}
+            <p class="supermarket-locations-count muted">
+              {{ total }} sede{{ total|pluralize }} en Medellín
+            </p>
+          {% else %}
+            <p class="supermarket-locations-count muted">Sin sedes registradas</p>
+          {% endif %}
+        {% endwith %}
+        <a href="{% url 'products:supermarkets_details' supermarket.pk %}" class="btn btn--primary">Ver sedes y reseñas</a>
       </article>
     {% empty %}
       <p class="empty-state">No hay supermercados disponibles.</p>
