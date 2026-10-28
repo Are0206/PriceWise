@@ -368,3 +368,9 @@ MEdia query
   color: var(--savings-green-color);
   font-weight: 600;
 }
+
+/* The card with an open menu sits above its neighbours and stops lifting */
+.product-card:has(.add-to-list[open]) {
+  z-index: 30;
+  transform: none;
+}
