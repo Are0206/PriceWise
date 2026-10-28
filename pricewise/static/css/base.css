@@ -24,9 +24,22 @@
   --sans: "DM Sans", sans-serif;
 }
 
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scrollbar-color: var(--default-border-color) transparent;
+  accent-color: var(--savings-green-color);
+}
+
+::selection {
+  background-color: color-mix(in srgb, var(--savings-green-color) 22%, transparent);
+  color: var(--primary-text-color);
+}
+
 body{
   background-color: var(--background-color);
   color: var(--primary-text-color);
+  caret-color: var(--savings-green-color);
   font-family: var(--sans);
   padding: 0px 120px;
   padding-top: 120px;
@@ -44,6 +57,11 @@ h1, h2{
   font-weight: 400;
   font-style: normal;
   color: var(--primary-text-color);
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 h2{
@@ -94,7 +112,11 @@ button {
   background: none;
   color: var(--primary-text-color);
   cursor: pointer;
-  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  transition: background-color 0.2s ease-out, color 0.2s ease-out, border-color 0.2s ease-out, transform 0.12s ease-out;
+}
+
+.btn:active {
+  transform: scale(0.96);
 }
 
 .btn--primary {
@@ -176,6 +198,14 @@ button {
 .price {
   color: var(--savings-green-color);
   font-weight: 700;
+}
+
+/* Prices and quantities line up and do not jump when they change */
+.price,
+.data-table td,
+.totals,
+.savings {
+  font-variant-numeric: tabular-nums;
 }
 
 .text-link {
@@ -292,14 +322,25 @@ button {
 }
 
 .message {
-  padding: 10px 14px;
-  border-left: 4px solid var(--savings-green-color);
-  background-color: var(--surface-color);
+  padding: 12px 16px;
+  border: 1px solid color-mix(in srgb, var(--savings-green-color) 30%, transparent);
+  border-radius: var(--radius);
+  background-color: color-mix(in srgb, var(--savings-green-color) 8%, var(--surface-color));
+  color: var(--savings-text-color);
   font-size: 14px;
+  font-weight: 500;
 }
 
 .message--error {
-  border-left-color: var(--error-color);
+  border-color: color-mix(in srgb, var(--error-color) 30%, transparent);
+  background-color: color-mix(in srgb, var(--error-color) 6%, var(--surface-color));
+  color: var(--error-color);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn:active {
+    transform: none;
+  }
 }
 
 @media(max-width: 900px){
