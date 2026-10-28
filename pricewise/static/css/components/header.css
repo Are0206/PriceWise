@@ -177,6 +177,19 @@
     align-items: center;
     margin: 0;
   }
+
+  /* Five links do not fit on one phone row: let them wrap instead of overflowing */
+  .user-area {
+    flex-wrap: wrap;
+    gap: 4px 6px;
+    margin-right: 0;
+  }
+
+  .user-area a,
+  .user-area button {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
 }
 .user-area > span,
 .user-area a,
