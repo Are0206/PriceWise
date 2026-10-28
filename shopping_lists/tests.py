@@ -47,3 +47,45 @@ class ShoppingListOwnershipTests(TestCase):
         self.assertRedirects(response, f"{reverse('index')}?open_lists=true")
         self.assertContains(response, 'Lista borrada.')
         self.assertFalse(ShoppingList.objects.filter(pk=self.shopping_list.pk).exists())
+
+
+class QuickAddToListTests(TestCase):
+    def setUp(self):
+        from products.models import Category, Product
+        category = Category.objects.create(name='Granos', slug='granos')
+        self.product = Product.objects.create(name='Arroz Diana 500g', category=category)
+        self.owner = User.objects.create_user(username='ana', password='clave-segura-1')
+        User.objects.create_user(username='beto', password='clave-segura-2')
+        self.shopping_list = ShoppingList.objects.create(name='Mercado', owner=self.owner)
+        self.url = reverse('shopping_lists:add_product', args=[self.shopping_list.pk])
+
+    def test_adds_one_unit_then_one_more(self):
+        self.client.login(username='ana', password='clave-segura-1')
+        self.client.post(self.url, {'product': self.product.pk})
+        response = self.client.post(self.url, {'product': self.product.pk}, HTTP_X_REQUESTED_WITH='fetch')
+        self.assertEqual(response.json()['quantity'], 2)
+        self.assertEqual(self.shopping_list.items.get(product=self.product).quantity, 2)
+
+    def test_without_javascript_redirects_back_with_a_message(self):
+        self.client.login(username='ana', password='clave-segura-1')
+        response = self.client.post(self.url, {'product': self.product.pk, 'next': '/products/favorites/'})
+        self.assertRedirects(response, '/products/favorites/', fetch_redirect_response=False)
+        response = self.client.post(self.url, {'product': self.product.pk, 'next': 'https://evil.example.com/'})
+        self.assertRedirects(response, reverse('index'), fetch_redirect_response=False)
+
+    def test_only_the_owner_can_add(self):
+        self.client.login(username='beto', password='clave-segura-2')
+        self.assertEqual(self.client.post(self.url, {'product': self.product.pk}).status_code, 404)
+        self.assertFalse(self.shopping_list.items.exists())
+
+    def test_bad_product_id_is_a_404(self):
+        self.client.login(username='ana', password='clave-segura-1')
+        self.assertEqual(self.client.post(self.url, {'product': 'abc'}).status_code, 404)
+
+    def test_card_menu_lists_only_my_lists(self):
+        ShoppingList.objects.create(name='Lista de Beto', owner=User.objects.get(username='beto'))
+        self.client.login(username='ana', password='clave-segura-1')
+        response = self.client.get(reverse('index'))
+        self.assertContains(response, 'Agregar a lista')
+        self.assertContains(response, self.url)
+        self.assertNotContains(response, 'Lista de Beto')
