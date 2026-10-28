@@ -81,7 +81,7 @@
         <div class="savings-div">
           <p class="savings-text">Ahorro</p>
           {% if savings %}
-          <p class="savings">${{ savings|money }}</p>
+          <p class="savings" data-count-to="{{ savings|stringformat:'s' }}">${{ savings|money }}</p>
           {% else %}
           <p class="savings">$0</p>
           {% endif %}
