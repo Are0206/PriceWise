@@ -19,6 +19,25 @@
     {% endwith %}
 
     {% if user.is_authenticated %}
+      <details class="add-to-list">
+        <summary class="btn btn--outline add-to-list-toggle">Agregar a lista</summary>
+        <div class="add-to-list-menu" role="menu">
+          {% for shopping_list in my_shopping_lists %}
+            <form method="post" action="{% url 'shopping_lists:add_product' shopping_list.pk %}" class="add-to-list-form">
+              {% csrf_token %}
+              <input type="hidden" name="product" value="{{ product.pk }}">
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+              <button type="submit" role="menuitem">{{ shopping_list.name }}</button>
+            </form>
+          {% empty %}
+            <p class="muted add-to-list-empty">Aún no tienes listas.</p>
+          {% endfor %}
+          <a href="{% url 'shopping_lists:create' %}" class="add-to-list-new" role="menuitem">+ {% if my_shopping_lists %}Nueva lista{% else %}Crea tu primera lista{% endif %}</a>
+        </div>
+      </details>
+    {% endif %}
+
+    {% if user.is_authenticated %}
       <form action="{% url 'products:toggle_favorite' product.id %}" method="post">
         {% csrf_token %}
         {% if product.id in user_favorite_ids %}
