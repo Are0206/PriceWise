@@ -1,8 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.db.models import F
+from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
+
+from products.models import Product
 
 from .forms import ShoppingListForm, ShoppingListItemFormSet
 from .models import ShoppingList, ShoppingListItem
@@ -134,3 +139,31 @@ def shopping_list_details(request, pk):
         'savings': savings,
         'is_owner': request.user.is_authenticated and shopping_list.owner_id == request.user.id,
     })
+
+# Quick add from a product card: adds one unit, or one more if it is already in the list.
+@login_required
+def add_product_to_list(request, pk):
+    shopping_list = get_object_or_404(ShoppingList, pk=pk, owner=request.user)
+    if request.method != 'POST':
+        return redirect('shopping_lists:detail', pk=shopping_list.pk)
+
+    product_id = request.POST.get('product', '')
+    if not product_id.isdigit():
+        raise Http404
+    product = get_object_or_404(Product, pk=product_id)
+    item, created = ShoppingListItem.objects.get_or_create(
+        shopping_list=shopping_list, product=product, defaults={'quantity': 1})
+    if not created:
+        ShoppingListItem.objects.filter(pk=item.pk).update(quantity=F('quantity') + 1)
+        item.refresh_from_db()
+    shopping_list.save(update_fields=['updated_at'])
+
+    text = f'{product.name} agregado a «{shopping_list.name}» ({item.quantity}).'
+    if request.headers.get('X-Requested-With') == 'fetch':
+        return JsonResponse({'message': text, 'quantity': item.quantity})
+
+    messages.success(request, text)
+    next_url = request.POST.get('next', '')
+    if url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+        return redirect(next_url)
+    return redirect('index')
