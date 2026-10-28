@@ -93,8 +93,7 @@ body {
   padding-top: 4px;
 }
 
-.view-details-button,
-.add-to-list-toggle {
+.view-details-button {
   width: 100%;
   min-height: 36px;
   padding: 8px 12px;
@@ -272,12 +271,47 @@ MEdia query
 /* =========================================
    QUICK ADD TO LIST (product card)
    ========================================= */
-.add-to-list {
+/* Image area: the add-to-list square sits in its bottom-left corner,
+   mirroring the favorite button in the top-right one. */
+.product-media {
   position: relative;
 }
 
 .add-to-list-toggle {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   list-style: none;
+  color: #fff;
+  background-color: var(--primary-text-color);
+  border-top-right-radius: 8px;
+  border-bottom-left-radius: var(--radius);
+  cursor: pointer;
+  transition: background-color 0.2s ease-out, transform 0.12s ease-out;
+}
+
+/* 44px touch target without growing the visible square */
+.add-to-list-toggle::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+}
+
+.add-to-list-toggle:hover {
+  background-color: var(--secondary-background-color);
+}
+
+.add-to-list-toggle:active {
+  transform: scale(0.96);
+}
+
+.add-to-list-plus {
+  fill: var(--savings-green-color);
 }
 
 .add-to-list-toggle::-webkit-details-marker {
@@ -285,16 +319,18 @@ MEdia query
 }
 
 .add-to-list[open] .add-to-list-toggle {
-  background-color: var(--primary-text-color);
-  border-color: var(--primary-text-color);
-  color: var(--background-color);
+  background-color: var(--savings-green-color);
+}
+
+.add-to-list[open] .add-to-list-plus {
+  fill: var(--primary-text-color);
 }
 
 .add-to-list-menu {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: calc(100% + 6px);
+  left: 8px;
+  right: 8px;
+  top: calc(100% - 4px);
   z-index: 20;
   max-height: 240px;
   overflow-y: auto;

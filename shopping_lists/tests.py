@@ -86,6 +86,6 @@ class QuickAddToListTests(TestCase):
         ShoppingList.objects.create(name='Lista de Beto', owner=User.objects.get(username='beto'))
         self.client.login(username='ana', password='clave-segura-1')
         response = self.client.get(reverse('index'))
-        self.assertContains(response, 'Agregar a lista')
+        self.assertContains(response, 'Agregar a una lista')
         self.assertContains(response, self.url)
         self.assertNotContains(response, 'Lista de Beto')
