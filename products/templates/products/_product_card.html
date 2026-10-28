@@ -9,7 +9,6 @@
   <div class="product-details">
     <p class="product-name">{{ product.name }}</p>
 
-    <a href="{% url 'products:detail' product.pk %}" class="btn btn--primary view-details-button">Ver detalles</a>
     {% with cheapest=product.get_cheapest_price %}
       {% if cheapest %}
       <p class="price">${{ cheapest.amount|money }}</p>
@@ -18,6 +17,8 @@
       {% endif %}
     {% endwith %}
 
+    <div class="product-actions">
+    <a href="{% url 'products:detail' product.pk %}" class="btn btn--primary view-details-button">Ver detalles</a>
     {% if user.is_authenticated %}
       <details class="add-to-list">
         <summary class="btn btn--outline add-to-list-toggle">Agregar a lista</summary>
@@ -36,6 +37,7 @@
         </div>
       </details>
     {% endif %}
+    </div>
 
     {% if user.is_authenticated %}
       <form action="{% url 'products:toggle_favorite' product.id %}" method="post">
