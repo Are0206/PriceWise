@@ -5,7 +5,7 @@ from django.test import TestCase
 
 from products.integrations.lospreciosco import pipeline
 from products.integrations.lospreciosco.client import LosPreciosError
-from products.models import Product
+from products.models import Category, Product
 
 
 def raw_item(item_id, price=2300):
@@ -35,13 +35,13 @@ class FakeClient:
 class PipelineTests(TestCase):
     def test_walks_every_page_and_stops_at_the_total(self):
         client = FakeClient()
-        summary = pipeline.run(client, store_api_ids=[1])
+        summary = pipeline.run(client, store_api_ids=[1], categories=["Despensa"])
         self.assertEqual(summary["created"], 3)
         self.assertEqual(client.pages_requested, [(1, 1), (1, 2)])
 
     def test_a_failing_store_is_skipped_not_fatal(self):
-        summary = pipeline.run(FakeClient(fail_store=6))
-        self.assertEqual(summary["failed_stores"], ["Éxito"])
+        summary = pipeline.run(FakeClient(fail_store=6), categories=["Despensa"])
+        self.assertEqual(summary["failed_stores"], ["Éxito / Despensa"])
         self.assertEqual(Product.objects.count(), 3)
 
     def test_fatal_api_error_stops_the_run(self):
@@ -61,3 +61,15 @@ class SyncCommandTests(TestCase):
             call_command("sync_losprecios", "--store", "1", stdout=out)
         client_class.assert_called_once_with("test-key")
         self.assertIn("3 products created", out.getvalue())
+
+
+class CategoryTests(TestCase):
+    def test_products_get_the_api_category_they_were_fetched_from(self):
+        pipeline.run(FakeClient(), store_api_ids=[1], categories=["Despensa"])
+        self.assertEqual(set(Product.objects.values_list("category__name", flat=True)), {"Despensa"})
+
+    def test_reimport_moves_products_out_of_the_default_category(self):
+        pipeline.run(FakeClient(), store_api_ids=[1], categories=["Despensa"])
+        Product.objects.update(category=Category.objects.create(name="Otros", slug="otros"))
+        pipeline.run(FakeClient(), store_api_ids=[1], categories=["Bebidas"])
+        self.assertEqual(set(Product.objects.values_list("category__name", flat=True)), {"Bebidas"})

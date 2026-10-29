@@ -35,6 +35,8 @@ class Command(BaseCommand):
                             help="Only import this store's API id (can be repeated).")
         parser.add_argument("--max-pages", type=int,
                             help="Stop after this many catalog pages per store (useful for a quick test).")
+        parser.add_argument("--category", action="append",
+                            help="Only import this API category, e.g. Despensa (can be repeated).")
         parser.add_argument("--only-supermarkets", action="store_true",
                             help="Only import the list of supermarkets.")
 
@@ -45,7 +47,8 @@ class Command(BaseCommand):
                 stores = pipeline.sync_supermarkets(client)
                 self.stdout.write(self.style.SUCCESS(f"{len(stores)} supermarkets imported."))
                 return
-            summary = pipeline.run(client, store_api_ids=options["store"], max_pages=options["max_pages"])
+            summary = pipeline.run(client, store_api_ids=options["store"], max_pages=options["max_pages"],
+                                   categories=options["category"])
         except LosPreciosError as error:
             raise CommandError(f"Los Precios API: {error}") from error
 
@@ -55,4 +58,4 @@ class Command(BaseCommand):
             f"{summary.get('prices_changed', 0)} prices changed, "
             f"{summary.get('skipped_prices', 0)} prices skipped."))
         if summary["failed_stores"]:
-            self.stdout.write(self.style.WARNING("Failed stores: " + ", ".join(summary["failed_stores"])))
+            self.stdout.write(self.style.WARNING("Failed: " + ", ".join(summary["failed_stores"])))
