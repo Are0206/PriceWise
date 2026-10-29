@@ -2,13 +2,14 @@
 
 {% block title %}{{ shopping_list.name }} | PriceWise{% endblock %}
 
-{% load static money %}
+{% load static money l10n %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/detail.css' %}">
 <link rel="stylesheet" href="{% static 'css/card-overlay.css' %}">
 <link rel="stylesheet" href="{% static 'css/share.css' %}">
 <link rel="stylesheet" href="{% static 'css/confirm-delete.css' %}">
+<link rel="stylesheet" href="{% static 'css/category-chart.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -88,6 +89,37 @@
         </div>
       </div>
     </div>
+
+    {% if category_breakdown %}
+    <section class="category-chart">
+      <h2 class="category-chart-title">En qué se te va la plata</h2>
+      <p class="category-chart-subtitle muted">
+        Gasto por categoría comprando esta lista en {{ best.supermarket.name }}.
+      </p>
+
+      <ul class="category-bars">
+        {% for entry in category_breakdown %}
+        <li class="category-bar-row">
+          <span class="category-bar-label">{{ entry.category.name }}</span>
+          <span class="category-bar-track">
+            <span class="category-bar-fill" style="width: {{ entry.percentage|unlocalize }}%"></span>
+          </span>
+          <span class="category-bar-value">
+            ${{ entry.total|money }}
+            <span class="category-bar-percentage">{{ entry.percentage }}%</span>
+          </span>
+        </li>
+        {% endfor %}
+      </ul>
+
+      {% if uncounted_products %}
+      <p class="category-chart-note muted">
+        No se incluyen {% for product in uncounted_products %}{{ product.name }}{% if not forloop.last %}, {% endif %}{% endfor %}:
+        {{ best.supermarket.name }} no los vende.
+      </p>
+      {% endif %}
+    </section>
+    {% endif %}
   </div>
 
   {% if is_owner %}

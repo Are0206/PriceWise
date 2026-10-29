@@ -131,12 +131,15 @@ def shopping_list_details(request, pk):
     raw_breakdown = calculate_supermarket_breakdown(shopping_list)
     breakdown, best = get_cheapest_supermarket_recommendation(raw_breakdown) #RF-2
     savings = calculate_estimated_savings(breakdown) #RF-3
+    category_breakdown, uncounted_products = calculate_category_breakdown(shopping_list, best) #RF-45
 
     return render(request, 'shopping_lists/detail.html', {
         'shopping_list': shopping_list,
         'breakdown': breakdown,
         'best': best,
         'savings': savings,
+        'category_breakdown': category_breakdown, #RF-45
+        'uncounted_products': uncounted_products, #RF-45
         'is_owner': request.user.is_authenticated and shopping_list.owner_id == request.user.id,
     })
 
