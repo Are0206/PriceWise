@@ -25,8 +25,18 @@ def normalize_supermarkets(supermarkets_json):
     return supermarkets_normalized
 
 def normalize_page(page_json):
-    total_items
-    pass     
+    page_json = page_json or {}
+    products_json = page_json.get("Ítems") or []
+
+    total_items = page_json.get("TotalÍtems")
+    if not isinstance(total_items, int):
+        total_items = None
+
+    return {
+        "total_items": total_items,
+        "items_on_page": len(products_json),
+        "products": _normalize_products(products_json),
+    }
 
 def _normalize_products(products_json):
     products_normalized = []
