@@ -1,144 +1,72 @@
-from client import LosPreciosClient, LosPreciosError
-from normalizers import normalize_supermarkets, normalize_page
+"""Orchestrates the Los Precios import, stage by stage.
 
+Defines the order of the stages (supermarkets, catalog, prices), connects
+the client, the normalizers and the loaders, and decides how to handle
+partial failures so that one failing store does not abort the whole run.
+Each stage can be executed on its own. Logs a summary at the end of each run.
+"""
+#RF-40: Store and update products and prices API data
 import logging
-import os
+from collections import Counter
+
+from .client import LosPreciosError
+from .loaders import load_products, load_supermarkets
+from .normalizers import normalize_page, normalize_supermarkets
 
 logger = logging.getLogger(__name__)
 
+# The API filters a store's catalog by category name but has no endpoint that
+# lists them. shortcut: names copied from losprecios.co/mercado on 2026-10-29;
+# update this list if the site adds or renames a category.
 CATEGORIES = [
-    "Despensa",
-    "Bebidas",
-    "Frutas y Verduras",
-    "Carnes y Pescados",
-    "Panadería",
-    "Comida Preparada",
-    "Refrigerados",
-    "Dulces y Pasabocas",
-    "Cuidado Personal",
-    "Aseo del Hogar",
-    "Licores",
-    "Bebés",
-    "Mascotas",
-    "Varios",
+    "Despensa", "Bebidas", "Frutas y Verduras", "Carnes y Pescados", "Panadería",
+    "Comida Preparada", "Refrigerados", "Dulces y Pasabocas", "Cuidado Personal",
+    "Aseo del Hogar", "Licores", "Bebés", "Mascotas", "Varios",
 ]
 
-# Supermarket ID 6 has no products available.
-SUPERMARKETS_WITHOUT_PRODUCTS = {6}
+
+def sync_supermarkets(client):
+    """Stage 1: fetch and store the supermarkets. Returns {api_id: Supermarket}."""
+    return load_supermarkets(normalize_supermarkets(client.get_supermarkets()))
 
 
-client = LosPreciosClient(api_key=os.environ['LOSPRECIOS_API_KEY'])
+def sync_store_products(client, store_api_id, supermarkets_by_api_id, max_pages=None, category=None):
+    """Stage 2: walk every page of one store's catalog (optionally one category) and store it."""
+    totals = Counter()
+    seen = 0
+    page = 1
+    while max_pages is None or page <= max_pages:
+        data = normalize_page(client.get_supermarkets_details(id=store_api_id, category=category, page=page))
+        if data["items_on_page"] == 0:
+            break
+        totals.update(load_products(data["products"], supermarkets_by_api_id, category_name=category))
+        totals["pages"] += 1
+        seen += data["items_on_page"]
+        if data["total_items"] is not None and seen >= data["total_items"]:
+            break
+        page += 1
+    return totals
 
-# IMPORT SUPERMARKETS
-def import_supermarkets(client):
-    supermarkets_json = client.get_supermarkets()
-    supermarkets = normalize_supermarkets(supermarkets_json) #supermarkets[i][{"api_id", "name"}]
 
+def run(client, store_api_ids=None, max_pages=None, categories=None):
+    """Run the whole import, store by store and category by category.
+
+    A failing store or category is logged and skipped; a fatal API error stops the run.
     """
-    TODO: save in database
-    for supermarket in supermarkets:
-        #save
-    """
-
-    logger.info("Found %d supermarkets.", len(supermarkets))
-    return supermarkets
-
-def import_products(client, supermarkets):
-    total_supermarkets = len(supermarkets)
-
-    for index, supermarket in enumerate(supermarkets, start=1):
-        supermarket_id = supermarket["api_id"]
-
-        if supermarket_id in SUPERMARKETS_WITHOUT_PRODUCTS:
-            logger.info(
-                "Skipping supermarket %s (ID %s): no products available.",
-                supermarket["name"],
-                supermarket_id,
-            )
+    supermarkets_by_api_id = sync_supermarkets(client)
+    totals = Counter()
+    failed = []
+    for api_id, supermarket in supermarkets_by_api_id.items():
+        if store_api_ids and api_id not in store_api_ids:
             continue
+        for category in categories or CATEGORIES:
+            try:
+                totals.update(sync_store_products(client, api_id, supermarkets_by_api_id, max_pages, category))
+            except LosPreciosError as error:
+                if error.is_fatal:
+                    raise
+                logger.error("Store %s (%s), category %s failed: %s", supermarket.name, api_id, category, error)
+                failed.append(f"{supermarket.name} / {category}")
 
-        logger.info(
-            "Importing products from supermarket %s/%s: %s",
-            index,
-            total_supermarkets,
-            supermarket["name"],
-        )
-
-        try:
-            import_supermarket_products(client, supermarket)
-        except LosPreciosError as exc:
-            if exc.is_fatal:
-                raise
-
-            logger.exception(
-                "Could not import supermarket %s (ID %s).",
-                supermarket["name"],
-                supermarket_id,
-            )
-            continue
-
-def import_supermarket_products(client, supermarket):
-    supermarket_id = supermarket["api_id"]
-
-    for category in CATEGORIES:
-        try:
-            import_category_products(client, supermarket, category)
-        except LosPreciosError as exc:
-            if exc.is_fatal:
-                raise
-
-            logger.exception(
-                "Failed category '%s' for supermarket %s (ID %s).",
-                category,
-                supermarket["name"],
-                supermarket_id,
-            )
-
-
-def import_category_products(client, supermarket, category):
-    supermarket_id = supermarket["api_id"]
-    page_index = 1
-    products_count = 0
-
-    while True:
-        page_json = client.get_supermarket_category_page(
-            id=supermarket_id,
-            category=category,
-            page=page_index,
-        )
-
-        page = normalize_page(page_json)
-        total_items = page["total_items"]
-        items_on_page = page["items_on_page"]
-        products = page["products"]
-
-        #Empty first page means nothing to import.
-        if page_index == 1 and items_on_page == 0:
-            logger.info(
-                "No products in category '%s' for supermarket %s.",
-                category,
-                supermarket["name"],
-            )
-            break
-
-        # TODO: Save or update normalized products and their prices.
-    
-
-        products_count += items_on_page
-
-        if items_on_page == 0:
-            break
-
-        if total_items is not None and products_count >= total_items:
-            break
-
-        # Without a total, continue until an empty page is returned.
-        page_index += 1
-
-    logger.info(
-        "Imported %s items from category '%s' in supermarket %s.",
-        products_count,
-        category,
-        supermarket["name"],
-    )
-                
+    logger.info("Los Precios import: %s; failed stores: %s", dict(totals), failed or "none")
+    return {"supermarkets": len(supermarkets_by_api_id), "failed_stores": failed, **totals}

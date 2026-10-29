@@ -83,6 +83,15 @@ class LosPreciosClient:
             Subcategoría=subcategory,
             Página=page,
         )
+
+    def get_supermarkets_details(self, id=None, municipio_id=2, category=None, subcategory=None, page=None):
+        return self.get_supermarket_category_page(
+            id=id,
+            municipio_id=municipio_id,
+            category=category,
+            subcategory=subcategory,
+            page=page,
+        )
     
     def get_product_details(self, id=None, ean13=None, municipio_id=2):
         return self._get(
