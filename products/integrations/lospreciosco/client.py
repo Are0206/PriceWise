@@ -74,7 +74,7 @@ class LosPreciosClient:
     def get_supermarkets(self, municipio_id=2):
         return self._get("tienda/lista", MunicipioID=municipio_id)
 
-    def get_supermarkets_details(self, id=None, municipio_id=2, category=None, subcategory=None, page=None):
+    def get_supermarket_category_page(self, id=None, municipio_id=2, category=None, subcategory=None, page=None):
         return self._get(
             "tienda/detalles",
             ID=id,

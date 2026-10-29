@@ -28,17 +28,43 @@ CATEGORIES = [
 
 client = LosPreciosClient(api_key=os.environ['LOSPRECIOS_API_KEY'])
 
-# SUPERMARKETS
-supermarkets_json = client.get_supermarkets()
-supermarkets = normalize_supermarkets(supermarkets_json) #supermarkets[i][{"api_id", "name"}]
+# IMPORT SUPERMARKETS
+def import_supermarkets(client):
+    supermarkets_json = client.get_supermarkets()
+    supermarkets = normalize_supermarkets(supermarkets_json) #supermarkets[i][{"api_id", "name"}]
 
-#save
-"""
-for supermarket in supermarkets:
     #save
-"""
+    """
+    for supermarket in supermarkets:
+        #save
+    """
 
-# CATEGORIES PAGES PER SUPERMARKETS
-for supermarket in supermarkets:
-    id =
-     
+
+# IMPORT PRODUCTS PER CATEGORIES PAGES PER SUPERMARKETS
+def import_products(client, supermarkets):
+    for supermarket in supermarkets:
+        id = supermarket["api_id"]
+        
+        if id == 6:
+            continue #no products in exito
+        
+        for category in CATEGORIES:
+            page_index = 1
+            products_count = 0
+            
+            while True:
+                page_json = client.get_supermarket_category_page(id=id, category=category, page=page_index)
+                page = normalize_page(page_json) 
+                
+                if page_index == 1 and (page["total_items"] == 0 or page["total_items"] is None):
+                    break #No products
+                
+                products = page["products"]
+                #save products
+                
+                products_count += page["items_on_page"]  
+                
+                if page["items_on_page"] == 0 or products_count >= page["total_items"]:
+                    break
+                
+                page_index += 1
