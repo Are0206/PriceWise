@@ -3,6 +3,8 @@ from django.db import models
 
 class Supermarket(models.Model):
     name = models.CharField(max_length=100, unique=True)
+    # RF-40: ID of the store in the Los Precios API, so imports update instead of duplicating.
+    api_id = models.PositiveIntegerField(unique=True, null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -65,6 +67,9 @@ class Product(models.Model):
         blank=True,
         null=True
     )
+    # RF-40: data from the Los Precios API. The image URL is used when no image was uploaded.
+    api_id = models.PositiveIntegerField(unique=True, null=True, blank=True)
+    image_url = models.URLField(max_length=500, blank=True)
     def get_cheapest_price(self): #RF-32
         return self.prices.select_related('supermarket').order_by('amount').first()
     
