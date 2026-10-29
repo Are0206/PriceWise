@@ -1,5 +1,6 @@
-from client import LosPreciosClient
+from client import LosPreciosClient, LosPreciosError
 from normalizers import normalize_supermarkets, normalize_page
+
 import logging
 import os
 
@@ -41,6 +42,24 @@ def import_supermarkets(client):
 
     logger.info("Found %d supermarkets.", len(supermarkets))
     return supermarkets
+
+def import_supermarket_products(client, supermarket):
+    supermarket_id = supermarket["api_id"]
+
+    for category in CATEGORIES:
+        try:
+            import_category_products(client, supermarket, category)
+        except LosPreciosError as exc:
+            if exc.is_fatal:
+                raise
+
+            logger.exception(
+                "Failed category '%s' for supermarket %s (ID %s).",
+                category,
+                supermarket["name"],
+                supermarket_id,
+            )
+
 
 def import_category_products(client, supermarket, category):
     supermarket_id = supermarket["api_id"]
