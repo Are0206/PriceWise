@@ -25,7 +25,7 @@ class LosPreciosError(Exception):
 
 #RF-
 class LosPreciosClient:
-    def __init__(self, api_key, min_interval=1.1, timeout=20, max_retries=3):
+    def __init__(self, api_key, min_interval=1.5, timeout=20, max_retries=3):
         if not api_key:
             raise LosPreciosError("Missing Los Precios API key.", error_id=1)
         self.api_key = api_key
@@ -54,7 +54,8 @@ class LosPreciosClient:
                 response.raise_for_status()
                 response_json = response.json()
             except (requests.RequestException, ValueError) as exc:
-                error = LosPreciosError(f"Network or parsing error: {exc}")
+                safe_message = str(exc).replace(self.api_key, "***")
+                error = LosPreciosError(f"Network or parsing error: {safe_message}")
             else:
                 error_id = response_json.get("ErrorID", 0)
                 if error_id == 0:
@@ -69,13 +70,24 @@ class LosPreciosClient:
             delay = 2 ** attempt
             logger.warning("%s (attempt %d), retrying in %ds", error, attempt + 1, delay)
             time.sleep(delay)
-
-
+    
     def get_supermarkets(self, municipio_id=2):
         return self._get("tienda/lista", MunicipioID=municipio_id)
+
+    def get_supermarkets_details(self, id=None, municipio_id=2, category=None, subcategory=None, page=None):
+        return self._get(
+            "tienda/detalles",
+            ID=id,
+            MunicipioID=municipio_id,
+            Categoría=category,
+            Subcategoría=subcategory,
+            Página=page,
+        )
     
-    def get_supermarket_details(self, id=None, municipio_id=2):
-        return self._get("tienda/detalles", ID=id, MunicipioID=municipio_id)
-    
-    def get_product_details(self, id=None, municipio_id=2):
-        return self._get("item/detalles", ID=id, MunicipioID=municipio_id)
+    def get_product_details(self, id=None, ean13=None, municipio_id=2):
+        return self._get(
+            "ítem/detalles",
+            ID=id,
+            CódigoEAN13=ean13,
+            MunicipioID=municipio_id,
+        )
