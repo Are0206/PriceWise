@@ -23,7 +23,7 @@ class LosPreciosError(Exception):
         # error_id=None means a network or parsing failure, which is retryable
         return self.error_id in self.RETRYABLE_IDS or self.error_id is None
 
-#RF-
+#RF-38: Get Products and prices from API
 class LosPreciosClient:
     def __init__(self, api_key, min_interval=1.5, timeout=20, max_retries=3):
         if not api_key:
