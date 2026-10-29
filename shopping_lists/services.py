@@ -57,3 +57,57 @@ def calculate_estimated_savings(sorted_breakdown):
     if len(complete_entries) >= 2:
         return complete_entries[-1]['total'] - complete_entries[0]['total']
     return None
+
+
+#RF-45: Gasto por categoría en el supermercado recomendado
+def calculate_category_breakdown(shopping_list: ShoppingList, best_entry):
+    """Cuánto cuesta cada categoría comprando la lista en el supermercado recomendado.
+
+    Usa los precios de ese supermercado para que las barras sumen exactamente
+    el total que la página ya muestra. Los productos que ese supermercado no
+    vende no se pueden contar: se devuelven aparte para avisarlo en pantalla.
+
+    Devuelve (lista de categorías ordenada de mayor a menor, productos excluidos).
+    """
+    if best_entry is None:
+        return [], []
+
+    items = list(shopping_list.items.select_related('product__category').all())
+    if not items:
+        return [], []
+
+    prices = {
+        price.product_id: price.amount
+        for price in Price.objects.filter(
+            supermarket=best_entry['supermarket'],
+            product__in=[item.product for item in items],
+        )
+    }
+
+    totals = {}
+    excluded = []
+
+    for item in items:
+        amount = prices.get(item.product_id)
+        if amount is None:
+            excluded.append(item.product)
+            continue
+        category = item.product.category
+        totals[category] = totals.get(category, Decimal("0.00")) + amount * item.quantity
+
+    grand_total = sum(totals.values(), Decimal("0.00"))
+    if grand_total == 0:
+        return [], excluded
+
+    breakdown = [
+        {
+            'category': category,
+            'total': total,
+            # Porcentaje sobre el total contado, no sobre el total de la lista.
+            'percentage': (total / grand_total * 100).quantize(Decimal("0.1")),
+        }
+        for category, total in totals.items()
+    ]
+    breakdown.sort(key=lambda entry: entry['total'], reverse=True)
+
+    return breakdown, excluded

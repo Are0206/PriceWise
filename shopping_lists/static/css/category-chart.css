@@ -1,0 +1,98 @@
+/* RF-45: gráfico de gasto por categoría */
+.category-chart {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--default-border-color);
+}
+
+.category-chart-title {
+  font-size: 22px;
+  margin: 0 0 4px 0;
+}
+
+.category-chart-subtitle {
+  margin: 0 0 20px 0;
+  font-size: 14px;
+}
+
+.category-bars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.category-bar-row {
+  display: grid;
+  /* La columna del valor va fija: si se encoge, cada riel mide distinto
+     y las barras dejan de ser comparables entre filas. */
+  grid-template-columns: minmax(90px, 160px) 1fr 170px;
+  align-items: center;
+  gap: 14px;
+}
+
+.category-bar-label {
+  font-size: 14px;
+  text-align: right;
+}
+
+/* El riel marca el 100%: deja ver cuánto ocupa cada categoría del total. */
+.category-bar-track {
+  display: block;
+  height: 20px;
+  background-color: var(--default-border-color);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.category-bar-fill {
+  display: block;
+  height: 100%;
+  background-color: var(--savings-green-color);
+  /* Punta redondeada al final del dato, cuadrada en la línea base. */
+  border-radius: 0 4px 4px 0;
+  min-width: 2px;
+}
+
+.category-bar-value {
+  text-align: right;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.category-bar-percentage {
+  font-weight: 400;
+  color: var(--secundary-text-color);
+  margin-left: 4px;
+}
+
+.category-chart-note {
+  margin: 16px 0 0 0;
+  font-size: 13px;
+}
+
+@media (max-width: 700px) {
+  .category-bar-row {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "label value"
+      "track track";
+    gap: 6px 12px;
+  }
+
+  .category-bar-label {
+    grid-area: label;
+    text-align: left;
+  }
+
+  .category-bar-track {
+    grid-area: track;
+  }
+
+  .category-bar-value {
+    grid-area: value;
+  }
+}
