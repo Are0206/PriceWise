@@ -68,3 +68,11 @@ class LoadProductsTests(TestCase):
         stats = load_products([data], self.stores, self.day1)
         self.assertEqual(stats["skipped_prices"], 1)
         self.assertEqual(Price.objects.count(), 1)
+
+
+class PhotoUrlTests(TestCase):
+    def test_imported_photo_is_shown_on_the_card(self):
+        stores = load_supermarkets(SUPERMARKETS)
+        load_products([product()], stores, date(2026, 10, 1))
+        response = self.client.get("/")
+        self.assertContains(response, 'src="https://example.com/crema.jpg"')

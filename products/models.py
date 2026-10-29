@@ -70,6 +70,11 @@ class Product(models.Model):
     # RF-40: data from the Los Precios API. The image URL is used when no image was uploaded.
     api_id = models.PositiveIntegerField(unique=True, null=True, blank=True)
     image_url = models.URLField(max_length=500, blank=True)
+    @property
+    def photo_url(self):
+        """An uploaded image wins; otherwise the photo URL imported from the API (RF-40)."""
+        return self.image.url if self.image else self.image_url
+
     def get_cheapest_price(self): #RF-32
         return self.prices.select_related('supermarket').order_by('amount').first()
     

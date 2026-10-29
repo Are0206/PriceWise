@@ -3,8 +3,8 @@
 <div class="product-card">
 
   <div class="product-media">
-  {% if product.image %}
-  <img class="product-image" src="{{ product.image.url }}" alt="{{ product.name }}">
+  {% if product.photo_url %}
+  <img class="product-image" src="{{ product.photo_url }}" alt="{{ product.name }}" loading="lazy">
   {% endif %}
   {% if user.is_authenticated %}
     <details class="add-to-list">

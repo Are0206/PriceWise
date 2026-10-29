@@ -14,8 +14,8 @@
   <a href="{% url 'index' %}" class="back-link">&larr; Volver</a>
 
   <article class="card product-hero">
-    {% if product.image %}
-      <img class="product-hero-image" src="{{ product.image.url }}" alt="{{ product.name }}">
+    {% if product.photo_url %}
+      <img class="product-hero-image" src="{{ product.photo_url }}" alt="{{ product.name }}">
     {% endif %}
 
     <div class="product-hero-info">
