@@ -22,7 +22,7 @@
       <h1>{{ product.name }}</h1>
 
       {% if product.description %}
-        <p class="muted">{{ product.description }}</p>
+        <p class="muted">{{ product.description|linebreaksbr }}</p>
       {% endif %}
 
       {% if cheapest_price %}
