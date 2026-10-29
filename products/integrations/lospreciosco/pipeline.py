@@ -42,5 +42,50 @@ def import_supermarkets(client):
     logger.info("Found %d supermarkets.", len(supermarkets))
     return supermarkets
 
-#
+def import_category_products(client, supermarket, category):
+    supermarket_id = supermarket["api_id"]
+    page_index = 1
+    products_count = 0
+
+    while True:
+        page_json = client.get_supermarket_category_page(
+            id=supermarket_id,
+            category=category,
+            page=page_index,
+        )
+
+        page = normalize_page(page_json)
+        total_items = page["total_items"]
+        items_on_page = page["items_on_page"]
+        products = page["products"]
+
+        #Empty first page means nothing to import.
+        if page_index == 1 and items_on_page == 0:
+            logger.info(
+                "No products in category '%s' for supermarket %s.",
+                category,
+                supermarket["name"],
+            )
+            break
+
+        # TODO: Save or update normalized products and their prices.
+    
+
+        products_count += items_on_page
+
+        if items_on_page == 0:
+            break
+
+        if total_items is not None and products_count >= total_items:
+            break
+
+        # Without a total, continue until an empty page is returned.
+        page_index += 1
+
+    logger.info(
+        "Imported %s items from category '%s' in supermarket %s.",
+        products_count,
+        category,
+        supermarket["name"],
+    )
                 
