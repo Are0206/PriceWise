@@ -17,7 +17,7 @@ from products.models import Category, Price, PriceHistory, Product, Supermarket
 
 logger = logging.getLogger(__name__)
 
-# The API does not send a category; new products land here and can be moved in the admin.
+# Used only when products are loaded without an API category.
 DEFAULT_CATEGORY_NAME = "Otros"
 
 
@@ -40,8 +40,12 @@ def load_supermarkets(supermarkets):
     return by_api_id
 
 
-def load_products(products, supermarkets_by_api_id, price_date=None):
+def load_products(products, supermarkets_by_api_id, price_date=None, category_name=None):
     """Upsert normalized products and their prices.
+
+    category_name is the API category the products were fetched from; it is
+    set on every product so the API stays the source of truth. Without it,
+    new products go to the default category and existing ones keep theirs.
 
     Returns counts: created, updated, prices_changed, skipped_prices.
     Each product and its prices are saved in one transaction, so a failure
@@ -49,18 +53,20 @@ def load_products(products, supermarkets_by_api_id, price_date=None):
     """
     price_date = price_date or timezone.localdate()
     stats = {"created": 0, "updated": 0, "prices_changed": 0, "skipped_prices": 0}
-    category = None
+    category = _category(category_name) if category_name else None
 
     for data in products:
         with transaction.atomic():
             product = Product.objects.filter(api_id=data["api_id"]).first()
             if product is None:
                 if category is None:
-                    category = _default_category()
+                    category = _category(DEFAULT_CATEGORY_NAME)
                 product = Product(api_id=data["api_id"], category=category)
                 stats["created"] += 1
             else:
                 stats["updated"] += 1
+                if category_name:
+                    product.category = category
             product.name = data["name"][:200]
             product.description = data.get("description") or ""
             product.image_url = data.get("image_url") or ""
@@ -99,7 +105,10 @@ def _save_price(product, supermarket, amount, price_date):
     return True
 
 
-def _default_category():
-    category, _ = Category.objects.get_or_create(
-        slug=slugify(DEFAULT_CATEGORY_NAME), defaults={"name": DEFAULT_CATEGORY_NAME})
+def _category(name):
+    """Find a category by name (or slug, for ones created by hand) or create it."""
+    slug = slugify(name)
+    category = Category.objects.filter(name__iexact=name).first() or Category.objects.filter(slug=slug).first()
+    if category is None:
+        category = Category.objects.create(name=name, slug=slug)
     return category
