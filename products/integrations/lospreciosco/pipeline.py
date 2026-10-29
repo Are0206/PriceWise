@@ -43,6 +43,40 @@ def import_supermarkets(client):
     logger.info("Found %d supermarkets.", len(supermarkets))
     return supermarkets
 
+def import_products(client, supermarkets):
+    total_supermarkets = len(supermarkets)
+
+    for index, supermarket in enumerate(supermarkets, start=1):
+        supermarket_id = supermarket["api_id"]
+
+        if supermarket_id in SUPERMARKETS_WITHOUT_PRODUCTS:
+            logger.info(
+                "Skipping supermarket %s (ID %s): no products available.",
+                supermarket["name"],
+                supermarket_id,
+            )
+            continue
+
+        logger.info(
+            "Importing products from supermarket %s/%s: %s",
+            index,
+            total_supermarkets,
+            supermarket["name"],
+        )
+
+        try:
+            import_supermarket_products(client, supermarket)
+        except LosPreciosError as exc:
+            if exc.is_fatal:
+                raise
+
+            logger.exception(
+                "Could not import supermarket %s (ID %s).",
+                supermarket["name"],
+                supermarket_id,
+            )
+            continue
+
 def import_supermarket_products(client, supermarket):
     supermarket_id = supermarket["api_id"]
 
