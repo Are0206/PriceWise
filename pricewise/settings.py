@@ -16,16 +16,51 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
+from django.core.exceptions import ImproperlyConfigured
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-#q@ld77k!&+@0x@no_d15s+z)nb)=q*hy4yq+=a!vxj0r&7w=l'
+from pricewise.env import env_bool, env_list, get_env, validate_production
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DJANGO_ENV picks the profile. Development is the default so the team can run
+# the project with no setup; production must be declared and is validated below,
+# so a forgotten variable stops the server instead of starting it in debug mode.
+DJANGO_ENV = get_env('DJANGO_ENV', 'development').strip().lower()
+if DJANGO_ENV not in ('development', 'production'):
+    raise ImproperlyConfigured(f"DJANGO_ENV must be 'development' or 'production', got {DJANGO_ENV!r}.")
+IS_PRODUCTION = DJANGO_ENV == 'production'
 
-ALLOWED_HOSTS = []
+# Only valid for local development; production refuses it.
+DEVELOPMENT_SECRET_KEY = 'django-insecure-#q@ld77k!&+@0x@no_d15s+z)nb)=q*hy4yq+=a!vxj0r&7w=l'
+
+if IS_PRODUCTION:
+    DEBUG = env_bool('DJANGO_DEBUG')
+    SECRET_KEY = get_env('DJANGO_SECRET_KEY', '')
+    ALLOWED_HOSTS = env_list('DJANGO_ALLOWED_HOSTS')
+    problems = validate_production(DEBUG, SECRET_KEY, ALLOWED_HOSTS)
+    if problems:
+        raise ImproperlyConfigured('Unsafe production settings: ' + ' '.join(problems))
+else:
+    DEBUG = env_bool('DJANGO_DEBUG', True)
+    SECRET_KEY = get_env('DJANGO_SECRET_KEY') or DEVELOPMENT_SECRET_KEY
+    ALLOWED_HOSTS = env_list('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1,[::1]')
+
+CSRF_TRUSTED_ORIGINS = env_list('DJANGO_CSRF_TRUSTED_ORIGINS')
+
+# Security headers that are safe in every environment.
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = 'same-origin'
+X_FRAME_OPTIONS = 'DENY'
+SESSION_COOKIE_HTTPONLY = True
+
+if IS_PRODUCTION:
+    SECURE_SSL_REDIRECT = env_bool('DJANGO_SECURE_SSL_REDIRECT', True)
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    # Start short; raise it once HTTPS is confirmed to work on every host.
+    SECURE_HSTS_SECONDS = int(get_env('DJANGO_SECURE_HSTS_SECONDS', '3600'))
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool('DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS', False)
+    # Only behind a reverse proxy that sets X-Forwarded-Proto itself.
+    if env_bool('DJANGO_TRUST_PROXY_SSL', False):
+        SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Application definition
@@ -121,7 +156,24 @@ USE_TZ = True
 
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 #Media
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+
+# Logging: show the Los Precios sync summary (INFO) and every warning on the console.
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'simple': {'format': '{levelname} {name}: {message}', 'style': '{'},
+    },
+    'handlers': {
+        'console': {'class': 'logging.StreamHandler', 'formatter': 'simple'},
+    },
+    'loggers': {
+        'products': {'handlers': ['console'], 'level': get_env('DJANGO_LOG_LEVEL', 'INFO'), 'propagate': False},
+    },
+}
