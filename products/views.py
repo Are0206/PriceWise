@@ -1,4 +1,5 @@
-from django.db.models.aggregates import Min
+from django.core.paginator import Paginator
+from django.db.models import Count, Min
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -45,6 +46,14 @@ def index(request):
     products = filter_products_by_price_range(products, min_price, max_price) # RF-14
     products = sort_products_by_price(products, sort)                        # RF-13
 
+    paginator = Paginator(products, 24)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
+    query_params = request.GET.copy()
+    query_params.pop('page', None)
+    query_string = query_params.urlencode()
+
     #RF-17
     user_favorite_ids = []
     if request.user.is_authenticated:
@@ -56,7 +65,10 @@ def index(request):
         request,
         "products/index.html",
         {
-            "products": products,
+            "products": page_obj,
+            "page_obj": page_obj,
+            "paginator": paginator,
+            "query_string": query_string,
             "categories": categories,
             "query": query,
             "search_by": search_by,
@@ -125,8 +137,9 @@ def delete_review(request, review_id):
     return redirect('products:detail', pk=product_pk)
 
 def supermarkets_index(request):
-    
-    supermarkets = Supermarket.objects.prefetch_related('locations')
+    supermarkets = Supermarket.objects.annotate(
+        price_count=Count('prices')
+    ).prefetch_related('locations')
 
     return render(request, 'supermarkets/index.html', {
         'supermarkets': supermarkets,
