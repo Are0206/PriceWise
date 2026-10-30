@@ -145,16 +145,6 @@ body {
 /* =========================================
    FILTER SECTION
    ========================================= */
-.supermarket-button p {
-  color: var(--primary-text-color);
-  position: absolute;
-  left: 20;
-
-  margin: 0;
-  margin-right: 100px;
-  margin-top: -25px;
-}
-
 .filter-form {
   display: flex;
   flex-direction: column;

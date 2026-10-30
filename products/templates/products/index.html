@@ -15,9 +15,13 @@
       <div class="filter-section">
         <form action="{% url 'index' %}" method="get" id="filterForm" class="filter-form">
 
-          <!-- Carry the active search so filtering does not clear it -->
+          <!-- Carry the active search and filters so each control keeps the others.
+               The hidden fields come first: a clicked category/sort button is sent
+               after them and Django keeps the last value. -->
           <input type="hidden" name="q" value="{{ query }}">
           <input type="hidden" name="search_by" value="{{ search_by }}">
+          <input type="hidden" name="category" value="{{ category_filter }}">
+          <input type="hidden" name="sort" value="{{ sort }}">
 
           <div class="filter-field">
             <p class="field-label">Categorías</p>

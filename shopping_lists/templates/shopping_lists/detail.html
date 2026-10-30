@@ -27,8 +27,9 @@
         {% csrf_token %}
         <button type="submit" class="btn btn--outline">Duplicar</button>
       </form>
-      <button type="button" id="open-share-card" data-url="{% url 'shopping_lists:share' shopping_list.pk %}" class="btn btn--outline">Compartir</button>
-      <button type="button" id="open-delete-card" data-url="{% url 'shopping_lists:delete' shopping_list.pk %}" class="btn btn--danger">Borrar</button>
+      {# Links work without JavaScript; card-dialog.js opens them in a dialog instead. #}
+      <a href="{% url 'shopping_lists:share' shopping_list.pk %}" data-card-url="{% url 'shopping_lists:share' shopping_list.pk %}" class="btn btn--outline">Compartir</a>
+      <a href="{% url 'shopping_lists:delete' shopping_list.pk %}" data-card-url="{% url 'shopping_lists:delete' shopping_list.pk %}" class="btn btn--danger">Borrar</a>
     </div>
     {% endif %}
   </div>
@@ -129,13 +130,10 @@
   {% endif %}
 </div>
 
-  <!--cards (share, delete)-->
-  <div class="card-overlay" id="card-overlay">
-    <div class="card-content" id="card-body-content">
-    </div>
-  </div>
+  {# Share / delete cards are loaded into this dialog. #}
+  <dialog class="card-dialog" id="card-dialog" aria-labelledby="card-title">
+    <div id="card-body-content"></div>
+  </dialog>
 
-  <!--Scripts-->
-  <script src="{% static 'js/display-share-card.js' %}" defer></script>
-  <script src="{% static 'js/display-confirm-delete.js' %}" defer></script>
+  <script src="{% static 'js/card-dialog.js' %}" defer></script>
 {% endblock %}

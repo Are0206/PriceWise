@@ -1,5 +1,6 @@
 from django.core.paginator import Paginator
 from django.db.models import Count, Min
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -112,21 +113,30 @@ def list_favorite_products(request):
     })
 
 
+VALID_RATINGS = {str(n) for n in range(1, 6)}
+
+
+def save_review(request, review_model, **target):
+    """Create or update the user's review of a product or supermarket (RF-30, RF-34)."""
+    rating = request.POST.get('rating', '')
+    if rating not in VALID_RATINGS:
+        messages.error(request, 'Elige una calificación de 1 a 5 estrellas para publicar tu reseña.')
+        return
+    review_model.objects.update_or_create(
+        user=request.user,
+        **target,
+        defaults={'rating': int(rating), 'comment': request.POST.get('comment', '').strip()},
+    )
+    messages.success(request, 'Tu reseña quedó guardada.')
+
+
 #RF-30: Review products
 @login_required
 def submit_review(request, pk):
     product = get_object_or_404(Product, pk=pk)
 
     if request.method == 'POST':
-        rating = request.POST.get('rating')
-        comment = request.POST.get('comment', '')
-
-        if rating in [str(n) for n in range(1, 6)]:
-            ProductReview.objects.update_or_create(
-                user=request.user,
-                product=product,
-                defaults={'rating': rating, 'comment': comment},
-            )
+        save_review(request, ProductReview, product=product)
 
     return redirect('products:detail', pk=product.pk)
 
@@ -180,15 +190,7 @@ def submit_supermarket_review(request, pk):
     supermarket = get_object_or_404(Supermarket, pk=pk)
 
     if request.method == 'POST':
-        rating = request.POST.get('rating')
-        comment = request.POST.get('comment', '')
-
-        if rating in [str(n) for n in range(1, 6)]:
-            SupermarketReview.objects.update_or_create(
-                user=request.user,
-                supermarket=supermarket,
-                defaults={'rating': rating, 'comment': comment},
-            )
+        save_review(request, SupermarketReview, supermarket=supermarket)
 
     return redirect('products:supermarkets_details', pk=supermarket.pk)
 

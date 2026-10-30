@@ -13,13 +13,13 @@ const shoppingListContent =
 
 const params = new URLSearchParams(window.location.search);
 
-if (params.get("open_lists") === "true") {
+if (shoppingListPanel && params.get("open_lists") === "true") {
     openShoppingListPanel();
 }
 
 
-shoppingListButton.addEventListener("click", async () => {
-
+// The button and panel only exist for logged-in users.
+shoppingListButton?.addEventListener("click", () => {
     openShoppingListPanel();
 });
 
@@ -56,7 +56,7 @@ async function openShoppingListPanel() {
 }
 
 
-closeShoppingList.addEventListener("click", () => {
+closeShoppingList?.addEventListener("click", () => {
 
     shoppingListPanel.classList.remove("open");
 

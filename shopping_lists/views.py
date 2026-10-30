@@ -71,6 +71,12 @@ def edit_shopping_lists(request, pk):
         'title': 'Editar lista',
     })
 
+def render_card(request, template, context):
+    """The detail page fetches share/delete cards into a dialog; a plain visit gets a full page."""
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return render(request, template, context)
+    return render(request, 'shopping_lists/card_page.html', {**context, 'card_template': template})
+
 #RF-5: Delete shopping lists
 @login_required
 def delete_shopping_lists(request, pk):
@@ -82,7 +88,7 @@ def delete_shopping_lists(request, pk):
         # The lists index is only the panel fragment, so go home with the panel open.
         return redirect(f"{reverse('index')}?open_lists=true")
 
-    return render(request, 'shopping_lists/confirm_delete.html', {
+    return render_card(request, 'shopping_lists/confirm_delete.html', {
         'shopping_list': shopping_list,
     })
 
@@ -119,7 +125,7 @@ def share_shopping_lists(request, pk):
     shopping_list = get_object_or_404(ShoppingList, pk=pk, owner=request.user)
     share_url = request.build_absolute_uri(reverse('shopping_lists:detail', kwargs={'pk': shopping_list.pk}))
 
-    return render(request, 'shopping_lists/share.html', {
+    return render_card(request, 'shopping_lists/share.html', {
         'shopping_list': shopping_list,
         'share_url': share_url,
     })

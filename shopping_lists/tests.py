@@ -89,3 +89,42 @@ class QuickAddToListTests(TestCase):
         self.assertContains(response, 'Agregar a una lista')
         self.assertContains(response, self.url)
         self.assertNotContains(response, 'Lista de Beto')
+
+
+class ShoppingListCardTests(TestCase):
+    def setUp(self):
+        self.owner = User.objects.create_user(username='ana', password='clave-segura-1')
+        self.shopping_list = ShoppingList.objects.create(name='Mercado', owner=self.owner)
+        self.client.force_login(self.owner)
+
+    def test_cards_are_fragments_when_fetched(self):
+        for name in ('share', 'delete'):
+            response = self.client.get(reverse(f'shopping_lists:{name}', args=[self.shopping_list.pk]),
+                                       HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+            self.assertNotContains(response, '<html')
+            self.assertContains(response, 'id="card-title"')
+
+    def test_cards_are_full_pages_without_javascript(self):
+        for name in ('share', 'delete'):
+            response = self.client.get(reverse(f'shopping_lists:{name}', args=[self.shopping_list.pk]))
+            self.assertContains(response, '<html')
+            self.assertContains(response, 'id="card-title"')
+            # Cancel/close goes back to the list instead of doing nothing.
+            self.assertContains(response, reverse('shopping_lists:detail', args=[self.shopping_list.pk]))
+
+    def test_detail_page_links_work_without_javascript(self):
+        response = self.client.get(reverse('shopping_lists:detail', args=[self.shopping_list.pk]))
+        self.assertContains(response, f'href="{reverse("shopping_lists:delete", args=[self.shopping_list.pk])}"')
+        self.assertContains(response, '<dialog class="card-dialog"')
+
+    def test_invalid_item_quantity_error_is_shown(self):
+        from products.models import Category, Product
+        product = Product.objects.create(name='Arroz', category=Category.objects.create(name='G', slug='g'))
+        response = self.client.post(reverse('shopping_lists:edit', args=[self.shopping_list.pk]), {
+            'name': 'Mercado',
+            'items-TOTAL_FORMS': '1', 'items-INITIAL_FORMS': '0',
+            'items-MIN_NUM_FORMS': '0', 'items-MAX_NUM_FORMS': '1000',
+            'items-0-product': product.pk, 'items-0-quantity': '-3',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'mayor o igual a 0')

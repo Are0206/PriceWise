@@ -281,3 +281,51 @@ class ToggleFavoriteTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn('/accounts/login/', response['Location'])
         self.assertFalse(Favorite.objects.exists())
+
+
+class CatalogFiltersKeepEachOtherTests(TestCase):
+    def setUp(self):
+        Category.objects.create(name='Granos', slug='granos')
+
+    def test_filter_form_carries_active_category_and_sort(self):
+        response = self.client.get(reverse('index'), {'category': 'granos', 'sort': 'price_desc', 'q': 'arroz'})
+        self.assertContains(response, '<input type="hidden" name="category" value="granos">', html=True)
+        self.assertContains(response, '<input type="hidden" name="sort" value="price_desc">', html=True)
+        self.assertContains(response, '<input type="hidden" name="q" value="arroz">', html=True)
+
+    def test_clicked_button_wins_over_hidden_value(self):
+        # The hidden category comes first in the form; the clicked button is sent last.
+        response = self.client.get('/?category=granos&sort=price_asc&category=lacteos')
+        self.assertEqual(response.context['category_filter'], 'lacteos')
+        self.assertEqual(response.context['sort'], 'price_asc')
+
+
+class ReviewFeedbackTests(TestCase):
+    def setUp(self):
+        category = Category.objects.create(name='Granos', slug='granos')
+        self.product = Product.objects.create(name='Arroz', category=category)
+        self.supermarket = Supermarket.objects.create(name='D1')
+        self.user = User.objects.create_user('ana', password='clave-segura-123')
+        self.client.force_login(self.user)
+
+    def test_invalid_rating_shows_an_error_and_saves_nothing(self):
+        for rating in ('', '0', '6', 'cinco'):
+            response = self.client.post(reverse('products:submit_review', args=[self.product.pk]),
+                                        {'rating': rating, 'comment': 'x'}, follow=True)
+            self.assertContains(response, 'Elige una calificación de 1 a 5 estrellas')
+        self.assertFalse(ProductReview.objects.exists())
+
+    def test_valid_rating_is_saved_with_confirmation(self):
+        response = self.client.post(reverse('products:submit_review', args=[self.product.pk]),
+                                    {'rating': '4', 'comment': '  Buen arroz  '}, follow=True)
+        self.assertContains(response, 'Tu reseña quedó guardada')
+        review = ProductReview.objects.get()
+        self.assertEqual((review.rating, review.comment), (4, 'Buen arroz'))
+
+    def test_supermarket_review_uses_the_same_rules(self):
+        from .models import SupermarketReview
+        url = reverse('products:submit_supermarket_review', args=[self.supermarket.pk])
+        self.client.post(url, {'rating': '9'})
+        self.assertFalse(SupermarketReview.objects.exists())
+        self.client.post(url, {'rating': '5', 'comment': 'Bien'})
+        self.assertEqual(SupermarketReview.objects.get().rating, 5)
