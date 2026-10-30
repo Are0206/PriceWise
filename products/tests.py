@@ -229,3 +229,55 @@ class CatalogPaginationTests(TestCase):
         response = self.client.get(reverse('index'), {'category': 'abarrotes', 'page': 1})
         self.assertContains(response, 'category=abarrotes')
         self.assertContains(response, 'page=2')
+
+
+class ParsePriceTests(TestCase):
+    def test_valid_prices(self):
+        from .services import parse_price
+        self.assertEqual(str(parse_price('2500')), '2500')
+        self.assertEqual(str(parse_price(' 99.50 ')), '99.50')
+        self.assertEqual(str(parse_price('0')), '0')
+
+    def test_invalid_prices_are_ignored(self):
+        from .services import parse_price
+        for raw in (None, '', 'abc', 'NaN', 'nan', 'Infinity', '-Infinity', 'sNaN', '-5', '1e', '1,000'):
+            self.assertIsNone(parse_price(raw), raw)
+
+    def test_catalog_does_not_crash_on_non_finite_prices(self):
+        for params in ({'min_price': 'NaN', 'max_price': '5000'}, {'min_price': '0', 'max_price': 'Infinity'}):
+            response = self.client.get(reverse('index'), params)
+            self.assertEqual(response.status_code, 200, params)
+
+
+class ToggleFavoriteTests(TestCase):
+    def setUp(self):
+        category = Category.objects.create(name='Granos', slug='granos')
+        self.product = Product.objects.create(name='Arroz', category=category)
+        self.user = User.objects.create_user('ana', password='clave-segura-123')
+        self.client.force_login(self.user)
+        self.url = reverse('products:toggle_favorite', args=[self.product.pk])
+
+    def test_toggle_adds_then_removes(self):
+        self.client.post(self.url)
+        self.assertTrue(Favorite.objects.filter(user=self.user, product=self.product).exists())
+        self.client.post(self.url)
+        self.assertFalse(Favorite.objects.filter(user=self.user, product=self.product).exists())
+
+    def test_get_does_not_change_favorites(self):
+        self.client.get(self.url)
+        self.assertFalse(Favorite.objects.exists())
+
+    def test_redirects_back_to_same_site_referer(self):
+        response = self.client.post(self.url, HTTP_REFERER='http://testserver/?page=2')
+        self.assertEqual(response['Location'], 'http://testserver/?page=2')
+
+    def test_external_referer_is_not_followed(self):
+        response = self.client.post(self.url, HTTP_REFERER='https://evil.example.com/phish')
+        self.assertRedirects(response, '/', fetch_redirect_response=False)
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/accounts/login/', response['Location'])
+        self.assertFalse(Favorite.objects.exists())

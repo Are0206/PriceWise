@@ -2,6 +2,7 @@ from django.core.paginator import Paginator
 from django.db.models import Count, Min
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.http import url_has_allowed_host_and_scheme
 
 from .models import Favorite, Category, Product, Supermarket, ProductReview, SupermarketReview
 from .services import *
@@ -91,7 +92,11 @@ def toggle_favorite(request, product_id):
         if not created:
             favorite.delete()
 
-    return redirect(request.META.get('HTTP_REFERER', '/'))
+    # Go back to the page that sent the form, but never to another site.
+    referer = request.META.get('HTTP_REFERER', '')
+    if url_has_allowed_host_and_scheme(referer, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+        return redirect(referer)
+    return redirect('/')
 
 
 #RF-41: List favorite products
