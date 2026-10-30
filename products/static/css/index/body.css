@@ -388,3 +388,60 @@ MEdia query
   z-index: 30;
   transform: none;
 }
+
+/* =========================================
+   PAGINATION
+   ========================================= */
+.pagination-nav {
+  margin: 32px 0 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.page-item {
+  display: flex;
+  align-items: center;
+}
+
+.page-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--primary-text-color);
+  background-color: var(--surface-color);
+  border: 1px solid var(--default-border-color);
+  border-radius: var(--radius);
+  text-decoration: none;
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+}
+
+.page-btn:hover:not(.disabled) {
+  background-color: var(--muted-surface-color);
+  border-color: var(--primary-input-color);
+}
+
+.page-btn.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.page-info {
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--secondary-text-color);
+  padding: 0 8px;
+}

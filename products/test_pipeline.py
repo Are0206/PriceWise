@@ -15,14 +15,14 @@ def raw_item(item_id, price=2300):
 
 
 class FakeClient:
-    """Two stores; store 1 has 3 items over two pages, store 6 fails."""
+    """Stores: store 1 has 3 items over two pages, store 2 fails, store 6 is Éxito (no products)."""
 
     def __init__(self, fail_store=None):
         self.fail_store = fail_store
         self.pages_requested = []
 
     def get_supermarkets(self, municipio_id=2):
-        return [{"ID": 1, "Nombre": "D1"}, {"ID": 6, "Nombre": "Éxito"}]
+        return [{"ID": 1, "Nombre": "D1"}, {"ID": 2, "Nombre": "Jumbo"}, {"ID": 6, "Nombre": "Éxito"}]
 
     def get_supermarkets_details(self, id=None, page=None, **kwargs):
         self.pages_requested.append((id, page))
@@ -39,9 +39,17 @@ class PipelineTests(TestCase):
         self.assertEqual(summary["created"], 3)
         self.assertEqual(client.pages_requested, [(1, 1), (1, 2)])
 
+    def test_supermarkets_without_products_are_skipped_automatically(self):
+        client = FakeClient()
+        summary = pipeline.run(client, categories=["Despensa"])
+        # Store 6 (Éxito) must not be queried for catalog pages
+        requested_stores = [store_id for store_id, _ in client.pages_requested]
+        self.assertNotIn(6, requested_stores)
+        self.assertIn(1, requested_stores)
+
     def test_a_failing_store_is_skipped_not_fatal(self):
-        summary = pipeline.run(FakeClient(fail_store=6), categories=["Despensa"])
-        self.assertEqual(summary["failed_stores"], ["Éxito / Despensa"])
+        summary = pipeline.run(FakeClient(fail_store=2), categories=["Despensa"])
+        self.assertEqual(summary["failed_stores"], ["Jumbo / Despensa"])
         self.assertEqual(Product.objects.count(), 3)
 
     def test_fatal_api_error_stops_the_run(self):

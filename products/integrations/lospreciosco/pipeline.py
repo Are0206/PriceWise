@@ -24,6 +24,10 @@ CATEGORIES = [
     "Aseo del Hogar", "Licores", "Bebés", "Mascotas", "Varios",
 ]
 
+# Supermarkets that do not expose products in the Los Precios API (e.g. Éxito ID 6).
+# Skipping them prevents making redundant requests (14 categories per run).
+SUPERMARKETS_WITHOUT_PRODUCTS = {6}
+
 
 def sync_supermarkets(client):
     """Stage 1: fetch and store the supermarkets. Returns {api_id: Supermarket}."""
@@ -58,6 +62,9 @@ def run(client, store_api_ids=None, max_pages=None, categories=None):
     failed = []
     for api_id, supermarket in supermarkets_by_api_id.items():
         if store_api_ids and api_id not in store_api_ids:
+            continue
+        if api_id in SUPERMARKETS_WITHOUT_PRODUCTS and not store_api_ids:
+            logger.info("Skipping supermarket %s (ID %s): no products available in API.", supermarket.name, api_id)
             continue
         for category in categories or CATEGORIES:
             try:

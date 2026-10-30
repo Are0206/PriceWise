@@ -26,6 +26,9 @@
             <p class="supermarket-locations-count muted">Sin sedes registradas</p>
           {% endif %}
         {% endwith %}
+        {% if supermarket.price_count == 0 %}
+          <p class="supermarket-catalog-notice muted" style="font-size:0.85rem; color:var(--secondary-text-color); margin-top:4px;">Catálogo no disponible en API</p>
+        {% endif %}
         <a href="{% url 'products:supermarkets_details' supermarket.pk %}" class="btn btn--primary">Ver sedes y reseñas</a>
       </article>
     {% empty %}
