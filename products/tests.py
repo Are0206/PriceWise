@@ -181,3 +181,51 @@ class StarRatingTests(TestCase):
         self.assertContains(response, 'value="4" required checked')
         self.assertContains(response, 'aria-label="4 de 5 estrellas"')
         self.assertContains(response, 'star--filled', count=4)
+
+
+class CatalogPaginationTests(TestCase):
+    def setUp(self):
+        self.category = Category.objects.create(name='Abarrotes', slug='abarrotes')
+        Product.objects.bulk_create([
+            Product(name=f"Producto {i:03d}", category=self.category)
+            for i in range(1, 56)
+        ])
+
+    def test_first_page_contains_24_products(self):
+        response = self.client.get(reverse('index'))
+        self.assertEqual(response.status_code, 200)
+        page_obj = response.context['page_obj']
+        self.assertEqual(len(page_obj), 24)
+        self.assertEqual(page_obj.number, 1)
+        self.assertEqual(page_obj.paginator.num_pages, 3)
+        self.assertTrue(page_obj.has_next())
+        self.assertFalse(page_obj.has_previous())
+
+    def test_second_page_navigation(self):
+        response = self.client.get(reverse('index'), {'page': 2})
+        self.assertEqual(response.status_code, 200)
+        page_obj = response.context['page_obj']
+        self.assertEqual(len(page_obj), 24)
+        self.assertEqual(page_obj.number, 2)
+        self.assertTrue(page_obj.has_next())
+        self.assertTrue(page_obj.has_previous())
+
+    def test_last_page_contains_remainder(self):
+        response = self.client.get(reverse('index'), {'page': 3})
+        self.assertEqual(response.status_code, 200)
+        page_obj = response.context['page_obj']
+        self.assertEqual(len(page_obj), 7)
+        self.assertEqual(page_obj.number, 3)
+        self.assertFalse(page_obj.has_next())
+        self.assertTrue(page_obj.has_previous())
+
+    def test_invalid_page_defaults_to_first_or_last(self):
+        response = self.client.get(reverse('index'), {'page': 'abc'})
+        self.assertEqual(response.context['page_obj'].number, 1)
+        response = self.client.get(reverse('index'), {'page': 999})
+        self.assertEqual(response.context['page_obj'].number, 3)
+
+    def test_pagination_links_preserve_active_filters(self):
+        response = self.client.get(reverse('index'), {'category': 'abarrotes', 'page': 1})
+        self.assertContains(response, 'category=abarrotes')
+        self.assertContains(response, 'page=2')

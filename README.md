@@ -50,6 +50,35 @@ The database is included in the repository, so it already contains the necessary
 
 To modify this data, add new products, or update prices, sign in to the admin panel at http://127.0.0.1:8000/admin/ using the superuser account you created earlier.
  
+## Importing data from Los Precios
+
+Products, prices and supermarkets can be imported from the [Los Precios](https://losprecios.co) API.
+
+1. Create a file named `.env` in the project root (next to `manage.py`) with the API key:
+
+   ```
+   LOSPRECIOS_API_KEY=your-key
+   ```
+
+   `.env` is in `.gitignore`: never commit the key or paste it in code, issues or the wiki.
+
+2. Run the import:
+
+   ```bash
+   python manage.py sync_losprecios
+   ```
+
+   Useful options: `--store 1` (only one store, by its API id), `--category Despensa` (only one category), `--max-pages 2` (quick test), `--only-supermarkets`. `--store` and `--category` can be repeated.
+
+Running it again updates the same products instead of duplicating them. Products get the category they have on Los Precios. Each time a price changes, a dated row is added to the price history, so run the import once a day to build up the history. The API allows one request per second, so a full import takes around 20 minutes.
+
+3. Once the real data is in, remove the hand-made demo catalog (products and supermarkets without an API id):
+
+   ```bash
+   python manage.py remove_demo_data        # shows what would be deleted
+   python manage.py remove_demo_data --yes  # deletes it
+   ```
+
 ## Main URLs
  
 ### Products & Supermarkets

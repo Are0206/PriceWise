@@ -86,8 +86,39 @@
           {% endfor %}
 
         </div>
+
+        {% if page_obj.has_other_pages %}
+        <nav class="pagination-nav" aria-label="Paginación del catálogo">
+          <ul class="pagination">
+            {% if page_obj.has_previous %}
+              <li class="page-item">
+                <a class="page-btn page-btn--nav" href="?{% if query_string %}{{ query_string }}&{% endif %}page={{ page_obj.previous_page_number }}" aria-label="Página anterior">&larr; Anterior</a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <span class="page-btn page-btn--nav disabled">&larr; Anterior</span>
+              </li>
+            {% endif %}
+
+            <li class="page-item page-info">
+              <span>Página <strong>{{ page_obj.number }}</strong> de <strong>{{ page_obj.paginator.num_pages }}</strong></span>
+            </li>
+
+            {% if page_obj.has_next %}
+              <li class="page-item">
+                <a class="page-btn page-btn--nav" href="?{% if query_string %}{{ query_string }}&{% endif %}page={{ page_obj.next_page_number }}" aria-label="Página siguiente">Siguiente &rarr;</a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <span class="page-btn page-btn--nav disabled">Siguiente &rarr;</span>
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
+        {% endif %}
       </div>
 
     </div>
   </div>
+<script src="{% static 'js/add-to-list.js' %}" defer></script>
 {% endblock %}

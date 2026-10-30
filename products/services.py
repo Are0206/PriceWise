@@ -49,7 +49,7 @@ def filter_products_by_price_range(products, min_price, max_price):
 def sort_products_by_price(products, sort_option):
     match sort_option:
         case 'price_asc':
-            return products.order_by('cheapest_price')
+            return products.order_by('cheapest_price', 'name', 'id')
         case 'price_desc':
-            return products.order_by('-cheapest_price')
-    return products
+            return products.order_by('-cheapest_price', 'name', 'id')
+    return products.order_by('name', 'id')

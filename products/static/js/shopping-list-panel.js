@@ -39,6 +39,13 @@ async function openShoppingListPanel() {
 
         shoppingListContent.innerHTML = html;
 
+        // The lists slide in after the panel, a beat behind each other.
+        if (window.gsap && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            gsap.from(shoppingListContent.querySelectorAll('.shopping-list-items li'), {
+                x: 16, autoAlpha: 0, duration: 0.35, ease: 'expo.out', stagger: 0.03, clearProps: 'all',
+            });
+        }
+
     } catch (error) {
 
         console.error(error);
