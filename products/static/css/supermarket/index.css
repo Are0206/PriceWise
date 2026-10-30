@@ -18,6 +18,20 @@
   box-shadow: var(--shadow-hover);
 }
 
+.supermarket-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.supermarket-logo {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  object-fit: contain;
+  border-radius: var(--radius);
+}
+
 .supermarket-name {
   margin: 0;
 }

@@ -16,7 +16,12 @@
   <div class="supermarkets-grid">
     {% for supermarket in supermarkets %}
       <article class="card supermarket-card">
-        <h2 class="supermarket-name">{{ supermarket.name }}</h2>
+        <div class="supermarket-header">
+          {% if supermarket.logo %}
+            <img class="supermarket-logo" src="{% static 'img/supermarkets/'|add:supermarket.logo %}" alt="" width="56" height="56">
+          {% endif %}
+          <h2 class="supermarket-name">{{ supermarket.name }}</h2>
+        </div>
         {% with total=supermarket.locations.count %}
           {% if total %}
             <p class="supermarket-locations-count muted">
