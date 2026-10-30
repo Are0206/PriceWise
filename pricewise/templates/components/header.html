@@ -2,7 +2,7 @@
 <header class="header">
   <div class="left-header">
     <a href="{% url 'index' %}">
-      <img src="{% static 'img/icons/pricewise-icon.png' %}" class="pricewise-icon" alt="PriceWise, inicio">
+      <img src="{% static 'img/icons/pricewise-icon.png' %}" class="pricewise-icon" alt="PriceWise, inicio" width="640" height="149">
     </a>
   </div>
 
@@ -19,18 +19,18 @@
 
         <select class="search-by-selector" name="search_by" aria-label="Buscar por">
           <option class="search-by-selector" value="product" {% if search_by == 'product' %}selected{% endif %}>
-            Producto
+            Por producto
           </option>
           <option class="search-by-selector" value="supermarket" {% if search_by == 'supermarket' %}selected{% endif %}>
-            Supermercado
+            Por supermercado
           </option>
         </select>
 
-        <input type="text" name="q" class="search-bar" placeholder="{% if search_by == 'supermarket' %}Buscar supermercado{% else %}Buscar producto{% endif %}" aria-label="Buscar" value="{{ query }}">
+        <input type="search" name="q" class="search-bar" placeholder="{% if search_by == 'supermarket' %}Productos de un supermercado, ej. D1{% else %}Buscar producto{% endif %}" aria-label="Texto a buscar" value="{{ query }}">
 
         <button type="submit" class="search-button" aria-label="Buscar">
           <div class="search-button-div">
-            <img class="search-icon" src="{% static 'img/icons/search.png' %}" alt="">
+            <img class="search-icon" src="{% static 'img/icons/search.png' %}" alt="" width="66" height="66">
           </div>
         </button>
 
@@ -39,13 +39,13 @@
 
   </div>
 
-  <div class="right-header">
+  <nav class="right-header" aria-label="Cuenta y secciones">
     <span class="user-area">
       {% if user.is_authenticated %}
-      <span>Hola, {{ user.username }}</span>
+      <span class="greeting">Hola, {{ user.username }}</span>
       <a href="{% url 'products:supermarkets_index' %}">Supermercados</a>
       <a href="{% url 'products:favorites' %}">Favoritos</a>
-      <button class="shopping-list-button" id="shoppingListButton" type="button">
+      <button class="shopping-list-button" id="shoppingListButton" type="button" aria-expanded="false" aria-controls="shoppingListPanel">
         Listas
       </button>
       <a href="{% url 'accounts:change_password' %}">Contraseña</a>
@@ -55,11 +55,12 @@
       </form>
       {% else %}
       <div class="user-area-div">
+        <a href="{% url 'products:supermarkets_index' %}">Supermercados</a>
         <a href="{% url 'accounts:login' %}?next={{ request.get_full_path|urlencode }}">Iniciar sesión</a>
         <a href="{% url 'accounts:register' %}">Registrarse</a>
       </div>
       {% endif %}
     </span>
 
-  </div>
+  </nav>
 </header>

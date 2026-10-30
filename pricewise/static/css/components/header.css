@@ -150,15 +150,30 @@
 
 /*Media query*/
 
+/* Mid widths: same single-row header, tighter so it still fits in 90px. */
+@media (max-width: 1360px) {
+  .left-header {
+    margin-left: 16px;
+  }
+
+  .user-area a,
+  .user-area button {
+    padding: 6px 10px;
+  }
+
+  .user-area .greeting {
+    display: none;
+  }
+}
+
 @media (max-width: 900px) {
   .header {
-    display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
     height: auto;
-    min-height: 150px;
-    padding: 10px 20px;
+    padding: 10px 16px;
+    position: sticky;
+    margin: 0 calc(-1 * var(--page-gutter)) 20px;
   }
 
   .left-header,

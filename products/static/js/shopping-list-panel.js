@@ -26,6 +26,10 @@ shoppingListButton?.addEventListener("click", () => {
 async function openShoppingListPanel() {
 
     shoppingListPanel.classList.add("open");
+    // While closed the panel is inert, so Tab cannot reach its hidden links.
+    shoppingListPanel.inert = false;
+    shoppingListButton?.setAttribute("aria-expanded", "true");
+    closeShoppingList.focus();
 
     try {
 
@@ -55,9 +59,16 @@ async function openShoppingListPanel() {
     }
 }
 
-
-closeShoppingList?.addEventListener("click", () => {
-
+function closeShoppingListPanel() {
+    if (!shoppingListPanel.classList.contains("open")) return;
     shoppingListPanel.classList.remove("open");
+    shoppingListPanel.inert = true;
+    shoppingListButton?.setAttribute("aria-expanded", "false");
+    shoppingListButton?.focus();
+}
 
+closeShoppingList?.addEventListener("click", closeShoppingListPanel);
+
+document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeShoppingListPanel();
 });

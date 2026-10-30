@@ -18,14 +18,15 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
+    <a class="skip-link" href="#main">Saltar al contenido</a>
 
     {% include "components/header.html" %}
 
-    <main>
+    <main id="main" tabindex="-1">
         {% if messages %}
         <ul class="messages" role="status">
           {% for message in messages %}
-          <li class="message{% if message.tags == 'error' %} message--error{% endif %}">{{ message }}</li>
+          <li class="message message--{{ message.level_tag|default:'info' }}">{{ message }}</li>
           {% endfor %}
         </ul>
         {% endif %}
@@ -34,7 +35,7 @@
         {% endblock %}
     </main>
 
-    <div id="shoppingListPanel" class="shopping-list-panel">
+    <div id="shoppingListPanel" class="shopping-list-panel" role="dialog" aria-label="Mis listas" inert>
       <button id="closeShoppingList" class="close-panel" type="button" aria-label="Cerrar listas">
         <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       </button>
@@ -49,6 +50,7 @@
     <script src="{% static 'js/shopping-list-panel.js' %}" defer>
     </script>
     <script src="{% static 'js/motion.js' %}" defer></script>
+    <script src="{% static 'js/confirm.js' %}" defer></script>
 </body>
 </html>
 
