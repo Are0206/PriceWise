@@ -136,10 +136,20 @@ def delete_review(request, review_id):
 
     return redirect('products:detail', pk=product_pk)
 
+# Logo files in static/img/supermarkets/, keyed by supermarket name.
+SUPERMARKET_LOGOS = {
+    'D1': 'd1.webp',
+    'Éxito': 'exito.webp',
+    'Jumbo': 'jumbo.svg',
+    'Carulla': 'carulla.jpeg',
+}
+
 def supermarkets_index(request):
-    supermarkets = Supermarket.objects.annotate(
+    supermarkets = list(Supermarket.objects.annotate(
         price_count=Count('prices')
-    ).prefetch_related('locations')
+    ).prefetch_related('locations'))
+    for supermarket in supermarkets:
+        supermarket.logo = SUPERMARKET_LOGOS.get(supermarket.name)
 
     return render(request, 'supermarkets/index.html', {
         'supermarkets': supermarkets,
