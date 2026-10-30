@@ -46,16 +46,6 @@ def index(request):
     products = filter_products_by_price_range(products, min_price, max_price) # RF-14
     products = sort_products_by_price(products, sort)                        # RF-13
 
-    # Stable tie-break ordering for pagination
-    if not sort:
-        products = products.order_by('name', 'id')
-    else:
-        products = products.order_by(
-            '-cheapest_price' if sort == 'price_desc' else 'cheapest_price',
-            'name',
-            'id',
-        )
-
     paginator = Paginator(products, 24)
     page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
