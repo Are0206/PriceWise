@@ -1,17 +1,20 @@
 from django.core.paginator import Paginator
-from django.db.models import Count, Min
+from django.db.models import Count, Min, Prefetch
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 
-from .models import Favorite, Category, Product, Supermarket, ProductReview, SupermarketReview
+from .models import Favorite, Category, Price, Product, Supermarket, ProductReview, SupermarketReview
 from .services import *
+
+# Product cards read every price of the product at once (see Product.get_cheapest_price).
+PRICES_WITH_SUPERMARKET = Prefetch('prices', queryset=Price.objects.select_related('supermarket'))
 
 #RF-9: View product details
 def view_product_details(request, pk):
     product = get_object_or_404(Product, pk=pk)
-    cheapest_price = product.prices.select_related('supermarket').order_by('amount').first() #RF-32
+    cheapest_price = product.get_cheapest_price() #RF-32
     reviews = product.reviews.select_related('user')
     user_review = None
     if request.user.is_authenticated:
@@ -40,7 +43,7 @@ def index(request):
     min_price = parse_price(min_price_raw)
     max_price = parse_price(max_price_raw)
 
-    products = Product.objects.annotate(cheapest_price=Min('prices__amount'))
+    products = Product.objects.annotate(cheapest_price=Min('prices__amount')).prefetch_related(PRICES_WITH_SUPERMARKET)
     categories = Category.objects.all()
 
     products = filter_by_category(products, category_filter)       # RF-12
@@ -106,6 +109,7 @@ def list_favorite_products(request):
     products = (
         Product.objects.filter(favorited_by__user=request.user)
         .order_by('-favorited_by__created_at')
+        .prefetch_related(PRICES_WITH_SUPERMARKET)
     )
     return render(request, 'products/favorites.html', {
         'products': products,

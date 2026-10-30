@@ -141,6 +141,7 @@ def shopping_list_details(request, pk):
 
     return render(request, 'shopping_lists/detail.html', {
         'shopping_list': shopping_list,
+        'items': shopping_list.items.select_related('product'),
         'breakdown': breakdown,
         'best': best,
         'savings': savings,

@@ -43,7 +43,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for item in shopping_list.items.all %}
+        {% for item in items %}
         <tr>
           <td><a href="{% url 'products:detail' item.product.pk %}">{{ item.product.name }}</a></td>
           <td>{{ item.quantity }}</td>

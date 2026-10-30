@@ -77,7 +77,15 @@ class Product(models.Model):
         return self.image.url if self.image else self.image_url
 
     def get_cheapest_price(self): #RF-32
-        return self.prices.select_related('supermarket').order_by('amount').first()
+        """Lowest price; ties go to the oldest price row (lowest pk).
+
+        Uses prices loaded with prefetch_related('prices') when a view provides
+        them, so a page of product cards does not run one query per card.
+        """
+        prefetched = getattr(self, '_prefetched_objects_cache', {}).get('prices')
+        if prefetched is not None:
+            return min(prefetched, key=lambda price: (price.amount, price.pk), default=None)
+        return self.prices.select_related('supermarket').order_by('amount', 'pk').first()
     
     def __str__(self):
         return self.name

@@ -395,3 +395,52 @@ class NegativeAuthorizationTests(TestCase):
         self.client.post(reverse('products:toggle_favorite', args=[self.product.pk]))
         self.client.post(reverse('products:toggle_favorite', args=[self.product.pk]))
         self.assertTrue(Favorite.objects.filter(user=self.ana, product=self.product).exists())
+
+
+class CheapestPriceTests(TestCase):
+    def setUp(self):
+        self.category = Category.objects.create(name='Granos', slug='granos')
+        self.d1 = Supermarket.objects.create(name='D1')
+        self.jumbo = Supermarket.objects.create(name='Jumbo')
+        self.carulla = Supermarket.objects.create(name='Carulla')
+
+    def cheapest_both_ways(self, product):
+        from django.db.models import Prefetch
+        plain = Product.objects.get(pk=product.pk).get_cheapest_price()
+        prefetched = (Product.objects.prefetch_related(Prefetch('prices', queryset=Price.objects.select_related('supermarket')))
+                      .get(pk=product.pk).get_cheapest_price())
+        return plain, prefetched
+
+    def test_no_prices(self):
+        product = Product.objects.create(name='Sin precio', category=self.category)
+        self.assertEqual(self.cheapest_both_ways(product), (None, None))
+
+    def test_single_price(self):
+        product = Product.objects.create(name='Uno', category=self.category)
+        price = Price.objects.create(product=product, supermarket=self.d1, amount=2000)
+        self.assertEqual(self.cheapest_both_ways(product), (price, price))
+
+    def test_lowest_wins_and_ties_go_to_the_oldest_row(self):
+        product = Product.objects.create(name='Empate', category=self.category)
+        Price.objects.create(product=product, supermarket=self.carulla, amount=3000)
+        first_tie = Price.objects.create(product=product, supermarket=self.jumbo, amount=1500)
+        Price.objects.create(product=product, supermarket=self.d1, amount=1500)
+        plain, prefetched = self.cheapest_both_ways(product)
+        self.assertEqual(plain, first_tie)
+        self.assertEqual(prefetched, first_tie)
+
+
+class CatalogQueryCountTests(TestCase):
+    def test_catalog_page_query_count_does_not_grow_with_cards(self):
+        category = Category.objects.create(name='Granos', slug='granos')
+        d1 = Supermarket.objects.create(name='D1')
+        jumbo = Supermarket.objects.create(name='Jumbo')
+        for i in range(30):
+            product = Product.objects.create(name=f'Producto {i:02d}', category=category)
+            Price.objects.create(product=product, supermarket=d1, amount=1000 + i)
+            Price.objects.create(product=product, supermarket=jumbo, amount=900 + i)
+        # count, page of products, their prices with supermarkets, categories.
+        with self.assertNumQueries(4):
+            response = self.client.get(reverse('index'))
+        self.assertEqual(len(response.context['page_obj']), 24)
+        self.assertContains(response, '$900,00')
