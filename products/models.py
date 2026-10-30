@@ -59,7 +59,8 @@ class Category(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=200)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
+    # PROTECT: deleting a category must not silently delete its products, prices and reviews.
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='products')
     description = models.TextField(blank=True)
     nutritional_info = models.TextField(blank=True, null=True) # RF-33: Información nutricional.
     image = models.ImageField(
@@ -104,7 +105,7 @@ class PriceHistory(models.Model):
     )
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     price_date = models.DateField(
-        help_text="Fecha del precio reportada por la fuente (campo 'Fecha' de la API).",
+        help_text="Día en que se registró el precio (fecha local de la sincronización).",
     )
     captured_at = models.DateTimeField(
         auto_now_add=True,
@@ -168,6 +169,12 @@ class ProductReview(models.Model):
     class Meta:
         unique_together = ('user', 'product')
         ordering = ['-created_at']
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(rating__gte=1, rating__lte=5),
+                name='productreview_rating_1_to_5',
+            ),
+        ]
 
     def __str__(self):
         return f"{self.user.username} rated {self.product.name}: {self.rating}"
@@ -193,6 +200,12 @@ class SupermarketReview(models.Model):
     class Meta:
         unique_together = ('user', 'supermarket')
         ordering = ['-created_at']
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(rating__gte=1, rating__lte=5),
+                name='supermarketreview_rating_1_to_5',
+            ),
+        ]
 
     def __str__(self):
         return f"{self.user.username} rated {self.supermarket.name}: {self.rating}"

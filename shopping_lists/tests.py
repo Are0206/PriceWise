@@ -128,3 +128,26 @@ class ShoppingListCardTests(TestCase):
         })
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'mayor o igual a 0')
+
+
+class ShoppingListNegativeAuthorizationTests(TestCase):
+    def setUp(self):
+        from products.models import Category, Product
+        self.ana = User.objects.create_user(username='ana', password='clave-segura-1')
+        self.beto = User.objects.create_user(username='beto', password='clave-segura-2')
+        self.product = Product.objects.create(name='Arroz', category=Category.objects.create(name='G', slug='g'))
+        self.shopping_list = ShoppingList.objects.create(name='Mercado de Ana', owner=self.ana)
+        self.client.force_login(self.beto)
+
+    def test_owner_only_actions_return_404_and_change_nothing(self):
+        pk = self.shopping_list.pk
+        for name, method in (('edit', 'get'), ('edit', 'post'), ('delete', 'get'), ('delete', 'post'),
+                             ('share', 'get'), ('duplicate', 'post')):
+            response = getattr(self.client, method)(reverse(f'shopping_lists:{name}', args=[pk]), {'name': 'Hackeada'})
+            self.assertEqual(response.status_code, 404, f'{method} {name}')
+        response = self.client.post(reverse('shopping_lists:add_product', args=[pk]), {'product': self.product.pk})
+        self.assertEqual(response.status_code, 404)
+        self.shopping_list.refresh_from_db()
+        self.assertEqual(self.shopping_list.name, 'Mercado de Ana')
+        self.assertEqual(self.shopping_list.items.count(), 0)
+        self.assertEqual(ShoppingList.objects.count(), 1)

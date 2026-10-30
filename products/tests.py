@@ -329,3 +329,69 @@ class ReviewFeedbackTests(TestCase):
         self.assertFalse(SupermarketReview.objects.exists())
         self.client.post(url, {'rating': '5', 'comment': 'Bien'})
         self.assertEqual(SupermarketReview.objects.get().rating, 5)
+
+
+class DataIntegrityTests(TestCase):
+    def setUp(self):
+        self.category = Category.objects.create(name='Granos', slug='granos')
+        self.product = Product.objects.create(name='Arroz', category=self.category)
+        self.user = User.objects.create_user('ana', password='clave-segura-123')
+
+    def test_category_with_products_cannot_be_deleted(self):
+        from django.db.models import ProtectedError
+        with self.assertRaises(ProtectedError):
+            self.category.delete()
+        self.assertTrue(Product.objects.filter(pk=self.product.pk).exists())
+
+    def test_empty_category_can_be_deleted(self):
+        empty = Category.objects.create(name='Vacía', slug='vacia')
+        empty.delete()
+        self.assertFalse(Category.objects.filter(slug='vacia').exists())
+
+    def test_database_rejects_out_of_range_ratings(self):
+        from django.db import IntegrityError, transaction
+        from .models import SupermarketReview
+        supermarket = Supermarket.objects.create(name='D1')
+        for rating in (0, 6):
+            with self.assertRaises(IntegrityError), transaction.atomic():
+                ProductReview.objects.create(user=self.user, product=self.product, rating=rating)
+            with self.assertRaises(IntegrityError), transaction.atomic():
+                SupermarketReview.objects.create(user=self.user, supermarket=supermarket, rating=rating)
+
+
+class NegativeAuthorizationTests(TestCase):
+    """User B must not read or change user A's private resources."""
+
+    def setUp(self):
+        from .models import SupermarketReview
+        category = Category.objects.create(name='Granos', slug='granos')
+        self.product = Product.objects.create(name='Arroz', category=category)
+        self.supermarket = Supermarket.objects.create(name='D1')
+        self.ana = User.objects.create_user('ana', password='clave-segura-123')
+        self.beto = User.objects.create_user('beto', password='clave-segura-456')
+        self.product_review = ProductReview.objects.create(user=self.ana, product=self.product, rating=5, comment='A')
+        self.supermarket_review = SupermarketReview.objects.create(user=self.ana, supermarket=self.supermarket, rating=4)
+        Favorite.objects.create(user=self.ana, product=self.product)
+        self.client.force_login(self.beto)
+
+    def test_cannot_delete_someone_elses_reviews(self):
+        from .models import SupermarketReview
+        response = self.client.post(reverse('products:delete_review', args=[self.product_review.pk]))
+        self.assertEqual(response.status_code, 404)
+        response = self.client.post(reverse('products:delete_supermarket_review', args=[self.supermarket_review.pk]))
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue(ProductReview.objects.filter(pk=self.product_review.pk).exists())
+        self.assertTrue(SupermarketReview.objects.filter(pk=self.supermarket_review.pk).exists())
+
+    def test_reviewing_does_not_overwrite_someone_elses_review(self):
+        self.client.post(reverse('products:submit_review', args=[self.product.pk]), {'rating': '1', 'comment': 'B'})
+        self.product_review.refresh_from_db()
+        self.assertEqual((self.product_review.rating, self.product_review.comment), (5, 'A'))
+        self.assertEqual(ProductReview.objects.count(), 2)
+
+    def test_favorites_page_and_toggle_only_touch_own_favorites(self):
+        response = self.client.get(reverse('products:favorites'))
+        self.assertNotContains(response, 'Arroz')
+        self.client.post(reverse('products:toggle_favorite', args=[self.product.pk]))
+        self.client.post(reverse('products:toggle_favorite', args=[self.product.pk]))
+        self.assertTrue(Favorite.objects.filter(user=self.ana, product=self.product).exists())
