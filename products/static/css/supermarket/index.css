@@ -20,20 +20,27 @@
 
 .supermarket-header {
   display: flex;
-  align-items: center;
-  gap: 14px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 .supermarket-logo {
-  width: 56px;
-  height: 56px;
-  flex-shrink: 0;
+  width: 96px;
+  height: 96px;
   object-fit: contain;
   border-radius: var(--radius);
 }
 
 .supermarket-name {
   margin: 0;
+}
+
+/* With a logo, the name is a secondary label under it */
+.supermarket-logo + .supermarket-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--secondary-text-color);
 }
 
 .supermarket-locations-count {
