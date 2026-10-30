@@ -6,13 +6,19 @@ logger = logging.getLogger(__name__)
 
 BASE_URL = "https://losprecios.co"
 
+# Longest wait the client accepts from a Retry-After header before giving up.
+MAX_RETRY_WAIT = 30
+
+
 class LosPreciosError(Exception):
     FATAL_IDS = {1, 12}      # invalid or disabled API key: stop the whole run
     RETRYABLE_IDS = {2, 3}   # server error, too many requests: retry later
 
-    def __init__(self, message, error_id=None):
+    def __init__(self, message, error_id=None, retryable=None, retry_after=None):
         super().__init__(message)
         self.error_id = error_id
+        self._retryable = retryable
+        self.retry_after = retry_after
 
     @property
     def is_fatal(self):
@@ -20,8 +26,25 @@ class LosPreciosError(Exception):
 
     @property
     def is_retryable(self):
-        # error_id=None means a network or parsing failure, which is retryable
-        return self.error_id in self.RETRYABLE_IDS or self.error_id is None
+        if self._retryable is not None:
+            return self._retryable
+        return self.error_id in self.RETRYABLE_IDS
+
+
+def parse_retry_after(value):
+    """Seconds from a Retry-After header (delta-seconds or HTTP date); None if absent or unreadable."""
+    if not value:
+        return None
+    value = value.strip()
+    if value.isdigit():
+        return int(value)
+    try:
+        from email.utils import parsedate_to_datetime
+        from datetime import datetime, timezone
+        return max(0, int((parsedate_to_datetime(value) - datetime.now(timezone.utc)).total_seconds()))
+    except (TypeError, ValueError):
+        return None
+
 
 #RF-38: Get Products and prices from API
 class LosPreciosClient:
@@ -47,30 +70,59 @@ class LosPreciosClient:
         params["ClaveAPI"] = self.api_key
         url = f"{BASE_URL}/{path}"
 
+        # Only GET requests are made, so repeating one is safe.
         for attempt in range(self.max_retries + 1):
             self._throttle()
-            try:
-                response = self.session.get(url, params=params, timeout=self.timeout)
-                response.raise_for_status()
-                response_json = response.json()
-            except (requests.RequestException, ValueError) as exc:
-                safe_message = str(exc).replace(self.api_key, "***")
-                error = LosPreciosError(f"Network or parsing error: {safe_message}")
-            else:
-                error_id = response_json.get("ErrorID", 0)
-                if error_id == 0:
-                    return response_json.get("Datos")
-                error = LosPreciosError(
-                    response_json.get("Mensaje") or f"API error {error_id}",
-                    error_id,
-                )
+            result = self._request(url, params)
+            if not isinstance(result, LosPreciosError):
+                return result
+            error = result
 
             if not error.is_retryable or attempt == self.max_retries:
                 raise error
-            delay = 2 ** attempt
+            delay = 2 ** attempt  # 1, 2, 4 s
+            if error.retry_after is not None:
+                if error.retry_after > MAX_RETRY_WAIT:
+                    logger.warning("Los Precios asked to wait %ss (more than %ss); giving up.",
+                                   error.retry_after, MAX_RETRY_WAIT)
+                    raise LosPreciosError(
+                        f"Rate limited: the API asked to wait {error.retry_after}s, "
+                        f"more than the {MAX_RETRY_WAIT}s limit.", retryable=False)
+                delay = max(delay, error.retry_after)
             logger.warning("%s (attempt %d), retrying in %ds", error, attempt + 1, delay)
             time.sleep(delay)
-    
+
+    def _request(self, url, params):
+        """One GET. Returns the API data, or a LosPreciosError that says whether to retry."""
+        try:
+            response = self.session.get(url, params=params, timeout=self.timeout)
+        except (requests.Timeout, requests.ConnectionError) as exc:
+            return LosPreciosError(f"Network error: {self._redact(exc)}", retryable=True)
+        except requests.RequestException as exc:
+            return LosPreciosError(f"Request error: {self._redact(exc)}", retryable=False)
+
+        status = response.status_code
+        if status == 429 or status >= 500:
+            return LosPreciosError(f"HTTP {status} from Los Precios", retryable=True,
+                                   retry_after=parse_retry_after(response.headers.get("Retry-After")))
+        if status >= 400:
+            return LosPreciosError(f"HTTP {status} from Los Precios", retryable=False)
+
+        try:
+            response_json = response.json()
+        except ValueError:
+            return LosPreciosError("Invalid response from Los Precios: the body is not JSON.", retryable=False)
+        if not isinstance(response_json, dict):
+            return LosPreciosError("Invalid response from Los Precios: unexpected JSON shape.", retryable=False)
+
+        error_id = response_json.get("ErrorID", 0)
+        if error_id == 0:
+            return response_json.get("Datos")
+        return LosPreciosError(response_json.get("Mensaje") or f"API error {error_id}", error_id)
+
+    def _redact(self, exc):
+        return str(exc).replace(self.api_key, "***")
+
     def get_supermarkets(self, municipio_id=2):
         return self._get("tienda/lista", MunicipioID=municipio_id)
 

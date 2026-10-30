@@ -29,6 +29,11 @@ CATEGORIES = [
 SUPERMARKETS_WITHOUT_PRODUCTS = {6}
 
 
+# Safety cap so a provider bug (pages that never come back empty) cannot loop forever.
+# A full run in October 2026 was 625 pages across every store and category.
+MAX_PAGES_PER_CATEGORY = 200
+
+
 def sync_supermarkets(client):
     """Stage 1: fetch and store the supermarkets. Returns {api_id: Supermarket}."""
     return load_supermarkets(normalize_supermarkets(client.get_supermarkets()))
@@ -40,6 +45,11 @@ def sync_store_products(client, store_api_id, supermarkets_by_api_id, max_pages=
     seen = 0
     page = 1
     while max_pages is None or page <= max_pages:
+        if page > MAX_PAGES_PER_CATEGORY:
+            logger.warning("Store %s, category %s: stopped at the %d-page safety cap; the import is incomplete.",
+                           store_api_id, category, MAX_PAGES_PER_CATEGORY)
+            totals["truncated"] += 1
+            break
         data = normalize_page(client.get_supermarkets_details(id=store_api_id, category=category, page=page))
         if data["items_on_page"] == 0:
             break
@@ -60,6 +70,7 @@ def run(client, store_api_ids=None, max_pages=None, categories=None):
     supermarkets_by_api_id = sync_supermarkets(client)
     totals = Counter()
     failed = []
+    truncated = []
     for api_id, supermarket in supermarkets_by_api_id.items():
         if store_api_ids and api_id not in store_api_ids:
             continue
@@ -68,12 +79,16 @@ def run(client, store_api_ids=None, max_pages=None, categories=None):
             continue
         for category in categories or CATEGORIES:
             try:
-                totals.update(sync_store_products(client, api_id, supermarkets_by_api_id, max_pages, category))
+                store_totals = sync_store_products(client, api_id, supermarkets_by_api_id, max_pages, category)
+                if store_totals.pop("truncated", 0):
+                    truncated.append(f"{supermarket.name} / {category}")
+                totals.update(store_totals)
             except LosPreciosError as error:
                 if error.is_fatal:
                     raise
                 logger.error("Store %s (%s), category %s failed: %s", supermarket.name, api_id, category, error)
                 failed.append(f"{supermarket.name} / {category}")
 
-    logger.info("Los Precios import: %s; failed stores: %s", dict(totals), failed or "none")
-    return {"supermarkets": len(supermarkets_by_api_id), "failed_stores": failed, **totals}
+    logger.info("Los Precios import: %s; failed stores: %s; truncated: %s",
+                dict(totals), failed or "none", truncated or "none")
+    return {"supermarkets": len(supermarkets_by_api_id), "failed_stores": failed, "truncated": truncated, **totals}

@@ -50,3 +50,6 @@ class Command(BaseCommand):
             f"{summary.get('skipped_prices', 0)} prices skipped."))
         if summary["failed_stores"]:
             self.stdout.write(self.style.WARNING("Failed: " + ", ".join(summary["failed_stores"])))
+        if summary["truncated"]:
+            self.stdout.write(self.style.WARNING(
+                "Incomplete (page safety cap reached): " + ", ".join(summary["truncated"])))
