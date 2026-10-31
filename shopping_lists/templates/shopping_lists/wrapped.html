@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Tu Wrapped | PriceWise{% endblock %}
+
+{% load static money l10n %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/wrapped.css' %}">
+{% endblock %}
+
+{% block content %}
+{# Spec: docs/superpowers/specs/2026-10-30-wrapped-design.md. Without JavaScript the cards stack; wrapped.js turns them into stories. #}
+<div class="wrapped" id="wrapped" aria-roledescription="historias" aria-label="Tu Wrapped de PriceWise">
+  <div class="wrapped-progress" aria-hidden="true"></div>
+
+  {% if not w.list_count %}
+  <section class="wrapped-card wrapped-card--dark" data-card="1">
+    <h2 tabindex="-1">Tu Wrapped empieza con tu primera lista</h2>
+    <p>Crea listas de mercado y aquí verás cuánto te ahorra PriceWise, como si fuera tu año de compras.</p>
+    <a href="{% url 'shopping_lists:create' %}" class="btn btn--primary">Crear mi primera lista</a>
+  </section>
+  {% else %}
+
+  <section class="wrapped-card wrapped-card--dark" data-card="1">
+    <h2 tabindex="-1">Tu año en PriceWise</h2>
+    <p>{{ w.list_count }} lista{{ w.list_count|pluralize }}
+      {% if w.first_date == w.last_date %}· el {{ w.first_date|date:"j \d\e F" }}{% else %}· del {{ w.first_date|date:"j \d\e F" }} al {{ w.last_date|date:"j \d\e F" }}{% endif %}</p>
+    <p class="wrapped-hint">Toca o usa las flechas para seguir</p>
+  </section>
+
+  <section class="wrapped-card wrapped-card--green" data-card="2">
+    <h2 tabindex="-1">Ahorraste <span class="wrapped-big">${{ w.saved|money }}</span></h2>
+    <p>Es el {{ w.saved_pct|floatformat:1 }} % de lo que habrías pagado sin comparar precios.</p>
+    <p class="wrapped-note">Comparamos cada producto contra el supermercado más caro que lo vende.{% if w.unpriced_items %} {{ w.unpriced_items }} producto{{ w.unpriced_items|pluralize }} sin precio no se cuenta{{ w.unpriced_items|pluralize:"n" }}.{% endif %}</p>
+  </section>
+
+  <section class="wrapped-card wrapped-card--cream" data-card="3">
+    <h2 tabindex="-1">Lo que pagaste contra lo que habrías pagado</h2>
+    {% if chart %}
+    {% localize off %}
+    <svg class="wrapped-chart" viewBox="0 0 {{ chart.width }} {{ chart.height }}" role="img"
+         aria-label="Gasto acumulado en {{ w.list_count }} listas: ${{ w.total_with|money }} con PriceWise y ${{ w.total_without|money }} sin PriceWise.">
+      <line class="wrapped-axis" x1="{{ chart.plot.left }}" x2="{{ chart.plot.right }}" y1="{{ chart.plot.bottom }}" y2="{{ chart.plot.bottom }}"/>
+      <polygon class="wrapped-area" points="{{ chart.area_points }}" fill="{{ chart.colors.with }}"/>
+      <polyline class="wrapped-line wrapped-line--without" points="{{ chart.without_points }}" stroke="{{ chart.colors.without }}"/>
+      <polyline class="wrapped-line" points="{{ chart.with_points }}" stroke="{{ chart.colors.with }}"/>
+      <text class="wrapped-label" x="{{ chart.end.x }}" y="{{ chart.end.without_y }}" fill="{{ chart.colors.without }}">Sin PriceWise</text>
+      <text class="wrapped-label" x="{{ chart.end.x }}" y="{{ chart.end.with_y }}" fill="{{ chart.colors.with }}">Con PriceWise</text>
+      {% for label in chart.labels %}
+      <text class="wrapped-tick" x="{{ label.x }}" y="{{ chart.height|add:'-12' }}" text-anchor="{% if forloop.first %}start{% else %}end{% endif %}">{{ label.text }}</text>
+      {% endfor %}
+    </svg>
+    {% endlocalize %}
+    <p>El área verde es lo que te ahorraste, lista por lista.</p>
+    {% else %}
+    <p class="wrapped-big">Crea otra lista para ver tu curva</p>
+    <p>Con dos listas o más aparece cómo crece tu ahorro compra a compra.</p>
+    {% endif %}
+  </section>
+
+  <section class="wrapped-card wrapped-card--dark" data-card="4">
+    {% if w.top_store %}
+    <h2 tabindex="-1">{{ w.top_store.name }} tuvo el mejor precio en <span class="wrapped-big">{{ w.top_store.wins }} de {{ w.top_store.of }}</span> productos</h2>
+    {% if w.runner_up %}<p>Le sigue {{ w.runner_up.name }} con {{ w.runner_up.wins }}.</p>{% endif %}
+    {% else %}
+    <h2 tabindex="-1">Aún no hay con qué comparar</h2>
+    <p>Ninguno de tus productos tiene precio en dos supermercados todavía.</p>
+    {% endif %}
+  </section>
+
+  <section class="wrapped-card wrapped-card--green" data-card="5">
+    {% if w.top_category %}
+    <h2 tabindex="-1">Donde más ahorraste: <span class="wrapped-big">{{ w.top_category.name }}</span></h2>
+    <p>${{ w.top_category.saved|money }} menos que en el supermercado más caro.</p>
+    {% else %}
+    <h2 tabindex="-1">Todavía no hay una categoría ganadora</h2>
+    <p>Agrega productos que vendan varios supermercados.</p>
+    {% endif %}
+  </section>
+
+  <section class="wrapped-card wrapped-card--cream" data-card="6">
+    {% if w.star_product %}
+    <h2 tabindex="-1">{{ w.star_product.name }}</h2>
+    <p>Entre el supermercado más barato y el más caro había</p>
+    <p class="wrapped-big">${{ w.star_product.gap|money }}</p>
+    <p>Lo pusiste en {{ w.star_product.lists }} lista{{ w.star_product.lists|pluralize }}.</p>
+    {% else %}
+    <h2 tabindex="-1">Sin producto estrella todavía</h2>
+    <p>Aparece cuando un producto de tus listas tenga precio en dos supermercados.</p>
+    {% endif %}
+  </section>
+
+  <section class="wrapped-card wrapped-card--dark" data-card="7">
+    <h2 tabindex="-1">Así compraste</h2>
+    <dl class="wrapped-stats">
+      <div><dt>Listas</dt><dd>{{ w.list_count }}</dd></div>
+      <div><dt>Productos distintos</dt><dd>{{ w.distinct_products }}</dd></div>
+      <div><dt>Unidades</dt><dd>{{ w.units }}</dd></div>
+      <div><dt>Lista promedio</dt><dd>${{ w.avg_per_list|money }}</dd></div>
+    </dl>
+  </section>
+
+  <section class="wrapped-card wrapped-card--green" data-card="8">
+    <h2 tabindex="-1" class="wrapped-big">{{ w.profile.title }}</h2>
+    <p>{{ w.profile.text }}</p>
+    <a href="{% url 'index' %}?open_lists=true" class="btn btn--dark">Volver a mis listas</a>
+  </section>
+  {% endif %}
+</div>
+<script src="{% static 'js/wrapped.js' %}" defer></script>
+{% endblock %}

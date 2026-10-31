@@ -142,3 +142,51 @@ class WrappedChartTests(TestCase):
         from .services import wrapped_chart
         chart = wrapped_chart(self.rows(('1', '2'), ('1', '2')))
         self.assertEqual(chart['colors'], {'with': '#1A7F37', 'without': '#2a78d6'})
+
+
+class WrappedPageTests(TestCase):
+    def setUp(self):
+        from django.urls import reverse
+        self.url = reverse('shopping_lists:wrapped')
+        self.products = make_catalog()
+        self.ana = User.objects.create_user('ana', password='clave-segura-1')
+
+    def test_requires_login(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/accounts/login/', response['Location'])
+
+    def test_full_wrapped(self):
+        p = self.products
+        make_list(self.ana, 'L1', [(p['arroz'], 2), (p['jabon'], 1)])
+        make_list(self.ana, 'L2', [(p['arroz'], 1), (p['sal'], 3), (p['te'], 1)])
+        self.client.force_login(self.ana)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'class="wrapped-card', count=8)
+        self.assertContains(response, '$2.800,00')
+        self.assertContains(response, '17,7 %')
+        self.assertContains(response, 'Cazador de ofertas')
+        self.assertContains(response, 'Comparamos cada producto contra el supermercado más caro que lo vende.')
+        self.assertRegex(response.content.decode(), r'<polyline[^>]*points="12\.0,\d')
+
+    def test_one_list_has_no_chart(self):
+        make_list(self.ana, 'L1', [(self.products['arroz'], 1)])
+        self.client.force_login(self.ana)
+        response = self.client.get(self.url)
+        self.assertContains(response, 'Crea otra lista para ver tu curva')
+        self.assertNotContains(response, '<polyline')
+
+    def test_no_lists_shows_one_invitation_card(self):
+        from django.urls import reverse
+        self.client.force_login(self.ana)
+        response = self.client.get(self.url)
+        self.assertContains(response, 'class="wrapped-card', count=1)
+        self.assertContains(response, f'href="{reverse("shopping_lists:create")}"')
+
+    def test_panel_links_to_wrapped_only_with_session(self):
+        from django.urls import reverse
+        panel = reverse('shopping_lists:index')
+        self.assertNotContains(self.client.get(panel), self.url)
+        self.client.force_login(self.ana)
+        self.assertContains(self.client.get(panel), self.url)
