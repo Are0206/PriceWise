@@ -103,6 +103,10 @@ Products, prices and supermarkets can be imported from the [Los Precios](https:/
 
 Running it again updates the same products instead of duplicating them. Products get the category they have on Los Precios. Each time a price changes, a dated row is added to the price history, so run the import once a day to build up the history. The API allows one request per second, so a full import takes around 20 minutes.
 
+### From GitHub Actions
+
+The **Sync Los Precios** workflow (Actions tab → *Run workflow*) applies the migrations, imports the prices and opens a pull request with the updated `db.sqlite3`, so the data change is reviewed like any other. It needs a repository secret named `LOSPRECIOS_API_KEY` (Settings → Secrets and variables → Actions). If the pull request step fails, enable *Allow GitHub Actions to create and approve pull requests* in Settings → Actions → General.
+
 3. Once the real data is in, remove the hand-made demo catalog (products and supermarkets without an API id):
 
    ```bash
