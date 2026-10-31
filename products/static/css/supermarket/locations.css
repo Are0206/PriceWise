@@ -34,3 +34,10 @@
 .location-address {
   font-size: 15px;
 }
+
+/* RF-43: opening hours under the address */
+.location-hours {
+  flex-basis: 100%;
+  font-size: 14px;
+  color: var(--secondary-text-color);
+}

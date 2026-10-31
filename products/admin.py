@@ -28,7 +28,7 @@ class SupermarketAdmin(admin.ModelAdmin):
 
 @admin.register(SupermarketLocation)
 class SupermarketLocationAdmin(admin.ModelAdmin):
-    list_display = ('supermarket', 'name', 'address')
+    list_display = ('supermarket', 'name', 'address', 'opening_hours')
     list_filter = ('supermarket',)
     search_fields = ('name', 'address')
 

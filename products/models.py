@@ -30,6 +30,12 @@ class SupermarketLocation(models.Model):
         max_length=200,
         help_text="Dirección de la sede, por ejemplo: Calle 10 #43-25, El Poblado.",
     )
+    # RF-43: free text because each store publishes its hours differently.
+    opening_hours = models.CharField(
+        max_length=200,
+        blank=True,
+        help_text="Horario de atención, por ejemplo: Lun a sáb 7:00 a 21:00; dom y festivos 8:00 a 20:00. Opcional.",
+    )
 
     class Meta:
         verbose_name = "Supermarket location"

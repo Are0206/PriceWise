@@ -592,3 +592,15 @@ class SupermarketStatisticsTests(TestCase):
         empty = Supermarket.objects.create(name='Éxito')
         response = self.client.get(reverse('products:supermarkets_details', args=[empty.pk]))
         self.assertContains(response, 'Aún no tenemos precios de este supermercado.')
+
+
+class OpeningHoursTests(TestCase):
+    def test_hours_shown_only_when_available(self):
+        from .models import SupermarketLocation
+        d1 = Supermarket.objects.create(name='D1')
+        SupermarketLocation.objects.create(supermarket=d1, address='Calle 10 #43-25',
+                                           opening_hours='Lun a sáb 7:00 a 21:00')
+        SupermarketLocation.objects.create(supermarket=d1, address='Carrera 70 #44-10')
+        response = self.client.get(reverse('products:supermarkets_details', args=[d1.pk]))
+        self.assertContains(response, 'Horario: Lun a sáb 7:00 a 21:00')
+        self.assertContains(response, 'Horario:', count=1)

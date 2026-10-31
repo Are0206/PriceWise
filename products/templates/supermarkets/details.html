@@ -64,6 +64,9 @@
             <span class="location-name">{{ location.name }}</span>
           {% endif %}
           <span class="location-address">{{ location.address }}</span>
+          {% if location.opening_hours %}
+            <span class="location-hours">Horario: {{ location.opening_hours }}</span>
+          {% endif %}
         </li>
       {% empty %}
         <li class="muted">Este supermercado todavía no tiene sedes registradas.</li>
