@@ -511,3 +511,51 @@ class AccentInsensitiveSearchTests(TestCase):
         self.jabon.save(update_fields=['name'])
         self.jabon.refresh_from_db()
         self.assertEqual(self.jabon.search_name, 'jabon azul')
+
+
+class PriceHistoryTests(TestCase):
+    def setUp(self):
+        from datetime import date
+        from .models import PriceHistory
+        category = Category.objects.create(name='Granos', slug='granos')
+        self.product = Product.objects.create(name='Arroz', category=category)
+        self.d1 = Supermarket.objects.create(name='D1')
+        self.jumbo = Supermarket.objects.create(name='Jumbo')
+        self.d1_price = Price.objects.create(product=self.product, supermarket=self.d1, amount=2500)
+        PriceHistory.objects.create(price=self.d1_price, amount=3000, price_date=date(2026, 10, 1))
+        PriceHistory.objects.create(price=self.d1_price, amount=2500, price_date=date(2026, 10, 15))
+        jumbo_price = Price.objects.create(product=self.product, supermarket=self.jumbo, amount=2800)
+        PriceHistory.objects.create(price=jumbo_price, amount=2800, price_date=date(2026, 10, 1))
+
+    def test_series_change_and_chart_geometry(self):
+        from .services import PLOT_BOTTOM, PLOT_LEFT, PLOT_RIGHT, PLOT_TOP, price_history
+        history = price_history(self.product)
+        self.assertTrue(history['has_chart'])
+        d1 = next(s for s in history['series'] if s['name'] == 'D1')
+        self.assertEqual(d1['change'], -500)
+        self.assertAlmostEqual(float(d1['change_pct']), -16.67, places=2)
+        xs = [p['x'] for p in d1['points']]
+        self.assertEqual(xs, [PLOT_LEFT, PLOT_RIGHT])
+        for point in d1['points']:
+            self.assertTrue(PLOT_TOP <= point['y'] <= PLOT_BOTTOM)
+
+    def test_color_follows_the_supermarket_not_its_rank(self):
+        from .services import SERIES_COLORS, price_history
+        history = price_history(self.product)
+        colors = {s['name']: s['color'] for s in history['series']}
+        self.assertEqual(colors, {'D1': SERIES_COLORS[0], 'Jumbo': SERIES_COLORS[1]})
+
+    def test_single_date_shows_table_without_chart(self):
+        from .models import PriceHistory
+        from .services import price_history
+        PriceHistory.objects.filter(price_date__day=15).delete()
+        history = price_history(self.product)
+        self.assertFalse(history['has_chart'])
+        response = self.client.get(reverse('products:detail', args=[self.product.pk]))
+        self.assertContains(response, 'Precios registrados')
+        self.assertNotContains(response, '<svg viewBox="0 0 640')
+
+    def test_svg_coordinates_use_a_dot_whatever_the_locale(self):
+        response = self.client.get(reverse('products:detail', args=[self.product.pk]))
+        self.assertContains(response, 'cx="72.0"')
+        self.assertContains(response, 'Bajó $500,00')
