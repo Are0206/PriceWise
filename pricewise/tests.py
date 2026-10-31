@@ -33,14 +33,13 @@ class EnvHelperTests(SimpleTestCase):
         self.assertIs(env_bool("X", True, environ={}, env_file=NO_ENV_FILE), True)
 
     def test_environment_wins_over_env_file(self):
-        env_file = BASE_DIR / "pricewise" / "test-tmp.env"
-        env_file.write_text('# comment\nA="from file"\nB=only-file\n')
-        try:
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            env_file = Path(tmp) / ".env"
+            env_file.write_text('# comment\nA="from file"\nB=only-file\n')
             self.assertEqual(read_env_file(env_file), {"A": "from file", "B": "only-file"})
             self.assertEqual(get_env("A", environ={"A": "from env"}, env_file=env_file), "from env")
             self.assertEqual(get_env("B", environ={}, env_file=env_file), "only-file")
-        finally:
-            env_file.unlink()
 
 
 class ProductionValidationTests(SimpleTestCase):
