@@ -198,3 +198,48 @@ def build_wrapped(user):
         'unpriced_items': unpriced,
         'profile': _profile(saved_pct),
     }
+
+
+# Validated with the dataviz palette checker on the cream background (#FAF8F6):
+# green/blue passes every check. Green/red failed for deuteranopia (ΔE 2.5), so
+# "without" is blue, dashed, and both lines carry direct labels.
+WRAPPED_COLORS = {'with': '#1A7F37', 'without': '#2a78d6'}
+WRAPPED_W, WRAPPED_H = 320, 220
+WRAPPED_PLOT = {'left': 12, 'right': 228, 'top': 16, 'bottom': 188}
+
+
+def wrapped_chart(per_list):
+    """Cumulative spending, list by list, as SVG geometry. None with fewer than 2 lists."""
+    if len(per_list) < 2:
+        return None
+    cum_with, cum_without, total_with, total_without = [], [], Decimal('0'), Decimal('0')
+    for row in per_list:
+        total_with += row['with']
+        total_without += row['without']
+        cum_with.append(total_with)
+        cum_without.append(total_without)
+
+    left, right, top, bottom = (WRAPPED_PLOT[k] for k in ('left', 'right', 'top', 'bottom'))
+    peak = cum_without[-1] or Decimal('1')
+    step = (right - left) / (len(per_list) - 1)
+
+    def point(i, amount):
+        return round(left + i * step, 1), round(bottom - float(amount / peak) * (bottom - top), 1)
+
+    with_pts = [point(i, a) for i, a in enumerate(cum_with)]
+    without_pts = [point(i, a) for i, a in enumerate(cum_without)]
+    as_text = lambda pts: ' '.join(f'{x},{y}' for x, y in pts)
+    return {
+        'width': WRAPPED_W,
+        'height': WRAPPED_H,
+        'plot': WRAPPED_PLOT,
+        'with_points': as_text(with_pts),
+        'without_points': as_text(without_pts),
+        'area_points': as_text(without_pts + with_pts[::-1]),
+        'labels': [{'x': with_pts[0][0], 'text': 'Compra 1'},
+                   {'x': with_pts[-1][0], 'text': f'Compra {len(per_list)}'}],
+        # Direct labels at the line ends; pushed apart when the lines nearly touch.
+        'end': {'x': right + 8, 'without_y': without_pts[-1][1],
+                'with_y': max(with_pts[-1][1], without_pts[-1][1] + 14)},
+        'colors': WRAPPED_COLORS,
+    }

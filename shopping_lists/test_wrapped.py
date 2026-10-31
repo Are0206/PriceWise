@@ -111,3 +111,34 @@ class ProfileThresholdTests(TestCase):
                  '15.0': 'Buen ojo', '15.1': 'Cazador de ofertas'}
         for pct, title in cases.items():
             self.assertEqual(_profile(Decimal(pct))['title'], title, pct)
+
+
+class WrappedChartTests(TestCase):
+    def rows(self, *pairs):
+        return [{'name': f'L{i}', 'created_at': None, 'with': Decimal(w), 'without': Decimal(wo)}
+                for i, (w, wo) in enumerate(pairs, 1)]
+
+    def points(self, text):
+        return [tuple(map(float, pair.split(','))) for pair in text.split()]
+
+    def test_none_for_fewer_than_two_lists(self):
+        from .services import wrapped_chart
+        self.assertIsNone(wrapped_chart([]))
+        self.assertIsNone(wrapped_chart(self.rows(('8000', '10200'))))
+
+    def test_cumulative_and_inside_plot(self):
+        from .services import wrapped_chart
+        chart = wrapped_chart(self.rows(('8000', '10200'), ('5000', '5600'), ('3000', '3000')))
+        with_pts, without_pts = self.points(chart['with_points']), self.points(chart['without_points'])
+        self.assertEqual(len(with_pts), 3)
+        self.assertLess(with_pts[-1][1], with_pts[0][1])  # higher on screen = more money
+        for (x, y) in with_pts + without_pts:
+            self.assertTrue(0 <= x <= chart['width'] and 0 <= y <= chart['height'], (x, y))
+        for (_, y_with), (_, y_without) in zip(with_pts, without_pts):
+            self.assertGreaterEqual(y_with, y_without)  # "without" never below "with"
+        self.assertEqual([l['text'] for l in chart['labels']], ['Compra 1', 'Compra 3'])
+
+    def test_colors_are_the_validated_pair(self):
+        from .services import wrapped_chart
+        chart = wrapped_chart(self.rows(('1', '2'), ('1', '2')))
+        self.assertEqual(chart['colors'], {'with': '#1A7F37', 'without': '#2a78d6'})
