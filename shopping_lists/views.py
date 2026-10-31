@@ -11,7 +11,8 @@ from products.models import Product
 
 from .forms import ShoppingListForm, ShoppingListItemFormSet
 from .models import ShoppingList, ShoppingListItem
-from .services import *
+from .services import (calculate_category_breakdown, calculate_estimated_savings,
+                       calculate_supermarket_breakdown, get_cheapest_supermarket_recommendation)
 
 def index(request):
     shopping_lists = []

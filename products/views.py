@@ -6,7 +6,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 
 from .models import Favorite, Category, Price, Product, Supermarket, ProductReview, SupermarketReview
-from .services import *
+from .services import (filter_by_category, filter_products_by_price_range, parse_price,
+                       search_products, sort_products_by_price)
 
 # Product cards read every price of the product at once (see Product.get_cheapest_price).
 PRICES_WITH_SUPERMARKET = Prefetch('prices', queryset=Price.objects.select_related('supermarket'))

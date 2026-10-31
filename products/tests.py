@@ -474,3 +474,11 @@ class NotFoundPageTests(TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertContains(response, 'No encontramos esta página', status_code=404)
         self.assertContains(response, 'Ir al catálogo', status_code=404)
+
+
+class AdminRegistrationTests(TestCase):
+    def test_both_review_models_have_their_own_admin(self):
+        from django.contrib import admin
+        from .models import SupermarketReview
+        self.assertEqual(type(admin.site._registry[ProductReview]).__name__, 'ProductReviewAdmin')
+        self.assertEqual(type(admin.site._registry[SupermarketReview]).__name__, 'SupermarketReviewAdmin')
