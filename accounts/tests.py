@@ -41,3 +41,17 @@ class LoginRedirectTests(TestCase):
         response = self.client.post(reverse('accounts:login'), {
             'username': 'ana', 'password': 'clave-segura-1', 'next': 'https://evil.example.com/'})
         self.assertRedirects(response, '/', fetch_redirect_response=False)
+
+
+class HelpTextLinkTests(TestCase):
+    def test_register_fields_point_to_their_help(self):
+        response = self.client.get(reverse('accounts:register'))
+        for help_id in ('username-help', 'email-help', 'password-rules'):
+            self.assertContains(response, f'aria-describedby="{help_id}"')
+            self.assertContains(response, f'id="{help_id}"')
+
+    def test_new_password_points_to_the_rules(self):
+        from django.contrib.auth.models import User
+        self.client.force_login(User.objects.create_user('ana', password='clave-segura-123'))
+        response = self.client.get(reverse('accounts:change_password'))
+        self.assertContains(response, 'aria-describedby="password-rules"')
