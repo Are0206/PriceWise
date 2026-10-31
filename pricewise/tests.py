@@ -123,3 +123,10 @@ class SettingsProfileTests(SimpleTestCase):
         output = result.stdout + result.stderr
         reported = {word.strip("():") for word in output.split() if word.startswith("(security.W")}
         self.assertEqual(reported, {"security.W005", "security.W021"}, output)
+
+
+class ErrorPageTests(SimpleTestCase):
+    def test_500_template_renders_without_context(self):
+        from django.template.loader import render_to_string
+        html = render_to_string('500.html')
+        self.assertIn('Algo salió mal', html)

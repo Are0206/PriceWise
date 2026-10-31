@@ -10,9 +10,12 @@
 
 {% block content %}
   <div class="main-page">
+    <h1 class="visually-hidden">Productos</h1>
     <div class="page-body">
 
-      <div class="filter-section">
+      {# Open by default so it works without JavaScript; catalog-filters.js folds it on phones when no filter is active. #}
+      <details class="filter-section filters-panel" open data-has-filters="{{ has_filters|yesno:'true,false' }}">
+        <summary class="filters-summary">Filtrar y ordenar{% if has_filters %} (activos){% endif %}</summary>
         <form action="{% url 'index' %}" method="get" id="filterForm" class="filter-form">
 
           <!-- Carry the active search and filters so each control keeps the others.
@@ -56,13 +59,13 @@
             <div class="price-range-field">
               <div class="filter-field">
                 <label for="min_price">Precio mínimo</label>
-                <input type="number" id="min_price" name="min_price" min="0" step="any"
+                <input type="number" id="min_price" name="min_price" min="0" step="any" inputmode="decimal"
                   placeholder="0" value="{{ min_price }}">
               </div>
 
               <div class="filter-field">
                   <label for="max_price">Precio máximo</label>
-                  <input type="number" id="max_price" name="max_price" min="0" step="any"
+                  <input type="number" id="max_price" name="max_price" min="0" step="any" inputmode="decimal"
                     placeholder="Sin límite" value="{{ max_price }}">
               </div>
 
@@ -75,7 +78,7 @@
           </div>
 
         </form>
-      </div>
+      </details>
 
       <div class="product-section">
         <div class="products-grid">
@@ -125,4 +128,5 @@
     </div>
   </div>
 <script src="{% static 'js/add-to-list.js' %}" defer></script>
+  <script src="{% static 'js/catalog-filters.js' %}" defer></script>
 {% endblock %}

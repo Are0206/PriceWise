@@ -39,6 +39,7 @@ html {
 }
 
 body{
+  margin: 0;
   background-color: var(--background-color);
   color: var(--primary-text-color);
   caret-color: var(--savings-green-color);

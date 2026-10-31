@@ -78,11 +78,23 @@
   color: var(--on-dark-text);
   padding-left: 15px;
   flex: 1;
+  /* Let the field shrink on phones instead of pushing the button off-screen. */
+  min-width: 0;
   border: none;
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
   margin: 0px;
   background-color: var(--secondary-background-color);
+}
+
+.search-bar::placeholder {
+  color: var(--on-dark-muted);
+  opacity: 1;
+}
+
+/* type="search": keep the dark field instead of the browser's default look. */
+.search-bar::-webkit-search-decoration {
+  -webkit-appearance: none;
 }
 
 .search-button {
@@ -180,6 +192,10 @@
   .middle-header {
     flex: 0 0 100%;
     box-sizing: border-box;
+  }
+
+  .search-by-selector {
+    margin-right: 8px;
   }
 
   .right-header {

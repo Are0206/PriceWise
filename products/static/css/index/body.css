@@ -1,7 +1,3 @@
-body {
-  margin-left: 200px;
-}
-
 /* =========================================
    BODY STRUCTURE
    ========================================= */
@@ -12,17 +8,20 @@ body {
 }
 
 .page-body {
+  --sidebar-width: 270px;
   display: flex;
   flex-direction: row;
   align-items: stretch;
+  /* Leave room for the fixed filter sidebar, whatever the page gutter is. */
+  padding-left: calc(var(--sidebar-width) + 24px - var(--page-gutter));
 }
 
 .filter-section {
-  width: 270px;
+  width: var(--sidebar-width);
   background-color: var(--muted-surface-color);
   position: fixed;
   padding: 20px 10px;
-  top: 90px;
+  top: var(--header-height);
   left: 0;
   bottom: 0;
   box-sizing: border-box;
@@ -32,10 +31,8 @@ body {
 }
 
 .product-section {
-  flex: 4;
-  align-items: center;
-  justify-content: center;
-  padding: 0px 40px;
+  flex: 1;
+  min-width: 0;
 }
 
 /* =========================================
@@ -44,7 +41,8 @@ body {
 
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  /* As many columns as fit: cards at least 180px, growing to 260px on wide screens. */
+  grid-template-columns: repeat(auto-fill, minmax(clamp(180px, 15vw, 260px), 1fr));
   gap: 24px;
   padding: 20px 0px;
   align-items: stretch;
@@ -59,6 +57,8 @@ body {
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   position: relative;
+  /* Keep a card reached by #product-<id> clear of the fixed header. */
+  scroll-margin-top: calc(var(--header-height) + 16px);
   transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
 }
 
@@ -67,12 +67,17 @@ body {
   box-shadow: var(--shadow-hover);
 }
 
-.product-image {
+.product-image,
+.product-image--empty {
   display: block;
   width: 100%;
   aspect-ratio: 1 / 1;
   object-fit: contain;
   border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.product-image--empty {
+  background-color: var(--muted-surface-color);
 }
 
 .product-name {
@@ -136,6 +141,13 @@ body {
   justify-content: center;
 }
 
+/* 44px touch target around the small visible square */
+.favorite-button::after {
+  content: "";
+  position: absolute;
+  inset: -9px;
+}
+
 .favorite-button img {
   height: 22px;
   width: 22px;
@@ -166,11 +178,9 @@ body {
   color: var(--primary-text-color);
   text-transform: uppercase;
   display: block;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: bold;
   letter-spacing: 1px;
-  visibility: visible;
-  height: auto;
 }
 
 .filter-field ul {
@@ -185,7 +195,7 @@ body {
 .filter-field button {
   width: 100%;
   background: none;
-  color: var(--primary-input-color);
+  color: var(--secondary-text-color);
   text-align: left;
   border-radius: 2px;
   padding: 8px 15px;
@@ -195,12 +205,12 @@ body {
 
 .filter-field button:hover {
   background-color: var(--background-color);
-  border-left: 2px solid var(--savings-green-color);
+  color: var(--primary-text-color);
 }
 
 .filter-field button.selected {
   background-color: var(--savings-green-color);
-  color: white;
+  color: var(--surface-color);
 }
 
 .filter-field select,
@@ -209,13 +219,8 @@ body {
   padding: 6px 8px;
   box-sizing: border-box;
   font-size: 14px;
-  color: #000;
-  background-color: #fff;
-  text-indent: 0;
-  opacity: 1;
-  -webkit-text-fill-color: #000;
-  line-height: normal;
-  height: auto;
+  color: var(--primary-text-color);
+  background-color: var(--surface-color);
   text-transform: none;
 }
 
@@ -238,18 +243,58 @@ body {
 MEdia query
 */
 
+/* Desktop: the filters are always visible, so the disclosure summary is hidden. */
+.filters-summary {
+  display: none;
+}
+
 @media (max-width: 900px) {
-  body{
+  .page-body {
+    flex-direction: column;
     padding-left: 0;
-    padding-right: 0;
-    margin: 0;
-  }
-  .filter-section {
-    display: none;
   }
 
-  .product-section {
+  /* Phones: the sidebar becomes a collapsible panel above the products. */
+  .filter-section {
+    position: static;
+    width: auto;
     padding: 0;
+    border-radius: var(--radius);
+    overflow: visible;
+  }
+
+  .filters-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 44px;
+    padding: 0 16px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .filters-panel[open] .filters-summary {
+    border-bottom: 1px solid var(--default-border-color);
+  }
+
+  .filter-form {
+    padding: 12px 16px 16px;
+  }
+
+  /* Categories wrap as chips instead of a 14-row list. */
+  .filter-field ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding-left: 0;
+  }
+
+  .filter-field button {
+    width: auto;
+    min-height: 36px;
+    padding: 6px 12px;
+    border: 1px solid var(--default-border-color);
+    background-color: var(--surface-color);
   }
 
   .product-details {
@@ -257,7 +302,7 @@ MEdia query
   }
 
   .products-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 12px;
     padding: 20px 0px;
   }
@@ -418,7 +463,7 @@ MEdia query
   border: 1px solid var(--default-border-color);
   border-radius: var(--radius);
   text-decoration: none;
-  transition: all 0.15s ease-in-out;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
   cursor: pointer;
 }
 

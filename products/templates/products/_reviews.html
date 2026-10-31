@@ -31,7 +31,7 @@ Expects: reviews, user_review, submit_url, delete_url (only when user_review exi
     </form>
 
     {% if user_review %}
-      <form method="post" action="{{ delete_url }}" class="review-delete">
+      <form method="post" action="{{ delete_url }}" class="review-delete" data-confirm="¿Borrar tu reseña? Esta acción no se puede deshacer.">
         {% csrf_token %}
         <button type="submit" class="btn btn--danger">Borrar mi reseña</button>
       </form>

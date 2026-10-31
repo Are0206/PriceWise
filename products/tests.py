@@ -444,3 +444,33 @@ class CatalogQueryCountTests(TestCase):
             response = self.client.get(reverse('index'))
         self.assertEqual(len(response.context['page_obj']), 24)
         self.assertContains(response, '$900,00')
+
+
+class FavoriteReturnsToCardTests(TestCase):
+    def setUp(self):
+        category = Category.objects.create(name='Granos', slug='granos')
+        self.product = Product.objects.create(name='Arroz', category=category)
+        self.client.force_login(User.objects.create_user('ana', password='clave-segura-123'))
+        self.url = reverse('products:toggle_favorite', args=[self.product.pk])
+
+    def test_next_with_card_anchor_is_followed(self):
+        response = self.client.post(self.url, {'next': f'/?page=2#product-{self.product.pk}'})
+        self.assertEqual(response['Location'], f'/?page=2#product-{self.product.pk}')
+
+    def test_external_next_falls_back_safely(self):
+        response = self.client.post(self.url, {'next': 'https://evil.example.com/'})
+        self.assertEqual(response['Location'], '/')
+
+    def test_card_marks_favorite_state_for_screen_readers(self):
+        Favorite.objects.create(user=User.objects.get(username='ana'), product=self.product)
+        response = self.client.get(reverse('index'))
+        self.assertContains(response, 'aria-pressed="true"')
+        self.assertContains(response, f'id="product-{self.product.pk}"')
+
+
+class NotFoundPageTests(TestCase):
+    def test_missing_product_uses_the_site_404_page(self):
+        response = self.client.get(reverse('products:detail', args=[999999]))
+        self.assertEqual(response.status_code, 404)
+        self.assertContains(response, 'No encontramos esta página', status_code=404)
+        self.assertContains(response, 'Ir al catálogo', status_code=404)

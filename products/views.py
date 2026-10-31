@@ -74,6 +74,7 @@ def index(request):
             "page_obj": page_obj,
             "paginator": paginator,
             "query_string": query_string,
+            "has_filters": bool(category_filter or sort or min_price is not None or max_price is not None),
             "categories": categories,
             "query": query,
             "search_by": search_by,
@@ -96,10 +97,10 @@ def toggle_favorite(request, product_id):
         if not created:
             favorite.delete()
 
-    # Go back to the page that sent the form, but never to another site.
-    referer = request.META.get('HTTP_REFERER', '')
-    if url_has_allowed_host_and_scheme(referer, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
-        return redirect(referer)
+    # Go back to the card (or the page) that sent the form, but never to another site.
+    for target in (request.POST.get('next', ''), request.META.get('HTTP_REFERER', '')):
+        if url_has_allowed_host_and_scheme(target, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+            return redirect(target)
     return redirect('/')
 
 
