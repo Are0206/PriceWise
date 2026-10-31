@@ -24,7 +24,7 @@
   <section class="wrapped-card wrapped-card--dark" data-card="1">
     <h2 tabindex="-1">Tu año en PriceWise</h2>
     <p>{{ w.list_count }} lista{{ w.list_count|pluralize }}
-      {% if w.first_date == w.last_date %}· el {{ w.first_date|date:"j \d\e F" }}{% else %}· del {{ w.first_date|date:"j \d\e F" }} al {{ w.last_date|date:"j \d\e F" }}{% endif %}</p>
+      {% if w.first_date == w.last_date %}· el {{ w.first_date|date:"j \d\e F"|lower }}{% else %}· del {{ w.first_date|date:"j \d\e F"|lower }} al {{ w.last_date|date:"j \d\e F"|lower }}{% endif %}</p>
     <p class="wrapped-hint">Toca o usa las flechas para seguir</p>
   </section>
 

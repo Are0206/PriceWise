@@ -1,0 +1,200 @@
+/* PriceWise Wrapped: story cards. Spec: docs/superpowers/specs/2026-10-30-wrapped-design.md */
+.wrapped {
+  position: relative;
+  max-width: 460px;
+  margin: 0 auto 32px;
+}
+
+.wrapped-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  min-height: min(640px, calc(100dvh - var(--header-height) - 60px));
+  margin-bottom: 16px;
+  padding: 32px 28px;
+  box-sizing: border-box;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.wrapped-card h2 {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.15;
+  color: inherit;
+}
+
+.wrapped-card h2:focus {
+  outline: none;
+}
+
+.wrapped-card p {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.45;
+}
+
+.wrapped-card--dark {
+  background-color: var(--primary-text-color);
+  color: var(--on-dark-text);
+}
+
+.wrapped-card--green {
+  background-color: var(--savings-green-color);
+  color: var(--surface-color);
+}
+
+.wrapped-card--cream {
+  background-color: var(--background-color);
+  color: var(--primary-text-color);
+  border: 1px solid var(--default-border-color);
+}
+
+.wrapped-big {
+  display: block;
+  font-family: var(--sans);
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+}
+
+.wrapped-note,
+.wrapped-hint {
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.wrapped-chart {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.wrapped-axis {
+  stroke: var(--default-border-color);
+}
+
+.wrapped-area {
+  opacity: 0.15;
+}
+
+.wrapped-line {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+/* Dashed: the line stays distinguishable without color. */
+.wrapped-line--without {
+  stroke-dasharray: 6 4;
+}
+
+.wrapped-label,
+.wrapped-tick {
+  font-family: var(--sans);
+  font-size: 11px;
+  dominant-baseline: middle;
+}
+
+.wrapped-label {
+  font-weight: 600;
+}
+
+.wrapped-tick {
+  fill: var(--secondary-text-color);
+}
+
+.wrapped-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 8px 0 0;
+}
+
+.wrapped-stats dt {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.wrapped-stats dd {
+  margin: 2px 0 0;
+  font-size: 26px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.wrapped-card .btn {
+  align-self: flex-start;
+}
+
+.wrapped-entry {
+  display: block;
+  margin: 0 20px 12px;
+  text-align: center;
+}
+
+/* Stories mode (added by wrapped.js) */
+.wrapped-progress {
+  display: none;
+}
+
+.wrapped--stories .wrapped-progress {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.wrapped--stories .wrapped-progress span {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background-color: var(--default-border-color);
+  transition: background-color 0.3s ease;
+}
+
+.wrapped--stories .wrapped-progress span.is-done {
+  background-color: var(--savings-green-color);
+}
+
+/* display:flex above would otherwise beat the hidden attribute. */
+.wrapped--stories .wrapped-card[hidden] {
+  display: none;
+}
+
+.wrapped--stories .wrapped-card {
+  margin-bottom: 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.wrapped--stories .wrapped-card.is-current {
+  animation: wrapped-in 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes wrapped-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wrapped--stories .wrapped-card.is-current {
+    animation: none;
+  }
+
+  .wrapped--stories .wrapped-progress span {
+    transition: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .wrapped-card h2 {
+    font-size: 26px;
+  }
+
+  .wrapped-big {
+    font-size: 38px;
+  }
+}
