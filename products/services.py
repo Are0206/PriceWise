@@ -1,5 +1,7 @@
 from decimal import Decimal, InvalidOperation
 
+from .models import Supermarket, normalize_search_text
+
 def parse_price(raw):
     """Price filter from the query string; anything that is not a finite, non-negative number is ignored."""
     if not raw:
@@ -26,13 +28,17 @@ def search_products(products, query, search_by):
     if not query:
         return products
         
+    needle = normalize_search_text(query.strip())
     match search_by:
         case 'supermarket':
-            # RF-7: Search products by supermarket
-            return products.filter(prices__supermarket__name__icontains=query).distinct()
+            # RF-7: Search products by supermarket. There are only a handful of
+            # supermarkets, so their names are compared in Python, without accents.
+            supermarket_ids = [s.pk for s in Supermarket.objects.only('pk', 'name')
+                               if needle in normalize_search_text(s.name)]
+            return products.filter(prices__supermarket__in=supermarket_ids).distinct()
         case _:
-            # RF-6: Search products by name
-            return products.filter(name__icontains=query)
+            # RF-6: Search products by name, ignoring accents and case
+            return products.filter(search_name__contains=needle)
 
 
 # RF-14: Filter products by price range

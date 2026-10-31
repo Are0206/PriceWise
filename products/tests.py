@@ -482,3 +482,32 @@ class AdminRegistrationTests(TestCase):
         from .models import SupermarketReview
         self.assertEqual(type(admin.site._registry[ProductReview]).__name__, 'ProductReviewAdmin')
         self.assertEqual(type(admin.site._registry[SupermarketReview]).__name__, 'SupermarketReviewAdmin')
+
+
+class AccentInsensitiveSearchTests(TestCase):
+    def setUp(self):
+        category = Category.objects.create(name='Aseo', slug='aseo')
+        self.jabon = Product.objects.create(name='Jabón Rey 300g', category=category)
+        self.crema = Product.objects.create(name='Crema de leche', category=category)
+        exito = Supermarket.objects.create(name='Éxito')
+        Price.objects.create(product=self.crema, supermarket=exito, amount=3000)
+
+    def search(self, **params):
+        return list(self.client.get(reverse('index'), params).context['page_obj'])
+
+    def test_name_search_ignores_accents_and_case(self):
+        for query in ('jabon', 'JABÓN', 'Jabon rey'):
+            self.assertEqual(self.search(q=query), [self.jabon], query)
+
+    def test_accented_query_finds_unaccented_name(self):
+        self.assertEqual(self.search(q='crème'), [])
+        self.assertEqual(self.search(q='créma'), [self.crema])
+
+    def test_supermarket_search_ignores_accents(self):
+        self.assertEqual(self.search(q='exito', search_by='supermarket'), [self.crema])
+
+    def test_renaming_keeps_search_name_in_sync(self):
+        self.jabon.name = 'Jabón Azul'
+        self.jabon.save(update_fields=['name'])
+        self.jabon.refresh_from_db()
+        self.assertEqual(self.jabon.search_name, 'jabon azul')

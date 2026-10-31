@@ -1,3 +1,5 @@
+import unicodedata
+
 from django.conf import settings
 from django.db import models
 
@@ -57,8 +59,16 @@ class Category(models.Model):
         return self.name
 
 
+def normalize_search_text(text):
+    """Lowercase without accents, so "jabon" finds "Jabón" in any database."""
+    decomposed = unicodedata.normalize('NFKD', text or '')
+    return ''.join(c for c in decomposed if not unicodedata.combining(c)).casefold()
+
+
 class Product(models.Model):
     name = models.CharField(max_length=200)
+    # Accent-free copy of the name for search; kept in sync in save().
+    search_name = models.CharField(max_length=200, blank=True, db_index=True, editable=False)
     # PROTECT: deleting a category must not silently delete its products, prices and reviews.
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='products')
     description = models.TextField(blank=True)
@@ -75,6 +85,13 @@ class Product(models.Model):
     def photo_url(self):
         """An uploaded image wins; otherwise the photo URL imported from the API (RF-40)."""
         return self.image.url if self.image else self.image_url
+
+    def save(self, *args, **kwargs):
+        self.search_name = normalize_search_text(self.name)
+        update_fields = kwargs.get('update_fields')
+        if update_fields is not None and 'name' in update_fields:
+            kwargs['update_fields'] = {*update_fields, 'search_name'}
+        super().save(*args, **kwargs)
 
     def get_cheapest_price(self): #RF-32
         """Lowest price; ties go to the oldest price row (lowest pk).
