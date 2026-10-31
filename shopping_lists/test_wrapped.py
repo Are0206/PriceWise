@@ -57,8 +57,9 @@ class BuildWrappedTests(TestCase):
         w = build_wrapped(self.ana)
         self.assertEqual([(r['name'], r['with'], r['without']) for r in w['per_list']],
                          [('L1', 8000, 10200), ('L2', 5000, 5600)])
-        self.assertEqual(w['first_date'], self.l1.created_at.date())
-        self.assertEqual(w['last_date'], self.l2.created_at.date())
+        from django.utils import timezone
+        self.assertEqual(w['first_date'], timezone.localdate(self.l1.created_at))
+        self.assertEqual(w['last_date'], timezone.localdate(self.l2.created_at))
 
     def test_top_store_counts_items_with_two_prices_only(self):
         w = build_wrapped(self.ana)
@@ -86,6 +87,14 @@ class BuildWrappedTests(TestCase):
         self.assertEqual(w['list_count'], 3)
         self.assertEqual(w['total_with'], 13000)
         self.assertEqual(w['avg_per_list'], Decimal('4333.33'))
+
+    def test_cover_dates_use_local_time(self):
+        from datetime import date, datetime, timezone as dt_timezone
+        # 01:00 UTC on Oct 31 is 8 p.m. on Oct 30 in Bogotá.
+        ShoppingList.objects.filter(owner=self.ana).update(
+            created_at=datetime(2026, 10, 31, 1, 0, tzinfo=dt_timezone.utc))
+        w = build_wrapped(self.ana)
+        self.assertEqual((w['first_date'], w['last_date']), (date(2026, 10, 30), date(2026, 10, 30)))
 
     def test_no_lists(self):
         w = build_wrapped(User.objects.create_user('carla', password='clave-segura-3'))

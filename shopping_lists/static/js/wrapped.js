@@ -27,7 +27,14 @@
     show(event.clientX - box.left < box.width / 3 ? current - 1 : current + 1);
   });
 
+  const panel = document.getElementById('shoppingListPanel');
+
   document.addEventListener('keydown', (event) => {
+    // Leave keys alone while the user types in the search bar, presses a control,
+    // or has the lists panel open (its own Escape closes it).
+    if (event.defaultPrevented) return;
+    if (event.target.closest?.('input, select, textarea, button, a, [contenteditable]')) return;
+    if (panel && !panel.inert) return;
     if (event.key === 'ArrowRight' || event.key === ' ') {
       event.preventDefault();
       show(current + 1);

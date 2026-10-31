@@ -1,5 +1,7 @@
 from decimal import Decimal
 
+from django.utils import timezone
+
 from .models import ShoppingList
 from products.models import Price, Supermarket
 
@@ -179,8 +181,9 @@ def build_wrapped(user):
 
     return {
         'list_count': len(lists),
-        'first_date': lists[0].created_at.date() if lists else None,
-        'last_date': lists[-1].created_at.date() if lists else None,
+        # Local dates (America/Bogota), not UTC: a list made at 8 p. m. stays on its own day.
+        'first_date': timezone.localdate(lists[0].created_at) if lists else None,
+        'last_date': timezone.localdate(lists[-1].created_at) if lists else None,
         'total_with': total_with,
         'total_without': total_without,
         'saved': saved,
