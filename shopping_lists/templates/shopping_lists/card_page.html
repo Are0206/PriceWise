@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}{{ shopping_list.name }} | PriceWise{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/share.css' %}">
+<link rel="stylesheet" href="{% static 'css/confirm-delete.css' %}">
+<link rel="stylesheet" href="{% static 'css/card-overlay.css' %}">
+{% endblock %}
+
+{% block content %}
+{# Same card as the dialog, as its own page for visitors without JavaScript. #}
+<div class="page card card-page">
+  {% include card_template %}
+</div>
+{% endblock %}

@@ -1,11 +1,11 @@
 <div class="delete-wrapper">
-  <h1 class="delete-title">¿Borrar «{{ shopping_list.name }}»?</h1>
+  <h2 class="delete-title" id="card-title">¿Borrar «{{ shopping_list.name }}»?</h2>
   {% with count=shopping_list.items.count %}
   <p class="delete-text">Se borrarán la lista y {{ count }} producto{{ count|pluralize }}. Esta acción no se puede deshacer.</p>
   {% endwith %}
 
   <div class="delete-buttons-div">
-    <button type="button" class="btn btn--outline btn-close">Cancelar</button>
+    <a href="{% url 'shopping_lists:detail' shopping_list.pk %}" class="btn btn--outline btn-close">Cancelar</a>
 
     <form method="post" action="{% url 'shopping_lists:delete' shopping_list.pk %}">
       {% csrf_token %}

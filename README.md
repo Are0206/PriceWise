@@ -6,8 +6,8 @@ Course project — ST0251, Universidad EAFIT.
  
 ## Requirements
  
-- Python 3.12 or newer
-- Django 6.0
+- Python 3.12 or newer (CI runs 3.14)
+- The packages in `requirements.txt` (Django 6.0.8, Pillow 13, requests)
 
 ## Setup
  
@@ -43,6 +43,37 @@ python manage.py runserver
 ```
  
 The application will be available at http://127.0.0.1:8000/
+
+## Configuration
+
+Settings come from environment variables or from the `.env` file in the project root. With nothing set, the project runs in development mode, so no setup is needed to work locally.
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `DJANGO_ENV` | `development` | `development` or `production`. Production validates the rest and refuses to start if something is unsafe. |
+| `DJANGO_DEBUG` | `true` in development | Must be set to `false` in production. Accepts `true/false`, `1/0`, `yes/no`, `on/off`. |
+| `DJANGO_SECRET_KEY` | development key | Required in production: at least 50 characters, not a `django-insecure` key. |
+| `DJANGO_ALLOWED_HOSTS` | `localhost,127.0.0.1,[::1]` | Comma-separated hosts. Required in production, no `*`. |
+| `DJANGO_CSRF_TRUSTED_ORIGINS` | empty | Comma-separated origins, e.g. `https://pricewise.example.com`. |
+| `DJANGO_SECURE_SSL_REDIRECT` | `true` in production | Redirect HTTP to HTTPS. |
+| `DJANGO_SECURE_HSTS_SECONDS` | `3600` in production | Raise it once HTTPS works on every host. |
+| `DJANGO_TRUST_PROXY_SSL` | `false` | Set to `true` only behind a reverse proxy that sets `X-Forwarded-Proto`. |
+| `DJANGO_LOG_LEVEL` | `INFO` | Level of the `products` logger (the Los Precios import summary). |
+| `LOSPRECIOS_API_KEY` | none | Key for the Los Precios import. |
+
+Generate a production secret key with:
+
+```bash
+python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+```
+
+## Tests
+
+```bash
+python manage.py test
+```
+
+GitHub Actions runs the tests and a missing-migrations check on every push and pull request to `main` and `develop`.
  
 ## Database and Data
  
@@ -87,13 +118,14 @@ Running it again updates the same products instead of duplicating them. Products
 | `/` | Home page with product search |
 | `/products/<id>/` | Product details |
 | `/products/<id>/compare/` | Price comparison across supermarkets |
+| `/products/favorites/` | The user's favorite products |
 | `/products/favorite/toggle/<id>/` | Toggle product favorite status |
 | `/products/<id>/review/` | Submit a product review |
 | `/products/review/<id>/delete/` | Delete a product review |
-| `/supermarkets/` | Supermarkets index list |
-| `/supermarkets/<id>` | Supermarket details |
-| `/supermarkets/<id>/review/` | Submit a supermarket review |
-| `/supermarkets/review/<id>/delete/` | Delete a supermarket review |
+| `/products/supermarkets/` | Supermarkets index list |
+| `/products/supermarkets/<id>` | Supermarket details |
+| `/products/supermarkets/<id>/review/` | Submit a supermarket review |
+| `/products/supermarkets/review/<id>/delete/` | Delete a supermarket review |
 
 ### Shopping Lists
 | URL | Description |
@@ -105,6 +137,7 @@ Running it again updates the same products instead of duplicating them. Products
 | `/lists/<uuid>/delete/` | Delete a shopping list |
 | `/lists/<uuid>/share/` | Share a shopping list |
 | `/lists/<uuid>/duplicate/` | Duplicate a shopping list |
+| `/lists/<uuid>/add/` | Add one product to a list (from a product card) |
 
 ### Accounts & Admin
 | URL | Description |

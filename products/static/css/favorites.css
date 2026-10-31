@@ -1,8 +1,3 @@
-/* The catalog stylesheet leaves room for its filter sidebar; this page has none. */
-body {
-  margin-left: 0;
-}
-
 .favorites-grid {
   margin-top: 24px;
 }

@@ -81,3 +81,47 @@ class CategoryTests(TestCase):
         Product.objects.update(category=Category.objects.create(name="Otros", slug="otros"))
         pipeline.run(FakeClient(), store_api_ids=[1], categories=["Bebidas"])
         self.assertEqual(set(Product.objects.values_list("category__name", flat=True)), {"Bebidas"})
+
+
+class PipelineRegressionTests(TestCase):
+    def test_running_twice_does_not_duplicate_anything_and_keeps_history(self):
+        from products.models import Price, PriceHistory, Supermarket
+        pipeline.run(FakeClient(), store_api_ids=[1], categories=["Despensa"])
+        counts = (Product.objects.count(), Price.objects.count(), Supermarket.objects.count(),
+                  PriceHistory.objects.count())
+        pipeline.run(FakeClient(), store_api_ids=[1], categories=["Despensa"])
+        self.assertEqual((Product.objects.count(), Price.objects.count(), Supermarket.objects.count(),
+                          PriceHistory.objects.count()), counts)
+        self.assertEqual(counts[:3], (3, 3, 3))
+
+    def test_a_failure_inside_one_product_rolls_back_only_that_product(self):
+        from products.integrations.lospreciosco import loaders
+        from products.models import Price
+        real_save_price = loaders._save_price
+
+        def failing_save_price(product, *args):
+            if product.api_id == 2:
+                raise RuntimeError("disk full")
+            return real_save_price(product, *args)
+
+        with mock.patch.object(loaders, "_save_price", side_effect=failing_save_price):
+            with self.assertRaises(RuntimeError):
+                pipeline.run(FakeClient(), store_api_ids=[1], categories=["Despensa"])
+        # Product 1 was committed with its price; product 2 left nothing half-written.
+        self.assertTrue(Price.objects.filter(product__api_id=1).exists())
+        self.assertFalse(Product.objects.filter(api_id=2).exists())
+
+    def test_page_safety_cap_is_reported_as_truncated(self):
+        class EndlessClient(FakeClient):
+            def get_supermarkets_details(self, id=None, page=None, **kwargs):
+                self.pages_requested.append((id, page))
+                return {"Ítems": [raw_item(page)], "TotalÍtems": None}
+
+        with mock.patch.object(pipeline, "MAX_PAGES_PER_CATEGORY", 3):
+            summary = pipeline.run(EndlessClient(), store_api_ids=[1], categories=["Despensa"])
+        self.assertEqual(summary["truncated"], ["D1 / Despensa"])
+        self.assertEqual(summary["pages"], 3)
+
+    def test_complete_run_reports_nothing_truncated(self):
+        summary = pipeline.run(FakeClient(), store_api_ids=[1], categories=["Despensa"])
+        self.assertEqual(summary["truncated"], [])

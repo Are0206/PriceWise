@@ -49,11 +49,11 @@ class PriceAdmin(admin.ModelAdmin):
 
 
 @admin.register(ProductReview)
-class ReviewAdmin(admin.ModelAdmin):
+class ProductReviewAdmin(admin.ModelAdmin):
     list_display = ('product', 'user', 'rating', 'created_at')
     list_filter = ('rating',)
    
 @admin.register(SupermarketReview)
-class ReviewAdmin(admin.ModelAdmin):
+class SupermarketReviewAdmin(admin.ModelAdmin):
     list_display = ('supermarket', 'user', 'rating', 'created_at')
     list_filter = ('rating',)

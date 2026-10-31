@@ -1,13 +1,17 @@
 from decimal import Decimal, InvalidOperation
 
 def parse_price(raw):
-   
+    """Price filter from the query string; anything that is not a finite, non-negative number is ignored."""
     if not raw:
         return None
     try:
-        return Decimal(raw)
+        price = Decimal(raw.strip())
     except InvalidOperation:
         return None
+    # NaN and Infinity parse as Decimals but crash the database filter.
+    if not price.is_finite() or price < 0:
+        return None
+    return price
 
 # RF-12: Filter products by category
 def filter_by_category(products, category_slug):

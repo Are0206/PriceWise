@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Página no encontrada | PriceWise{% endblock %}
+
+{% block content %}
+<div class="page error-page">
+  <h1>No encontramos esta página</h1>
+  <p class="muted">Puede que el enlace esté mal escrito o que el producto o la lista ya no exista.</p>
+  <a href="{% url 'index' %}" class="btn btn--primary">Ir al catálogo</a>
+</div>
+{% endblock %}

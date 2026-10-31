@@ -1,7 +1,7 @@
 <div class="shopping-list-panel-content">
 
   <div class="shopping-list-header">
-    <h1>Mis listas</h1>
+    <h2>Mis listas</h2>
     {% if user.is_authenticated %}
     <a href="{% url 'shopping_lists:create' %}">+ Crear lista</a>
     {% endif %}

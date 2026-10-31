@@ -18,6 +18,8 @@
   --danger-color: #a4553a;
   --error-color: #b42318;
   --radius: 4px;
+  --header-height: 90px;
+  --page-gutter: clamp(16px, 6vw, 120px);
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   --shadow-hover: 0 8px 13px rgba(0, 0, 0, 0.15);
   --serif: "DM Serif Display", serif;
@@ -37,12 +39,13 @@ html {
 }
 
 body{
+  margin: 0;
   background-color: var(--background-color);
   color: var(--primary-text-color);
   caret-color: var(--savings-green-color);
   font-family: var(--sans);
-  padding: 0px 120px;
-  padding-top: 120px;
+  padding: 0 var(--page-gutter);
+  padding-top: calc(var(--header-height) + 30px);
 }
 
 p, a, button, select,
@@ -344,15 +347,50 @@ button {
   color: var(--error-color);
 }
 
+.message--warning {
+  border-color: color-mix(in srgb, var(--danger-color) 35%, transparent);
+  background-color: color-mix(in srgb, var(--danger-color) 7%, var(--surface-color));
+  color: var(--primary-text-color);
+}
+
+.message--info {
+  border-color: var(--default-border-color);
+  background-color: var(--surface-color);
+  color: var(--primary-text-color);
+}
+
+/* Hidden until focused with the keyboard, then shown above the fixed header. */
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 2000;
+  padding: 10px 16px;
+  background-color: var(--surface-color);
+  color: var(--primary-text-color);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transform: translateY(-200%);
+}
+
+.skip-link:focus-visible {
+  transform: none;
+}
+
+main:focus {
+  outline: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .btn:active {
     transform: none;
   }
 }
 
+/* On small screens the header wraps to several rows of unknown height, so it
+   scrolls with the page (sticky) instead of being fixed over the content. */
 @media(max-width: 900px){
   body{
-    padding: 180px 16px;
-    padding-bottom: 0;
+    padding: 0 var(--page-gutter);
   }
 }
