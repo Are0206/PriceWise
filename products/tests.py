@@ -559,3 +559,36 @@ class PriceHistoryTests(TestCase):
         response = self.client.get(reverse('products:detail', args=[self.product.pk]))
         self.assertContains(response, 'cx="72.0"')
         self.assertContains(response, 'Bajó $500,00')
+
+
+class SupermarketStatisticsTests(TestCase):
+    def setUp(self):
+        from .models import SupermarketReview
+        granos = Category.objects.create(name='Granos', slug='granos')
+        aseo = Category.objects.create(name='Aseo', slug='aseo')
+        self.d1 = Supermarket.objects.create(name='D1')
+        for name, category, amount in (('Arroz', granos, 2000), ('Frijol', granos, 4000), ('Jabón', aseo, 9000)):
+            Price.objects.create(product=Product.objects.create(name=name, category=category), supermarket=self.d1, amount=amount)
+        for i, rating in enumerate((5, 4)):
+            SupermarketReview.objects.create(user=User.objects.create_user(f'u{i}', password='clave-segura-123'),
+                                             supermarket=self.d1, rating=rating)
+
+    def test_statistics(self):
+        from .services import supermarket_statistics
+        stats = supermarket_statistics(self.d1)
+        self.assertEqual(stats['product_count'], 3)
+        self.assertEqual((stats['average_rating'], stats['review_count']), (4.5, 2))
+        self.assertEqual([(c['name'], c['average'], c['width']) for c in stats['categories']],
+                         [('Aseo', 9000, 100.0), ('Granos', 3000, 33.3)])
+
+    def test_detail_page_shows_statistics_with_few_queries(self):
+        with self.assertNumQueries(5):
+            response = self.client.get(reverse('products:supermarkets_details', args=[self.d1.pk]))
+        self.assertContains(response, 'Precio promedio por categoría')
+        self.assertContains(response, 'width: 33.3%')
+        self.assertContains(response, '$3.000,00')
+
+    def test_supermarket_without_prices(self):
+        empty = Supermarket.objects.create(name='Éxito')
+        response = self.client.get(reverse('products:supermarkets_details', args=[empty.pk]))
+        self.assertContains(response, 'Aún no tenemos precios de este supermercado.')

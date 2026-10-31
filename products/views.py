@@ -7,7 +7,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 
 from .models import Favorite, Category, Price, Product, Supermarket, ProductReview, SupermarketReview
 from .services import (filter_by_category, filter_products_by_price_range, parse_price,
-                       price_history, search_products, sort_products_by_price)
+                       price_history, search_products, sort_products_by_price, supermarket_statistics)
 
 # Product cards read every price of the product at once (see Product.get_cheapest_price).
 PRICES_WITH_SUPERMARKET = Prefetch('prices', queryset=Price.objects.select_related('supermarket'))
@@ -187,6 +187,7 @@ def supermarkets_details(request, pk):
         user_review = reviews.filter(user=request.user).first()
     return render(request, 'supermarkets/details.html', {
         'supermarket': supermarket,
+        'stats': supermarket_statistics(supermarket), #RF-42
         'reviews': reviews,
         'user_review': user_review,
     })

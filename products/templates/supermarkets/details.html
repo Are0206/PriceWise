@@ -2,11 +2,12 @@
 
 {% block title %}{{ supermarket.name }} | PriceWise{% endblock %}
 
-{% load static %}
+{% load static money l10n %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/reviews.css' %}">
 <link rel="stylesheet" href="{% static 'css/supermarket/locations.css' %}">
+<link rel="stylesheet" href="{% static 'css/supermarket/stats.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -14,6 +15,45 @@
   <a href="{% url 'products:supermarkets_index' %}" class="back-link">&larr; Volver a supermercados</a>
 
   <h1>{{ supermarket.name }}</h1>
+
+  {# RF-42: statistics #}
+  <section class="supermarket-stats" aria-labelledby="stats-title">
+    <h2 id="stats-title">Estadísticas</h2>
+    <dl class="stat-tiles">
+      <div class="stat-tile">
+        <dt>Productos con precio</dt>
+        <dd>{{ stats.product_count }}</dd>
+      </div>
+      <div class="stat-tile">
+        <dt>Calificación promedio</dt>
+        <dd>{% if stats.review_count %}{{ stats.average_rating|floatformat:1 }} <span class="stat-unit">de 5 · {{ stats.review_count }} reseña{{ stats.review_count|pluralize }}</span>{% else %}<span class="stat-unit">Sin reseñas todavía</span>{% endif %}</dd>
+      </div>
+    </dl>
+
+    {% if stats.categories %}
+      <h3 class="stats-chart-title" id="category-chart-title">Precio promedio por categoría</h3>
+      {# A table drawn as bars: screen readers get rows and numbers, sighted users get the bars. #}
+      <table class="category-bars" aria-labelledby="category-chart-title">
+        <thead class="visually-hidden">
+          <tr><th scope="col">Categoría</th><th scope="col">Precio promedio</th><th scope="col">Productos</th></tr>
+        </thead>
+        <tbody>
+          {% for category in stats.categories %}
+            <tr>
+              <th scope="row">{{ category.name }}</th>
+              <td class="category-bar-cell">
+                <span class="category-bar-track"><span class="category-bar" style="width: {% localize off %}{{ category.width }}{% endlocalize %}%"></span></span>
+                <span class="category-bar-value">${{ category.average|money }}</span>
+              </td>
+              <td class="muted">{{ category.products }} producto{{ category.products|pluralize }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="muted">Aún no tenemos precios de este supermercado.</p>
+    {% endif %}
+  </section>
 
   <section class="locations">
     <h2>Sedes</h2>

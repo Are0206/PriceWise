@@ -147,3 +147,35 @@ def price_history(product):
     shown = dates if len(dates) <= 6 else [dates[0], dates[len(dates) // 2], dates[-1]]
     result['x_ticks'] = [{'x': round(x(d), 1), 'label': f"{d:%d/%m}"} for d in shown]
     return result
+
+
+# RF-42: statistics shown on a supermarket's detail page.
+def supermarket_statistics(supermarket):
+    """Products with a price at this supermarket, average rating, and average price per category.
+
+    Two aggregate queries, whatever the catalog size. Categories are sorted by
+    average price (highest first) and carry a 0-100 width for the bar.
+    """
+    from django.db.models import Avg, Count
+    from .models import Price
+
+    reviews = supermarket.supermarket_reviews.aggregate(average=Avg('rating'), count=Count('id'))
+    by_category = list(
+        Price.objects.filter(supermarket=supermarket)
+        .values('product__category__name')
+        .annotate(average=Avg('amount'), products=Count('product', distinct=True))
+        .order_by('-average')
+    )
+    top = max((row['average'] for row in by_category), default=0)
+    categories = [{
+        'name': row['product__category__name'],
+        'average': row['average'],
+        'products': row['products'],
+        'width': round(float(row['average'] / top) * 100, 1) if top else 0,
+    } for row in by_category]
+    return {
+        'product_count': sum(row['products'] for row in categories),
+        'average_rating': reviews['average'],
+        'review_count': reviews['count'],
+        'categories': categories,
+    }
