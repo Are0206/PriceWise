@@ -225,3 +225,18 @@
   font-family: var(--sans);
   white-space: nowrap;
 }
+
+/* Count of favorites that got cheaper */
+.drop-badge {
+  display: inline-block;
+  min-width: 18px;
+  margin-left: 4px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background-color: var(--savings-green-color);
+  color: var(--surface-color);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  text-align: center;
+}

@@ -179,3 +179,16 @@ def supermarket_statistics(supermarket):
         'review_count': reviews['count'],
         'categories': categories,
     }
+
+
+def favorite_price_drops(user):
+    """{product_id: {'before', 'now', 'saved'}} for favorites now cheaper than when they were saved."""
+    from django.db.models import F, Min
+    from .models import Favorite
+
+    rows = (Favorite.objects.filter(user=user, price_when_added__isnull=False)
+            .annotate(now=Min('product__prices__amount'))
+            .filter(now__lt=F('price_when_added'))
+            .values('product_id', 'price_when_added', 'now'))
+    return {row['product_id']: {'before': row['price_when_added'], 'now': row['now'],
+                                'saved': row['price_when_added'] - row['now']} for row in rows}

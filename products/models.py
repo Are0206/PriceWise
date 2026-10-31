@@ -171,6 +171,8 @@ class Favorite(models.Model):
         related_name='favorited_by'
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    # Lowest price when the product was saved; a lower price later is a price-drop alert.
+    price_when_added = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     class Meta:
         unique_together = ('user', 'product')

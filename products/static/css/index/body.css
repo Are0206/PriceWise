@@ -484,3 +484,11 @@ MEdia query
   color: var(--secondary-text-color);
   padding: 0 8px;
 }
+
+/* Favorite price-drop alert */
+.price-drop {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--savings-text-color);
+}

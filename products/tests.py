@@ -604,3 +604,39 @@ class OpeningHoursTests(TestCase):
         response = self.client.get(reverse('products:supermarkets_details', args=[d1.pk]))
         self.assertContains(response, 'Horario: Lun a sáb 7:00 a 21:00')
         self.assertContains(response, 'Horario:', count=1)
+
+
+class FavoritePriceDropTests(TestCase):
+    def setUp(self):
+        category = Category.objects.create(name='Granos', slug='granos')
+        self.product = Product.objects.create(name='Arroz', category=category)
+        self.price = Price.objects.create(product=self.product, supermarket=Supermarket.objects.create(name='D1'),
+                                          amount=3000)
+        self.user = User.objects.create_user('ana', password='clave-segura-123')
+        self.client.force_login(self.user)
+        self.client.post(reverse('products:toggle_favorite', args=[self.product.pk]))
+
+    def test_saving_a_favorite_records_its_price(self):
+        self.assertEqual(Favorite.objects.get().price_when_added, 3000)
+
+    def test_no_alert_while_the_price_is_the_same_or_higher(self):
+        self.price.amount = 3200
+        self.price.save()
+        response = self.client.get(reverse('products:favorites'))
+        self.assertNotContains(response, 'desde que lo guardaste')
+        self.assertNotContains(response, 'drop-badge')
+
+    def test_a_cheaper_price_shows_the_alert_and_the_header_badge(self):
+        self.price.amount = 2500
+        self.price.save()
+        response = self.client.get(reverse('products:favorites'))
+        self.assertContains(response, 'Bajó $500,00 desde que lo guardaste')
+        self.assertContains(response, '1 de tus favoritos bajó de precio')
+        self.assertContains(response, 'class="drop-badge"')
+
+    def test_other_users_do_not_see_my_alerts(self):
+        self.price.amount = 2500
+        self.price.save()
+        self.client.force_login(User.objects.create_user('beto', password='clave-segura-456'))
+        response = self.client.get(reverse('index'))
+        self.assertNotContains(response, 'drop-badge')
