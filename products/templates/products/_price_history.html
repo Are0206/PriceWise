@@ -1,0 +1,67 @@
+{% load money l10n %}
+{% comment %}Price history of one product (one line per supermarket). Expects: history (services.price_history).{% endcomment %}
+<section class="price-history" aria-labelledby="history-title">
+  <h2 id="history-title">Historial de precio</h2>
+
+  {% if not history.series %}
+    <p class="muted">Todavía no hay precios registrados para este producto.</p>
+  {% else %}
+    {% if history.has_chart %}
+      {% if history.series|length > 1 %}
+        <ul class="history-legend" aria-hidden="true">
+          {% for entry in history.series %}
+            <li><span class="history-swatch" style="--series-color: {{ entry.color }}"></span>{{ entry.name }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      <div class="history-chart">
+        {# Coordinates must use a dot: the es-co locale would print "72,0", which SVG reads as two numbers. #}
+        {% localize off %}
+        <svg viewBox="0 0 {{ history.width }} {{ history.height }}" role="img" aria-labelledby="history-title" aria-describedby="history-table-note">
+          {% for tick in history.y_ticks %}
+            <line class="history-grid" x1="{{ history.plot.left }}" x2="{{ history.plot.right }}" y1="{{ tick.y }}" y2="{{ tick.y }}"/>
+            <text class="history-axis" x="{{ history.plot.left|add:'-8' }}" y="{{ tick.y }}" text-anchor="end" dominant-baseline="middle">{{ tick.label }}</text>
+          {% endfor %}
+          {% for tick in history.x_ticks %}
+            <text class="history-axis" x="{{ tick.x }}" y="{{ history.plot.bottom|add:'20' }}" text-anchor="middle">{{ tick.label }}</text>
+          {% endfor %}
+          {% for entry in history.series %}
+            <g class="history-series" style="--series-color: {{ entry.color }}">
+              {% if entry.points|length > 1 %}<polyline points="{{ entry.path }}"/>{% endif %}
+              {% for point in entry.points %}
+                <circle cx="{{ point.x }}" cy="{{ point.y }}" r="4" tabindex="0" data-label="{{ point.label }}"><title>{{ point.label }}</title></circle>
+              {% endfor %}
+              <text class="history-label" x="{{ history.plot.right|add:'10' }}" y="{{ entry.label_y }}" dominant-baseline="middle">{{ entry.name }}</text>
+            </g>
+          {% endfor %}
+        </svg>
+        {% endlocalize %}
+        <div class="history-tooltip" role="status" hidden></div>
+      </div>
+    {% endif %}
+
+    <details class="history-table"{% if not history.has_chart %} open{% endif %}>
+      <summary id="history-table-note">{% if history.has_chart %}Ver los precios en una tabla{% else %}Precios registrados{% endif %}</summary>
+      <table class="data-table">
+        <thead>
+          <tr><th scope="col">Supermercado</th><th scope="col">Primer registro</th><th scope="col">Precio actual</th><th scope="col">Cambio</th></tr>
+        </thead>
+        <tbody>
+          {% for entry in history.series %}
+            <tr>
+              <th scope="row">{{ entry.name }}</th>
+              <td>${{ entry.first.amount|money }} <span class="muted">({{ entry.first.date|date:"d/m/Y" }})</span></td>
+              <td>${{ entry.current|money }}</td>
+              <td>
+                {% if entry.change < 0 %}Bajó ${{ entry.change|cut:'-'|money }} ({{ entry.change_pct|floatformat:1 }} %)
+                {% elif entry.change > 0 %}Subió ${{ entry.change|money }} (+{{ entry.change_pct|floatformat:1 }} %)
+                {% else %}Sin cambios{% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% if not history.has_chart %}<p class="muted">El gráfico aparece cuando el precio tenga registros en al menos dos fechas.</p>{% endif %}
+    </details>
+  {% endif %}
+</section>

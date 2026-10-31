@@ -66,7 +66,6 @@
 
 .star-input-row {
   display: inline-flex;
-  flex-direction: row-reverse;
   gap: 4px;
 }
 
@@ -89,19 +88,21 @@
   transition: transform 0.15s ease, fill 0.15s ease;
 }
 
-.star-input input:checked ~ label .star {
+/* A star is lit when it or a later star is the chosen value. */
+.star-input input:checked + label .star,
+.star-input label:has(~ input:checked) .star {
   fill: var(--savings-green-color);
   stroke: var(--savings-green-color);
 }
 
 /* While hovering, preview the hovered value instead of the saved one */
-.star-input-row:hover input:checked ~ label .star {
+.star-input-row:hover label .star {
   fill: none;
   stroke: var(--secondary-text-color);
 }
 
 .star-input-row:hover label:hover .star,
-.star-input-row:hover label:hover ~ label .star {
+.star-input-row:hover label:has(~ label:hover) .star {
   fill: var(--savings-green-color);
   stroke: var(--savings-green-color);
 }

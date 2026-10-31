@@ -42,6 +42,7 @@
     {% with cheapest=product.get_cheapest_price %}
       {% if cheapest %}
       <p class="price">${{ cheapest.amount|money }}</p>
+      {% if product.price_drop %}<p class="price-drop">Bajó ${{ product.price_drop.saved|money }} desde que lo guardaste</p>{% endif %}
       {% else %}
       <p class="muted">Sin precios disponibles.</p>
       {% endif %}

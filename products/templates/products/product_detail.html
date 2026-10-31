@@ -38,6 +38,8 @@
     </div>
   </article>
 
+  {% include "products/_price_history.html" %}
+
   <section aria-labelledby="nutrition-title">
     <h2 id="nutrition-title">Información nutricional</h2>
     <p class="nutritional-info{% if not product.nutritional_info %} muted{% endif %}">{{ product.nutritional_info|default:"Información nutricional no disponible." }}</p>
@@ -47,4 +49,5 @@
   {% if user_review %}{% url 'products:delete_review' user_review.pk as delete_url %}{% endif %}
   {% include "products/_reviews.html" %}
 </div>
+<script src="{% static 'js/price-history.js' %}" defer></script>
 {% endblock %}

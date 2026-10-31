@@ -482,3 +482,161 @@ class AdminRegistrationTests(TestCase):
         from .models import SupermarketReview
         self.assertEqual(type(admin.site._registry[ProductReview]).__name__, 'ProductReviewAdmin')
         self.assertEqual(type(admin.site._registry[SupermarketReview]).__name__, 'SupermarketReviewAdmin')
+
+
+class AccentInsensitiveSearchTests(TestCase):
+    def setUp(self):
+        category = Category.objects.create(name='Aseo', slug='aseo')
+        self.jabon = Product.objects.create(name='Jabón Rey 300g', category=category)
+        self.crema = Product.objects.create(name='Crema de leche', category=category)
+        exito = Supermarket.objects.create(name='Éxito')
+        Price.objects.create(product=self.crema, supermarket=exito, amount=3000)
+
+    def search(self, **params):
+        return list(self.client.get(reverse('index'), params).context['page_obj'])
+
+    def test_name_search_ignores_accents_and_case(self):
+        for query in ('jabon', 'JABÓN', 'Jabon rey'):
+            self.assertEqual(self.search(q=query), [self.jabon], query)
+
+    def test_accented_query_finds_unaccented_name(self):
+        self.assertEqual(self.search(q='crème'), [])
+        self.assertEqual(self.search(q='créma'), [self.crema])
+
+    def test_supermarket_search_ignores_accents(self):
+        self.assertEqual(self.search(q='exito', search_by='supermarket'), [self.crema])
+
+    def test_renaming_keeps_search_name_in_sync(self):
+        self.jabon.name = 'Jabón Azul'
+        self.jabon.save(update_fields=['name'])
+        self.jabon.refresh_from_db()
+        self.assertEqual(self.jabon.search_name, 'jabon azul')
+
+
+class PriceHistoryTests(TestCase):
+    def setUp(self):
+        from datetime import date
+        from .models import PriceHistory
+        category = Category.objects.create(name='Granos', slug='granos')
+        self.product = Product.objects.create(name='Arroz', category=category)
+        self.d1 = Supermarket.objects.create(name='D1')
+        self.jumbo = Supermarket.objects.create(name='Jumbo')
+        self.d1_price = Price.objects.create(product=self.product, supermarket=self.d1, amount=2500)
+        PriceHistory.objects.create(price=self.d1_price, amount=3000, price_date=date(2026, 10, 1))
+        PriceHistory.objects.create(price=self.d1_price, amount=2500, price_date=date(2026, 10, 15))
+        jumbo_price = Price.objects.create(product=self.product, supermarket=self.jumbo, amount=2800)
+        PriceHistory.objects.create(price=jumbo_price, amount=2800, price_date=date(2026, 10, 1))
+
+    def test_series_change_and_chart_geometry(self):
+        from .services import PLOT_BOTTOM, PLOT_LEFT, PLOT_RIGHT, PLOT_TOP, price_history
+        history = price_history(self.product)
+        self.assertTrue(history['has_chart'])
+        d1 = next(s for s in history['series'] if s['name'] == 'D1')
+        self.assertEqual(d1['change'], -500)
+        self.assertAlmostEqual(float(d1['change_pct']), -16.67, places=2)
+        xs = [p['x'] for p in d1['points']]
+        self.assertEqual(xs, [PLOT_LEFT, PLOT_RIGHT])
+        for point in d1['points']:
+            self.assertTrue(PLOT_TOP <= point['y'] <= PLOT_BOTTOM)
+
+    def test_color_follows_the_supermarket_not_its_rank(self):
+        from .services import SERIES_COLORS, price_history
+        history = price_history(self.product)
+        colors = {s['name']: s['color'] for s in history['series']}
+        self.assertEqual(colors, {'D1': SERIES_COLORS[0], 'Jumbo': SERIES_COLORS[1]})
+
+    def test_single_date_shows_table_without_chart(self):
+        from .models import PriceHistory
+        from .services import price_history
+        PriceHistory.objects.filter(price_date__day=15).delete()
+        history = price_history(self.product)
+        self.assertFalse(history['has_chart'])
+        response = self.client.get(reverse('products:detail', args=[self.product.pk]))
+        self.assertContains(response, 'Precios registrados')
+        self.assertNotContains(response, '<svg viewBox="0 0 640')
+
+    def test_svg_coordinates_use_a_dot_whatever_the_locale(self):
+        response = self.client.get(reverse('products:detail', args=[self.product.pk]))
+        self.assertContains(response, 'cx="72.0"')
+        self.assertContains(response, 'Bajó $500,00')
+
+
+class SupermarketStatisticsTests(TestCase):
+    def setUp(self):
+        from .models import SupermarketReview
+        granos = Category.objects.create(name='Granos', slug='granos')
+        aseo = Category.objects.create(name='Aseo', slug='aseo')
+        self.d1 = Supermarket.objects.create(name='D1')
+        for name, category, amount in (('Arroz', granos, 2000), ('Frijol', granos, 4000), ('Jabón', aseo, 9000)):
+            Price.objects.create(product=Product.objects.create(name=name, category=category), supermarket=self.d1, amount=amount)
+        for i, rating in enumerate((5, 4)):
+            SupermarketReview.objects.create(user=User.objects.create_user(f'u{i}', password='clave-segura-123'),
+                                             supermarket=self.d1, rating=rating)
+
+    def test_statistics(self):
+        from .services import supermarket_statistics
+        stats = supermarket_statistics(self.d1)
+        self.assertEqual(stats['product_count'], 3)
+        self.assertEqual((stats['average_rating'], stats['review_count']), (4.5, 2))
+        self.assertEqual([(c['name'], c['average'], c['width']) for c in stats['categories']],
+                         [('Aseo', 9000, 100.0), ('Granos', 3000, 33.3)])
+
+    def test_detail_page_shows_statistics_with_few_queries(self):
+        with self.assertNumQueries(5):
+            response = self.client.get(reverse('products:supermarkets_details', args=[self.d1.pk]))
+        self.assertContains(response, 'Precio promedio por categoría')
+        self.assertContains(response, 'width: 33.3%')
+        self.assertContains(response, '$3.000,00')
+
+    def test_supermarket_without_prices(self):
+        empty = Supermarket.objects.create(name='Éxito')
+        response = self.client.get(reverse('products:supermarkets_details', args=[empty.pk]))
+        self.assertContains(response, 'Aún no tenemos precios de este supermercado.')
+
+
+class OpeningHoursTests(TestCase):
+    def test_hours_shown_only_when_available(self):
+        from .models import SupermarketLocation
+        d1 = Supermarket.objects.create(name='D1')
+        SupermarketLocation.objects.create(supermarket=d1, address='Calle 10 #43-25',
+                                           opening_hours='Lun a sáb 7:00 a 21:00')
+        SupermarketLocation.objects.create(supermarket=d1, address='Carrera 70 #44-10')
+        response = self.client.get(reverse('products:supermarkets_details', args=[d1.pk]))
+        self.assertContains(response, 'Horario: Lun a sáb 7:00 a 21:00')
+        self.assertContains(response, 'Horario:', count=1)
+
+
+class FavoritePriceDropTests(TestCase):
+    def setUp(self):
+        category = Category.objects.create(name='Granos', slug='granos')
+        self.product = Product.objects.create(name='Arroz', category=category)
+        self.price = Price.objects.create(product=self.product, supermarket=Supermarket.objects.create(name='D1'),
+                                          amount=3000)
+        self.user = User.objects.create_user('ana', password='clave-segura-123')
+        self.client.force_login(self.user)
+        self.client.post(reverse('products:toggle_favorite', args=[self.product.pk]))
+
+    def test_saving_a_favorite_records_its_price(self):
+        self.assertEqual(Favorite.objects.get().price_when_added, 3000)
+
+    def test_no_alert_while_the_price_is_the_same_or_higher(self):
+        self.price.amount = 3200
+        self.price.save()
+        response = self.client.get(reverse('products:favorites'))
+        self.assertNotContains(response, 'desde que lo guardaste')
+        self.assertNotContains(response, 'drop-badge')
+
+    def test_a_cheaper_price_shows_the_alert_and_the_header_badge(self):
+        self.price.amount = 2500
+        self.price.save()
+        response = self.client.get(reverse('products:favorites'))
+        self.assertContains(response, 'Bajó $500,00 desde que lo guardaste')
+        self.assertContains(response, '1 de tus favoritos bajó de precio')
+        self.assertContains(response, 'class="drop-badge"')
+
+    def test_other_users_do_not_see_my_alerts(self):
+        self.price.amount = 2500
+        self.price.save()
+        self.client.force_login(User.objects.create_user('beto', password='clave-segura-456'))
+        response = self.client.get(reverse('index'))
+        self.assertNotContains(response, 'drop-badge')

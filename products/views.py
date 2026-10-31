@@ -7,7 +7,8 @@ from django.utils.http import url_has_allowed_host_and_scheme
 
 from .models import Favorite, Category, Price, Product, Supermarket, ProductReview, SupermarketReview
 from .services import (filter_by_category, filter_products_by_price_range, parse_price,
-                       search_products, sort_products_by_price)
+                       favorite_price_drops, price_history, search_products, sort_products_by_price,
+                       supermarket_statistics)
 
 # Product cards read every price of the product at once (see Product.get_cheapest_price).
 PRICES_WITH_SUPERMARKET = Prefetch('prices', queryset=Price.objects.select_related('supermarket'))
@@ -23,6 +24,7 @@ def view_product_details(request, pk):
     return render(request, 'products/product_detail.html', {
         'product': product,
         'cheapest_price': cheapest_price, #RF-32
+        'history': price_history(product),
         'reviews': reviews,
         'user_review': user_review,
     })
@@ -93,7 +95,11 @@ def index(request):
 def toggle_favorite(request, product_id):
     if request.method == 'POST':
         product = get_object_or_404(Product, id=product_id)
-        favorite, created = Favorite.objects.get_or_create(user=request.user, product=product)
+        cheapest = product.get_cheapest_price()
+        favorite, created = Favorite.objects.get_or_create(
+            user=request.user, product=product,
+            defaults={'price_when_added': cheapest.amount if cheapest else None},
+        )
 
         if not created:
             favorite.delete()
@@ -113,9 +119,13 @@ def list_favorite_products(request):
         .order_by('-favorited_by__created_at')
         .prefetch_related(PRICES_WITH_SUPERMARKET)
     )
+    drops = favorite_price_drops(request.user)
+    for product in products:
+        product.price_drop = drops.get(product.pk)
     return render(request, 'products/favorites.html', {
         'products': products,
         'user_favorite_ids': [product.id for product in products],
+        'drop_count': len(drops),
     })
 
 
@@ -186,6 +196,7 @@ def supermarkets_details(request, pk):
         user_review = reviews.filter(user=request.user).first()
     return render(request, 'supermarkets/details.html', {
         'supermarket': supermarket,
+        'stats': supermarket_statistics(supermarket), #RF-42
         'reviews': reviews,
         'user_review': user_review,
     })

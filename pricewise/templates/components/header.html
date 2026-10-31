@@ -44,7 +44,7 @@
       {% if user.is_authenticated %}
       <span class="greeting">Hola, {{ user.username }}</span>
       <a href="{% url 'products:supermarkets_index' %}">Supermercados</a>
-      <a href="{% url 'products:favorites' %}">Favoritos</a>
+      <a href="{% url 'products:favorites' %}">Favoritos{% if favorite_drop_count %} <span class="drop-badge" aria-label="{{ favorite_drop_count }} bajaron de precio">{{ favorite_drop_count }}</span>{% endif %}</a>
       <button class="shopping-list-button" id="shoppingListButton" type="button" aria-expanded="false" aria-controls="shoppingListPanel">
         Listas
       </button>
