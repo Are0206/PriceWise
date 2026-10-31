@@ -6,6 +6,9 @@
     <a href="{% url 'shopping_lists:create' %}">+ Crear lista</a>
     {% endif %}
   </div>
+  {% if user.is_authenticated %}
+  <a href="{% url 'shopping_lists:wrapped' %}" class="btn btn--primary wrapped-entry">Ver mi Wrapped</a>
+  {% endif %}
 
   <ul class="shopping-list-items">
     {% for shopping_list in shopping_lists %}

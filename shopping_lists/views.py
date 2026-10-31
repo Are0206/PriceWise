@@ -11,8 +11,8 @@ from products.models import Product
 
 from .forms import ShoppingListForm, ShoppingListItemFormSet
 from .models import ShoppingList, ShoppingListItem
-from .services import (calculate_category_breakdown, calculate_estimated_savings,
-                       calculate_supermarket_breakdown, get_cheapest_supermarket_recommendation)
+from .services import (build_wrapped, calculate_category_breakdown, calculate_estimated_savings,
+                       calculate_supermarket_breakdown, get_cheapest_supermarket_recommendation, wrapped_chart)
 
 def index(request):
     shopping_lists = []
@@ -178,3 +178,13 @@ def add_product_to_list(request, pk):
     if url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
         return redirect(next_url)
     return redirect('index')
+
+
+# PriceWise Wrapped: every list of the user summarized as a year of shopping.
+@login_required
+def wrapped(request):
+    summary = build_wrapped(request.user)
+    return render(request, 'shopping_lists/wrapped.html', {
+        'w': summary,
+        'chart': wrapped_chart(summary['per_list']),
+    })
