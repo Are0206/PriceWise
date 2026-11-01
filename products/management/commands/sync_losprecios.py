@@ -6,25 +6,16 @@ to the pipeline. Contains no business logic.
 
 Usage: python manage.py sync_losprecios [options]
 """
-import os
-
-from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
+from pricewise.env import get_env
 from products.integrations.lospreciosco import pipeline
 from products.integrations.lospreciosco.client import LosPreciosClient, LosPreciosError
 
 
 def read_api_key():
     """The key comes from the environment or from the project's .env file, never from the code."""
-    key = os.environ.get("LOSPRECIOS_API_KEY")
-    env_file = settings.BASE_DIR / ".env"
-    if not key and env_file.exists():
-        for line in env_file.read_text().splitlines():
-            name, _, value = line.partition("=")
-            if name.strip() == "LOSPRECIOS_API_KEY":
-                key = value.strip().strip('"').strip("'")
-    return key
+    return get_env("LOSPRECIOS_API_KEY")
 
 
 class Command(BaseCommand):
@@ -59,3 +50,6 @@ class Command(BaseCommand):
             f"{summary.get('skipped_prices', 0)} prices skipped."))
         if summary["failed_stores"]:
             self.stdout.write(self.style.WARNING("Failed: " + ", ".join(summary["failed_stores"])))
+        if summary["truncated"]:
+            self.stdout.write(self.style.WARNING(
+                "Incomplete (page safety cap reached): " + ", ".join(summary["truncated"])))

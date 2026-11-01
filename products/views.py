@@ -1,15 +1,22 @@
 from django.core.paginator import Paginator
-from django.db.models import Count, Min
+from django.db.models import Count, Min, Prefetch
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.http import url_has_allowed_host_and_scheme
 
-from .models import Favorite, Category, Product, Supermarket, ProductReview, SupermarketReview
-from .services import *
+from .models import Favorite, Category, Price, Product, Supermarket, ProductReview, SupermarketReview
+from .services import (filter_by_category, filter_products_by_price_range, parse_price,
+                       favorite_price_drops, price_history, search_products, sort_products_by_price,
+                       supermarket_statistics)
+
+# Product cards read every price of the product at once (see Product.get_cheapest_price).
+PRICES_WITH_SUPERMARKET = Prefetch('prices', queryset=Price.objects.select_related('supermarket'))
 
 #RF-9: View product details
 def view_product_details(request, pk):
     product = get_object_or_404(Product, pk=pk)
-    cheapest_price = product.prices.select_related('supermarket').order_by('amount').first() #RF-32
+    cheapest_price = product.get_cheapest_price() #RF-32
     reviews = product.reviews.select_related('user')
     user_review = None
     if request.user.is_authenticated:
@@ -17,6 +24,7 @@ def view_product_details(request, pk):
     return render(request, 'products/product_detail.html', {
         'product': product,
         'cheapest_price': cheapest_price, #RF-32
+        'history': price_history(product),
         'reviews': reviews,
         'user_review': user_review,
     })
@@ -38,7 +46,7 @@ def index(request):
     min_price = parse_price(min_price_raw)
     max_price = parse_price(max_price_raw)
 
-    products = Product.objects.annotate(cheapest_price=Min('prices__amount'))
+    products = Product.objects.annotate(cheapest_price=Min('prices__amount')).prefetch_related(PRICES_WITH_SUPERMARKET)
     categories = Category.objects.all()
 
     products = filter_by_category(products, category_filter)       # RF-12
@@ -69,6 +77,7 @@ def index(request):
             "page_obj": page_obj,
             "paginator": paginator,
             "query_string": query_string,
+            "has_filters": bool(category_filter or sort or min_price is not None or max_price is not None),
             "categories": categories,
             "query": query,
             "search_by": search_by,
@@ -86,12 +95,20 @@ def index(request):
 def toggle_favorite(request, product_id):
     if request.method == 'POST':
         product = get_object_or_404(Product, id=product_id)
-        favorite, created = Favorite.objects.get_or_create(user=request.user, product=product)
+        cheapest = product.get_cheapest_price()
+        favorite, created = Favorite.objects.get_or_create(
+            user=request.user, product=product,
+            defaults={'price_when_added': cheapest.amount if cheapest else None},
+        )
 
         if not created:
             favorite.delete()
 
-    return redirect(request.META.get('HTTP_REFERER', '/'))
+    # Go back to the card (or the page) that sent the form, but never to another site.
+    for target in (request.POST.get('next', ''), request.META.get('HTTP_REFERER', '')):
+        if url_has_allowed_host_and_scheme(target, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+            return redirect(target)
+    return redirect('/')
 
 
 #RF-41: List favorite products
@@ -100,11 +117,33 @@ def list_favorite_products(request):
     products = (
         Product.objects.filter(favorited_by__user=request.user)
         .order_by('-favorited_by__created_at')
+        .prefetch_related(PRICES_WITH_SUPERMARKET)
     )
+    drops = favorite_price_drops(request.user)
+    for product in products:
+        product.price_drop = drops.get(product.pk)
     return render(request, 'products/favorites.html', {
         'products': products,
         'user_favorite_ids': [product.id for product in products],
+        'drop_count': len(drops),
     })
+
+
+VALID_RATINGS = {str(n) for n in range(1, 6)}
+
+
+def save_review(request, review_model, **target):
+    """Create or update the user's review of a product or supermarket (RF-30, RF-34)."""
+    rating = request.POST.get('rating', '')
+    if rating not in VALID_RATINGS:
+        messages.error(request, 'Elige una calificación de 1 a 5 estrellas para publicar tu reseña.')
+        return
+    review_model.objects.update_or_create(
+        user=request.user,
+        **target,
+        defaults={'rating': int(rating), 'comment': request.POST.get('comment', '').strip()},
+    )
+    messages.success(request, 'Tu reseña quedó guardada.')
 
 
 #RF-30: Review products
@@ -113,15 +152,7 @@ def submit_review(request, pk):
     product = get_object_or_404(Product, pk=pk)
 
     if request.method == 'POST':
-        rating = request.POST.get('rating')
-        comment = request.POST.get('comment', '')
-
-        if rating in [str(n) for n in range(1, 6)]:
-            ProductReview.objects.update_or_create(
-                user=request.user,
-                product=product,
-                defaults={'rating': rating, 'comment': comment},
-            )
+        save_review(request, ProductReview, product=product)
 
     return redirect('products:detail', pk=product.pk)
 
@@ -136,10 +167,20 @@ def delete_review(request, review_id):
 
     return redirect('products:detail', pk=product_pk)
 
+# Logo files in static/img/supermarkets/, keyed by supermarket name.
+SUPERMARKET_LOGOS = {
+    'D1': 'd1.webp',
+    'Éxito': 'exito.webp',
+    'Jumbo': 'jumbo.svg',
+    'Carulla': 'carulla.jpeg',
+}
+
 def supermarkets_index(request):
-    supermarkets = Supermarket.objects.annotate(
+    supermarkets = list(Supermarket.objects.annotate(
         price_count=Count('prices')
-    ).prefetch_related('locations')
+    ).prefetch_related('locations'))
+    for supermarket in supermarkets:
+        supermarket.logo = SUPERMARKET_LOGOS.get(supermarket.name)
 
     return render(request, 'supermarkets/index.html', {
         'supermarkets': supermarkets,
@@ -155,6 +196,7 @@ def supermarkets_details(request, pk):
         user_review = reviews.filter(user=request.user).first()
     return render(request, 'supermarkets/details.html', {
         'supermarket': supermarket,
+        'stats': supermarket_statistics(supermarket), #RF-42
         'reviews': reviews,
         'user_review': user_review,
     })
@@ -165,15 +207,7 @@ def submit_supermarket_review(request, pk):
     supermarket = get_object_or_404(Supermarket, pk=pk)
 
     if request.method == 'POST':
-        rating = request.POST.get('rating')
-        comment = request.POST.get('comment', '')
-
-        if rating in [str(n) for n in range(1, 6)]:
-            SupermarketReview.objects.update_or_create(
-                user=request.user,
-                supermarket=supermarket,
-                defaults={'rating': rating, 'comment': comment},
-            )
+        save_review(request, SupermarketReview, supermarket=supermarket)
 
     return redirect('products:supermarkets_details', pk=supermarket.pk)
 

@@ -1,23 +1,23 @@
-.card-overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-
-.card-overlay.active {
-  display: flex;
-}
-
-.card-content {
-  background-color: var(--background-color);
+/* Share / delete cards of a shopping list, shown in a native <dialog>. */
+.card-dialog {
+  padding: 0;
+  border: none;
   border-radius: var(--radius);
+  background-color: var(--background-color);
+  color: var(--primary-text-color);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  position: relative;
+  max-width: calc(100vw - 32px);
+}
+
+.card-dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.card-page {
+  max-width: 480px;
+  padding: 0;
+}
+
+.copy-status:empty {
+  display: none;
 }

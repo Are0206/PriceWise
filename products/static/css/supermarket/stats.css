@@ -1,0 +1,115 @@
+/* RF-42: statistics on the supermarket detail page */
+.supermarket-stats {
+  margin: 24px 0 32px;
+}
+
+.supermarket-stats h2 {
+  font-size: 20px;
+  margin: 0 0 12px;
+}
+
+.stat-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin: 0 0 24px;
+}
+
+.stat-tile {
+  padding: 14px 16px;
+  background-color: var(--surface-color);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.stat-tile dt {
+  font-size: 13px;
+  color: var(--secondary-text-color);
+}
+
+.stat-tile dd {
+  margin: 4px 0 0;
+  font-size: 28px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-unit {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--secondary-text-color);
+}
+
+.stats-chart-title {
+  font-size: 16px;
+  margin: 0 0 8px;
+}
+
+.category-bars {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--surface-color);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.category-bars th,
+.category-bars td {
+  padding: 8px 12px;
+  font-size: 14px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.category-bars th {
+  width: 30%;
+  font-weight: 500;
+}
+
+.category-bars tr + tr > * {
+  border-top: 1px solid var(--muted-surface-color);
+}
+
+.category-bar-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Fixed track so bar lengths stay proportional and the values line up. */
+.category-bar-track {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.category-bar {
+  display: block;
+  height: 12px;
+  min-width: 2px;
+  background-color: var(--savings-green-color);
+  border-radius: 0 4px 4px 0;
+}
+
+.category-bar-value {
+  flex: 0 0 auto;
+  min-width: 9ch;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.category-bars td.muted {
+  width: 1%;
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+@media (max-width: 600px) {
+  .category-bars th {
+    width: auto;
+  }
+
+  .category-bars td.muted {
+    display: none;
+  }
+}

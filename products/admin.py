@@ -28,7 +28,7 @@ class SupermarketAdmin(admin.ModelAdmin):
 
 @admin.register(SupermarketLocation)
 class SupermarketLocationAdmin(admin.ModelAdmin):
-    list_display = ('supermarket', 'name', 'address')
+    list_display = ('supermarket', 'name', 'address', 'opening_hours')
     list_filter = ('supermarket',)
     search_fields = ('name', 'address')
 
@@ -49,11 +49,11 @@ class PriceAdmin(admin.ModelAdmin):
 
 
 @admin.register(ProductReview)
-class ReviewAdmin(admin.ModelAdmin):
+class ProductReviewAdmin(admin.ModelAdmin):
     list_display = ('product', 'user', 'rating', 'created_at')
     list_filter = ('rating',)
    
 @admin.register(SupermarketReview)
-class ReviewAdmin(admin.ModelAdmin):
+class SupermarketReviewAdmin(admin.ModelAdmin):
     list_display = ('supermarket', 'user', 'rating', 'created_at')
     list_filter = ('rating',)

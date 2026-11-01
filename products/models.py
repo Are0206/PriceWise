@@ -1,3 +1,5 @@
+import unicodedata
+
 from django.conf import settings
 from django.db import models
 
@@ -28,6 +30,12 @@ class SupermarketLocation(models.Model):
         max_length=200,
         help_text="Dirección de la sede, por ejemplo: Calle 10 #43-25, El Poblado.",
     )
+    # RF-43: free text because each store publishes its hours differently.
+    opening_hours = models.CharField(
+        max_length=200,
+        blank=True,
+        help_text="Horario de atención, por ejemplo: Lun a sáb 7:00 a 21:00; dom y festivos 8:00 a 20:00. Opcional.",
+    )
 
     class Meta:
         verbose_name = "Supermarket location"
@@ -57,9 +65,18 @@ class Category(models.Model):
         return self.name
 
 
+def normalize_search_text(text):
+    """Lowercase without accents, so "jabon" finds "Jabón" in any database."""
+    decomposed = unicodedata.normalize('NFKD', text or '')
+    return ''.join(c for c in decomposed if not unicodedata.combining(c)).casefold()
+
+
 class Product(models.Model):
     name = models.CharField(max_length=200)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
+    # Accent-free copy of the name for search; kept in sync in save().
+    search_name = models.CharField(max_length=200, blank=True, db_index=True, editable=False)
+    # PROTECT: deleting a category must not silently delete its products, prices and reviews.
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='products')
     description = models.TextField(blank=True)
     nutritional_info = models.TextField(blank=True, null=True) # RF-33: Información nutricional.
     image = models.ImageField(
@@ -75,8 +92,23 @@ class Product(models.Model):
         """An uploaded image wins; otherwise the photo URL imported from the API (RF-40)."""
         return self.image.url if self.image else self.image_url
 
+    def save(self, *args, **kwargs):
+        self.search_name = normalize_search_text(self.name)
+        update_fields = kwargs.get('update_fields')
+        if update_fields is not None and 'name' in update_fields:
+            kwargs['update_fields'] = {*update_fields, 'search_name'}
+        super().save(*args, **kwargs)
+
     def get_cheapest_price(self): #RF-32
-        return self.prices.select_related('supermarket').order_by('amount').first()
+        """Lowest price; ties go to the oldest price row (lowest pk).
+
+        Uses prices loaded with prefetch_related('prices') when a view provides
+        them, so a page of product cards does not run one query per card.
+        """
+        prefetched = getattr(self, '_prefetched_objects_cache', {}).get('prices')
+        if prefetched is not None:
+            return min(prefetched, key=lambda price: (price.amount, price.pk), default=None)
+        return self.prices.select_related('supermarket').order_by('amount', 'pk').first()
     
     def __str__(self):
         return self.name
@@ -104,7 +136,7 @@ class PriceHistory(models.Model):
     )
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     price_date = models.DateField(
-        help_text="Fecha del precio reportada por la fuente (campo 'Fecha' de la API).",
+        help_text="Día en que se registró el precio (fecha local de la sincronización).",
     )
     captured_at = models.DateTimeField(
         auto_now_add=True,
@@ -139,6 +171,8 @@ class Favorite(models.Model):
         related_name='favorited_by'
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    # Lowest price when the product was saved; a lower price later is a price-drop alert.
+    price_when_added = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     class Meta:
         unique_together = ('user', 'product')
@@ -168,6 +202,12 @@ class ProductReview(models.Model):
     class Meta:
         unique_together = ('user', 'product')
         ordering = ['-created_at']
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(rating__gte=1, rating__lte=5),
+                name='productreview_rating_1_to_5',
+            ),
+        ]
 
     def __str__(self):
         return f"{self.user.username} rated {self.product.name}: {self.rating}"
@@ -193,6 +233,12 @@ class SupermarketReview(models.Model):
     class Meta:
         unique_together = ('user', 'supermarket')
         ordering = ['-created_at']
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(rating__gte=1, rating__lte=5),
+                name='supermarketreview_rating_1_to_5',
+            ),
+        ]
 
     def __str__(self):
         return f"{self.user.username} rated {self.supermarket.name}: {self.rating}"

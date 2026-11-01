@@ -21,21 +21,21 @@
       <label for="{{ form.username.id_for_label }}">Usuario</label>
       {{ form.username.errors }}
       {{ form.username }}
-      <span class="helptext">Hasta 150 caracteres: letras, números y @ . + - _</span>
+      <span class="helptext" id="username-help">Hasta 150 caracteres: letras, números y @ . + - _</span>
     </div>
 
     <div class="field">
       <label for="{{ form.email.id_for_label }}">Correo electrónico</label>
       {{ form.email.errors }}
       {{ form.email }}
-      <span class="helptext">Lo usamos para recuperar tu cuenta.</span>
+      <span class="helptext" id="email-help">Lo usamos para recuperar tu cuenta.</span>
     </div>
 
     <div class="field">
       <label for="{{ form.password1.id_for_label }}">Contraseña</label>
       {{ form.password1.errors }}
       {{ form.password1 }}
-      <ul class="password-rules">
+      <ul class="password-rules" id="password-rules">
         <li>Al menos 8 caracteres.</li>
         <li>No puede parecerse a tu usuario ni a tu correo.</li>
         <li>No puede ser una contraseña común.</li>

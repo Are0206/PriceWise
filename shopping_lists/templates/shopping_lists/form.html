@@ -33,7 +33,9 @@
       {% for item_form in formset %}
         <div class="item-form">
           {{ item_form.id }}
+          {{ item_form.non_field_errors }}
           {{ item_form.product.errors }}
+          {{ item_form.quantity.errors }}
           <label class="visually-hidden" for="{{ item_form.product.id_for_label }}">Producto</label>
           {{ item_form.product }}
           <label class="visually-hidden" for="{{ item_form.quantity.id_for_label }}">Cantidad</label>
@@ -43,7 +45,7 @@
       {% endfor %}
     </div>
 
-    <div id="empty-form-template" style="display: none;">
+    <template id="empty-form-template">
       <div class="item-form">
         {{ formset.empty_form.id }}
         <label class="visually-hidden" for="{{ formset.empty_form.product.id_for_label }}">Producto</label>
@@ -52,9 +54,9 @@
         {{ formset.empty_form.quantity }}
         <label class="remove-label">{{ formset.empty_form.DELETE }} Quitar</label>
       </div>
-    </div>
+    </template>
 
-    <button type="button" id="add-item" class="add-button">+ Agregar producto</button>
+    <button type="button" id="add-item" class="add-button" data-total-forms="id_{{ formset.prefix }}-TOTAL_FORMS">+ Agregar producto</button>
 
     <div class="form-actions">
       <a href="{% url 'index' %}?open_lists=true" class="btn btn--outline">Cancelar</a>
@@ -64,19 +66,5 @@
 </div>
 
 
-  <script>
-    (function () {
-      const container = document.getElementById('items-container');
-      const template = document.getElementById('empty-form-template');
-      const addButton = document.getElementById('add-item');
-      const totalForms = document.getElementById('id_{{ formset.prefix }}-TOTAL_FORMS');
-
-      addButton.addEventListener('click', function () {
-        const index = parseInt(totalForms.value, 10);
-        const newRow = template.innerHTML.replace(/__prefix__/g, index);
-        container.insertAdjacentHTML('beforeend', newRow);
-        totalForms.value = index + 1;
-      });
-    })();
-  </script>
+  <script src="{% static 'js/list-form.js' %}"></script>
 {% endblock %}

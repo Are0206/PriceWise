@@ -1,6 +1,6 @@
 <div class="share-wrapper">
   <div class="share-title-div">
-    <h1 class="share-title">Compartir lista</h1>
+    <h2 class="share-title" id="card-title">Compartir lista</h2>
     <p class="shopping-list-name">«{{ shopping_list.name }}»</p>
   </div>
 
@@ -10,10 +10,11 @@
       <input class="link-input" type="text" id="share-link-input" value="{{ share_url }}" readonly>
       <button type="button" class="btn btn--dark" id="copy-btn">Copiar</button>
     </div>
+    <p class="helptext copy-status" id="copy-status" role="status"></p>
     <p class="helptext">Quien tenga el enlace puede ver la lista, pero solo tú puedes cambiarla.</p>
   </div>
 
   <div class="share-footer">
-    <button type="button" class="btn btn--outline btn-close">Cerrar</button>
+    <a href="{% url 'shopping_lists:detail' shopping_list.pk %}" class="btn btn--outline btn-close">Cerrar</a>
   </div>
 </div>

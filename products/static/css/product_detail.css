@@ -24,3 +24,110 @@
   white-space: pre-line;
   line-height: 1.6;
 }
+
+/* =========================================
+   PRICE HISTORY (chart + table)
+   ========================================= */
+.price-history {
+  margin-top: 32px;
+}
+
+.history-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  padding: 0;
+  margin: 0 0 8px;
+  list-style: none;
+  font-size: 13px;
+  color: var(--secondary-text-color);
+}
+
+.history-swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background-color: var(--series-color);
+}
+
+.history-chart {
+  position: relative;
+  background-color: var(--surface-color);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 12px;
+}
+
+.history-chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.history-grid {
+  stroke: var(--default-border-color);
+  stroke-width: 1;
+}
+
+.history-axis,
+.history-label {
+  fill: var(--secondary-text-color);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.history-label {
+  fill: var(--primary-text-color);
+  font-weight: 500;
+}
+
+.history-series polyline {
+  fill: none;
+  stroke: var(--series-color);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.history-series circle {
+  fill: var(--series-color);
+  /* 2px surface ring so overlapping points stay distinct */
+  stroke: var(--surface-color);
+  stroke-width: 2;
+  cursor: pointer;
+}
+
+.history-series circle:focus-visible {
+  outline: none;
+  stroke: var(--primary-text-color);
+}
+
+.history-tooltip {
+  position: absolute;
+  transform: translate(-50%, calc(-100% - 10px));
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  background-color: var(--primary-text-color);
+  color: var(--on-dark-text);
+  font-size: 13px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.history-table {
+  margin-top: 12px;
+}
+
+.history-table summary {
+  cursor: pointer;
+  font-weight: 500;
+  min-height: 32px;
+}
+
+.history-table td {
+  font-variant-numeric: tabular-nums;
+}

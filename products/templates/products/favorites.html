@@ -13,6 +13,11 @@
 <div class="page page--wide">
   <h1>Mis favoritos</h1>
   <p class="muted">Los productos que marcaste con el corazón, del más reciente al más antiguo.</p>
+  {% if drop_count %}
+    <p class="message message--success drop-summary" role="status">
+      {{ drop_count }} de tus favoritos {{ drop_count|pluralize:"bajó,bajaron" }} de precio desde que {{ drop_count|pluralize:"lo,los" }} guardaste.
+    </p>
+  {% endif %}
 
   <div class="products-grid favorites-grid">
     {% for product in products %}

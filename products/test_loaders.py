@@ -76,3 +76,13 @@ class PhotoUrlTests(TestCase):
         load_products([product()], stores, date(2026, 10, 1))
         response = self.client.get("/")
         self.assertContains(response, 'src="https://example.com/crema.jpg"')
+
+
+class LoadSupermarketsConflictTests(TestCase):
+    def test_name_clash_skips_that_store_and_keeps_going(self):
+        Supermarket.objects.create(name="D1", api_id=99)
+        by_id = load_supermarkets([{"api_id": 1, "name": "D1"}, {"api_id": 2, "name": "Jumbo"}])
+        self.assertNotIn(1, by_id)
+        self.assertEqual(by_id[2].name, "Jumbo")
+        self.assertEqual(Supermarket.objects.get(name="D1").api_id, 99)
+        self.assertEqual(Supermarket.objects.count(), 2)

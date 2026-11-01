@@ -1,11 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
+from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 
-from .forms import RegisterForm
+from .forms import ChangePasswordForm, RegisterForm
 
 #RF-24: Register Account
 def register_account(request):
@@ -50,7 +50,7 @@ def logout_view(request):
 @login_required
 def change_password(request):
     if request.method == 'POST':
-        form = PasswordChangeForm(user=request.user, data=request.POST)
+        form = ChangePasswordForm(user=request.user, data=request.POST)
         if form.is_valid():
             user = form.save()
             # Saving a new password rotates the session hash, which would log
@@ -60,6 +60,6 @@ def change_password(request):
             messages.success(request, 'Tu contraseña se cambió correctamente.')
             return redirect('index')
     else:
-        form = PasswordChangeForm(user=request.user)
+        form = ChangePasswordForm(user=request.user)
 
     return render(request, 'accounts/change_password.html', {'form': form})

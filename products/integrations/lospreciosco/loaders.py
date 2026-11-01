@@ -9,7 +9,7 @@ single transaction to keep both in sync.
 #RF-40: Store and update products and prices API data
 import logging
 
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.utils import timezone
 from django.utils.text import slugify
 
@@ -35,7 +35,14 @@ def load_supermarkets(supermarkets):
         if supermarket is None:
             supermarket = Supermarket(name=data["name"])
         supermarket.api_id = data["api_id"]
-        supermarket.save()
+        try:
+            # A savepoint per store: a name clash rolls back only this store
+            # and leaves the surrounding transaction usable for the next one.
+            with transaction.atomic():
+                supermarket.save()
+        except IntegrityError as error:
+            logger.error("Skipping supermarket %r (API id %s): %s", data["name"], data["api_id"], error)
+            continue
         by_api_id[data["api_id"]] = supermarket
     return by_api_id
 

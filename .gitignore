@@ -4,3 +4,8 @@ __pycache__/
 venv/
 .sqlite3
 .vscode/
+# Local environment and generated files
+.venv/
+*.log
+staticfiles/
+*.sqlite3.bak*

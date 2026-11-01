@@ -16,7 +16,12 @@
   <div class="supermarkets-grid">
     {% for supermarket in supermarkets %}
       <article class="card supermarket-card">
-        <h2 class="supermarket-name">{{ supermarket.name }}</h2>
+        <div class="supermarket-header">
+          {% if supermarket.logo %}
+            <img class="supermarket-logo" src="{% static 'img/supermarkets/'|add:supermarket.logo %}" alt="" width="96" height="96">
+          {% endif %}
+          <h2 class="supermarket-name">{{ supermarket.name }}</h2>
+        </div>
         {% with total=supermarket.locations.count %}
           {% if total %}
             <p class="supermarket-locations-count muted">
@@ -27,7 +32,7 @@
           {% endif %}
         {% endwith %}
         {% if supermarket.price_count == 0 %}
-          <p class="supermarket-catalog-notice muted" style="font-size:0.85rem; color:var(--secondary-text-color); margin-top:4px;">Catálogo no disponible en API</p>
+          <p class="supermarket-catalog-notice muted">Aún no tenemos precios de este supermercado.</p>
         {% endif %}
         <a href="{% url 'products:supermarkets_details' supermarket.pk %}" class="btn btn--primary">Ver sedes y reseñas</a>
       </article>

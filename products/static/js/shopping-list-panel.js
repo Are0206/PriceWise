@@ -13,19 +13,23 @@ const shoppingListContent =
 
 const params = new URLSearchParams(window.location.search);
 
-if (params.get("open_lists") === "true") {
+if (shoppingListPanel && params.get("open_lists") === "true") {
     openShoppingListPanel();
 }
 
 
-shoppingListButton.addEventListener("click", async () => {
-
+// The button and panel only exist for logged-in users.
+shoppingListButton?.addEventListener("click", () => {
     openShoppingListPanel();
 });
 
 async function openShoppingListPanel() {
 
     shoppingListPanel.classList.add("open");
+    // While closed the panel is inert, so Tab cannot reach its hidden links.
+    shoppingListPanel.inert = false;
+    shoppingListButton?.setAttribute("aria-expanded", "true");
+    closeShoppingList.focus();
 
     try {
 
@@ -55,9 +59,16 @@ async function openShoppingListPanel() {
     }
 }
 
-
-closeShoppingList.addEventListener("click", () => {
-
+function closeShoppingListPanel() {
+    if (!shoppingListPanel.classList.contains("open")) return;
     shoppingListPanel.classList.remove("open");
+    shoppingListPanel.inert = true;
+    shoppingListButton?.setAttribute("aria-expanded", "false");
+    shoppingListButton?.focus();
+}
 
+closeShoppingList?.addEventListener("click", closeShoppingListPanel);
+
+document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeShoppingListPanel();
 });
