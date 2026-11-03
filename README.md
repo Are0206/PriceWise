@@ -56,6 +56,7 @@ Settings come from environment variables or from the `.env` file in the project 
 | `DJANGO_ALLOWED_HOSTS` | `localhost,127.0.0.1,[::1]` | Comma-separated hosts. Required in production, no `*`. |
 | `DJANGO_CSRF_TRUSTED_ORIGINS` | empty | Comma-separated origins, e.g. `https://pricewise.example.com`. |
 | `DJANGO_SECURE_SSL_REDIRECT` | `true` in production | Redirect HTTP to HTTPS. |
+| `DJANGO_SECURE_COOKIES` | `true` in production | Send session and CSRF cookies only over HTTPS. Set to `false` only when the site is served over plain HTTP (with `DJANGO_SECURE_SSL_REDIRECT=false`). |
 | `DJANGO_SECURE_HSTS_SECONDS` | `3600` in production | Raise it once HTTPS works on every host. |
 | `DJANGO_TRUST_PROXY_SSL` | `false` | Set to `true` only behind a reverse proxy that sets `X-Forwarded-Proto`. |
 | `DJANGO_LOG_LEVEL` | `INFO` | Level of the `products` logger (the Los Precios import summary). |
