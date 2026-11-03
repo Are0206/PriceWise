@@ -106,6 +106,12 @@ class SettingsProfileTests(SimpleTestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stdout.strip(), "False ['a.com'] True")
 
+    def test_secure_cookies_can_be_turned_off_for_http_only_hosts(self):
+        result = load_settings(DJANGO_ENV="production", DJANGO_DEBUG="false", DJANGO_ALLOWED_HOSTS="a.com",
+                               DJANGO_SECRET_KEY=STRONG_KEY, DJANGO_SECURE_COOKIES="false")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout.strip(), "False ['a.com'] False")
+
     def test_unknown_profile_is_rejected(self):
         result = load_settings(DJANGO_ENV="prod")
         self.assertNotEqual(result.returncode, 0)

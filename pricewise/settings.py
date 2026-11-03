@@ -53,8 +53,8 @@ SESSION_COOKIE_HTTPONLY = True
 
 if IS_PRODUCTION:
     SECURE_SSL_REDIRECT = env_bool('DJANGO_SECURE_SSL_REDIRECT', True)
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
+    # Set to false only on a host served over plain HTTP, or browsers drop the cookies and forms fail CSRF.
+    SESSION_COOKIE_SECURE = CSRF_COOKIE_SECURE = env_bool('DJANGO_SECURE_COOKIES', True)
     # Start short; raise it once HTTPS is confirmed to work on every host.
     SECURE_HSTS_SECONDS = int(get_env('DJANGO_SECURE_HSTS_SECONDS', '3600'))
     SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool('DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS', False)
